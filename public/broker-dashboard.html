@@ -659,6 +659,12 @@
         import { collection, addDoc, doc, getDoc, setDoc, query, where, onSnapshot, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
         const storage = getStorage();
+        
+        // Configuration constants
+        const MAX_PRICE = 100000;
+        const MAX_THC_PERCENT = 100;
+        const MIN_PRODUCT_NAME_LENGTH = 2;
+        const MAX_PRODUCT_NAME_LENGTH = 100;
 
         let currentUser = null;
         let userData = null;
@@ -730,20 +736,20 @@
                         alert('Please enter a product name.');
                         return;
                     }
-                    if (productName.length < 2 || productName.length > 100) {
-                        alert('Product name must be between 2 and 100 characters.');
+                    if (productName.length < MIN_PRODUCT_NAME_LENGTH || productName.length > MAX_PRODUCT_NAME_LENGTH) {
+                        alert(`Product name must be between ${MIN_PRODUCT_NAME_LENGTH} and ${MAX_PRODUCT_NAME_LENGTH} characters.`);
                         return;
                     }
                     if (!productPrice || parseFloat(productPrice) <= 0) {
                         alert('Please enter a valid price greater than 0.');
                         return;
                     }
-                    if (parseFloat(productPrice) > 100000) {
-                        alert('Price cannot exceed $100,000.');
+                    if (parseFloat(productPrice) > MAX_PRICE) {
+                        alert(`Price cannot exceed $${MAX_PRICE.toLocaleString()}.`);
                         return;
                     }
-                    if (productTHC && (parseFloat(productTHC) < 0 || parseFloat(productTHC) > 100)) {
-                        alert('THC percentage must be between 0 and 100.');
+                    if (productTHC && (parseFloat(productTHC) < 0 || parseFloat(productTHC) > MAX_THC_PERCENT)) {
+                        alert(`THC percentage must be between 0 and ${MAX_THC_PERCENT}.`);
                         return;
                     }
                     if (productStock && parseInt(productStock) < 0) {
@@ -754,8 +760,8 @@
                         alert('Please enter a valid email address.');
                         return;
                     }
-                    if (labUrl && !labUrl.startsWith('http')) {
-                        alert('Lab URL must be a valid URL starting with http:// or https://');
+                    if (labUrl && !labUrl.startsWith('https://')) {
+                        alert('Lab URL must be a secure HTTPS URL for data protection.');
                         return;
                     }
                     
