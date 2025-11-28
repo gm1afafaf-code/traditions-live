@@ -3,7 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta name="theme-color" content="#fafaf9" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)">
     <title>VOUCHED | Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -406,7 +411,57 @@
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(26,26,26,0.2); border-radius: 3px; }
-            /* Dark Mode */
+        
+        /* Focus visible styles */
+        a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible {
+            outline: 2px solid #b8a369;
+            outline-offset: 2px;
+        }
+        
+        /* Skip link for accessibility */
+        .skip-link {
+            position: absolute;
+            left: -9999px;
+            top: auto;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+        }
+        .skip-link:focus {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: auto;
+            height: auto;
+            padding: 1rem;
+            background: #b8a369;
+            color: white;
+            z-index: 9999;
+        }
+        
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+        
+        /* Screen reader only */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+        
+        /* Dark Mode */
         .dark { background: #0a0a0a !important; }
         .dark .marble-bg { background: #0a0a0a !important; }
         .dark .sidebar { background: rgba(15,15,15,0.98) !important; border-right-color: #b8a369 !important; }
@@ -421,59 +476,60 @@
     </style>
 </head>
 <body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
     <!-- B2B Professional Gate -->
-    <div id="proGate" class="fixed inset-0 bg-black/95 flex items-center justify-center z-[9999]" style="display:none;">
+    <div id="proGate" class="fixed inset-0 bg-black/95 flex items-center justify-center z-[9999]" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="gate-title">
         <div style="background: white; border-radius: 1rem; padding: 3rem; max-width: 32rem; text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.5);">
-            <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-weight: 600; margin-bottom: 1.5rem;">Licensed Professionals Only</h2>
+            <h2 id="gate-title" style="font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-weight: 600; margin-bottom: 1.5rem;">Licensed Professionals Only</h2>
             <p style="color: #6b6b6b; margin-bottom: 2rem; line-height: 1.6;">This platform is exclusively for New York State OCM-licensed cannabis businesses.<br>No retail dispensaries • Wholesale only</p>
-            <button onclick="localStorage.setItem('proVerified','true');document.getElementById('proGate').remove()" style="background: linear-gradient(135deg, #b8a369, #c4b896); color: white; padding: 1rem 2.5rem; border: none; border-radius: 0.5rem; font-weight: 600; cursor: pointer; font-size: 1rem;">I am a Licensed Professional</button>
+            <button type="button" onclick="localStorage.setItem('proVerified','true');document.getElementById('proGate').remove()" style="background: linear-gradient(135deg, #b8a369, #c4b896); color: white; padding: 1rem 2.5rem; border: none; border-radius: 0.5rem; font-weight: 600; cursor: pointer; font-size: 1rem;">I am a Licensed Professional</button>
         </div>
     </div>
     <script>if (!localStorage.getItem('proVerified')) document.getElementById('proGate').style.display = 'flex';</script>
     
     <div class="container">
         <!-- SIDEBAR -->
-        <aside id="sidebar" class="sidebar">
+        <aside id="sidebar" class="sidebar" role="complementary" aria-label="Sidebar navigation">
             <div class="sidebar-header">
-                <a href="index.html" style="text-decoration: none;">
+                <a href="index.html" style="text-decoration: none;" aria-label="Go to homepage">
                     <h1 class="serif sidebar-brand">VOUCHED</h1>
                 </a>
-                <button id="toggleSidebar" class="toggle-btn">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                <button type="button" id="toggleSidebar" class="toggle-btn" aria-label="Toggle sidebar" aria-expanded="true">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
                 </button>
             </div>
             
             <div class="user-section">
-                <div class="user-avatar" id="userAvatar">?</div>
+                <div class="user-avatar" id="userAvatar" aria-hidden="true">?</div>
                 <div class="user-info">
                     <div class="user-name" id="sidebarUserName">Loading...</div>
                     <div class="user-role" id="sidebarUserRole">Member</div>
                 </div>
             </div>
             
-            <nav class="nav">
+            <nav class="nav" aria-label="Main navigation">
                 <div class="nav-section">
                     <a href="traditions-bulk.html" class="nav-item">
-                        <span class="nav-icon">◇</span>
+                        <span class="nav-icon" aria-hidden="true">◇</span>
                         <span class="nav-label">VAULT</span>
                     </a>
                 </div>
                 
                 <div class="nav-section">
-                    <a href="broker-dashboard.html" class="nav-item active">
-                        <span class="nav-icon">◈</span>
+                    <a href="broker-dashboard.html" class="nav-item active" aria-current="page">
+                        <span class="nav-icon" aria-hidden="true">◈</span>
                         <span class="nav-label">PORTAL</span>
                     </a>
-                    <button class="nav-item" onclick="document.querySelector('[data-tab=inventory]').click()">
-                        <span class="nav-icon">📋</span>
+                    <button type="button" class="nav-item" onclick="document.querySelector('[data-tab=inventory]').click()">
+                        <span class="nav-icon" aria-hidden="true">📋</span>
                         <span class="nav-label">Inventory</span>
                     </button>
-                    <button class="nav-item" onclick="document.querySelector('[data-tab=media]').click()">
-                        <span class="nav-icon">📸</span>
+                    <button type="button" class="nav-item" onclick="document.querySelector('[data-tab=media]').click()">
+                        <span class="nav-icon" aria-hidden="true">📸</span>
                         <span class="nav-label">Media</span>
                     </button>
-                    <button class="nav-item" onclick="document.querySelector('[data-tab=documents]').click()">
-                        <span class="nav-icon">📄</span>
+                    <button type="button" class="nav-item" onclick="document.querySelector('[data-tab=documents]').click()">
+                        <span class="nav-icon" aria-hidden="true">📄</span>
                         <span class="nav-label">PDF</span>
                     </button>
                 </div>
@@ -481,66 +537,66 @@
                 <div class="nav-section">
                     <div class="nav-title">Activity</div>
                     <a href="#" class="nav-item">
-                        <span class="nav-icon">❓</span>
+                        <span class="nav-icon" aria-hidden="true">❓</span>
                         <span class="nav-label">Inquiries</span>
-                        <span class="nav-badge" id="inquiriesBadge">0</span>
+                        <span class="nav-badge" id="inquiriesBadge" aria-label="0 inquiries">0</span>
                     </a>
                     <a href="#" class="nav-item">
-                        <span class="nav-icon">⭐</span>
+                        <span class="nav-icon" aria-hidden="true">⭐</span>
                         <span class="nav-label">Favorites</span>
-                        <span class="nav-badge" id="favoritesBadge">0</span>
+                        <span class="nav-badge" id="favoritesBadge" aria-label="0 favorites">0</span>
                     </a>
                 </div>
                 
                 <div class="nav-section">
                     <div class="nav-title">System</div>
                     <a href="admin-dashboard.html" class="nav-item">
-                        <span class="nav-icon">⚙</span>
+                        <span class="nav-icon" aria-hidden="true">⚙</span>
                         <span class="nav-label">Admin</span>
                     </a>
                     <a href="#settings" class="nav-item">
-                        <span class="nav-icon">⚡</span>
+                        <span class="nav-icon" aria-hidden="true">⚡</span>
                         <span class="nav-label">Settings</span>
                     </a>
                 </div>
             </nav>
             
             <div class="signout-section">
-                <button id="signOutBtn" class="nav-item" style="width: 100%;">
-                    <span class="nav-icon">→</span>
+                <button type="button" id="signOutBtn" class="nav-item" style="width: 100%;">
+                    <span class="nav-icon" aria-hidden="true">→</span>
                     <span class="nav-label">Sign Out</span>
                 </button>
             </div>
         </aside>
         
         <!-- MAIN CONTENT -->
-        <main class="main">
+        <main id="main-content" class="main" role="main">
             <div class="content">
-                <div class="header">
+                <header class="header">
                     <h1 class="header-title">PORTAL</h1>
                     <p class="header-subtitle">Manage inventory, media, and documents</p>
-                </div>
+                </header>
                 
-                <div class="stats">
+                <div class="stats" role="group" aria-label="Statistics">
                     <div style="flex: 1;"></div>
                     <div class="stat">
                         <div class="stat-label">Products</div>
-                        <div class="stat-value" id="productCount">0</div>
+                        <div class="stat-value" id="productCount" aria-live="polite">0</div>
                     </div>
                     <div class="stat">
                         <div class="stat-label">Public</div>
-                        <div class="stat-value gold" id="publicCount">0</div>
+                        <div class="stat-value gold" id="publicCount" aria-live="polite">0</div>
                     </div>
                 </div>
                 
-                <div class="tabs">
-                    <button class="tab-btn active" data-tab="inventory">Inventory</button>
-                    <button class="tab-btn" data-tab="media">Media</button>
-                    <button class="tab-btn" data-tab="documents">Documents</button>
+                <div class="tabs" role="tablist" aria-label="Content tabs">
+                    <button type="button" class="tab-btn active" data-tab="inventory" role="tab" aria-selected="true" aria-controls="inventoryTab">Inventory</button>
+                    <button type="button" class="tab-btn" data-tab="media" role="tab" aria-selected="false" aria-controls="mediaTab">Media</button>
+                    <button type="button" class="tab-btn" data-tab="documents" role="tab" aria-selected="false" aria-controls="documentsTab">Documents</button>
                 </div>
                 
                 <!-- INVENTORY TAB -->
-                <div id="inventoryTab" class="tab-content active">
+                <div id="inventoryTab" class="tab-content active" role="tabpanel" aria-labelledby="inventory-tab">
                     <div class="card">
                         <h2>Add Product</h2>
                         <form id="uploadForm" style="display: grid; gap: 1rem;">
