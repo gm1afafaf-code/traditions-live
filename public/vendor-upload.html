@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRADITIONS | Vendor Upload</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        obsidian: '#050505',
+                        surface: '#0a0a0a',
+                        neon: '#00f0ff',
+                        'neon-green': '#00ff88',
+                        'neon-purple': '#a855f7',
+                        'neon-pink': '#ff0080'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        
+        .cosmic-bg {
+            background: radial-gradient(ellipse at 20% 20%, rgba(0, 240, 255, 0.06) 0%, transparent 50%),
+                        radial-gradient(ellipse at 80% 80%, rgba(168, 85, 247, 0.06) 0%, transparent 50%),
+                        #050505;
+        }
+        
+        .neural-grid {
+            background-image: 
+                linear-gradient(rgba(0, 240, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 240, 255, 0.02) 1px, transparent 1px);
+            background-size: 60px 60px;
+            animation: gridPulse 8s ease-in-out infinite;
+        }
+        @keyframes gridPulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.7; }
+        }
+        
+        .glass { 
+            backdrop-filter: blur(20px); 
+            background: rgba(10, 10, 10, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .glow-btn {
+            background: linear-gradient(135deg, #00f0ff, #00ff88);
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+        .glow-btn:hover {
+            box-shadow: 0 0 50px rgba(0, 240, 255, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        .stat-value {
+            background: linear-gradient(135deg, #00f0ff, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .live-dot {
+            animation: livePulse 2s ease-in-out infinite;
+        }
+        @keyframes livePulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.7); }
+            50% { box-shadow: 0 0 0 8px rgba(0, 255, 136, 0); }
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            border-color: rgba(0, 240, 255, 0.5) !important;
+            outline: none;
+        }
+        
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #050505; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #00f0ff, #a855f7); border-radius: 3px; }
+    </style>
+</head>
+<body class="cosmic-bg text-white min-h-screen">
+    
+    <!-- Background -->
+    <div class="fixed inset-0 neural-grid pointer-events-none z-0"></div>
+
+    <!-- Header -->
+    <header class="glass sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <a href="index.html" class="text-2xl font-black tracking-[-0.02em] text-white hover:text-neon transition">TRADITIONS</a>
+                <span class="text-white/20">|</span>
+                <span class="text-gray-400 text-sm">Vendor Upload</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <a href="traditions-bulk.html" class="text-gray-400 hover:text-neon text-sm font-medium transition">View Marketplace</a>
+                <button id="signOutBtn" class="text-gray-400 hover:text-red-400 text-sm font-medium transition">Sign Out</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-4xl mx-auto px-6 py-8 relative z-10">
+        <!-- Upload Form -->
+        <div class="glass rounded-2xl p-8">
+            <div class="flex items-center gap-4 mb-8">
+                <div class="w-12 h-12 bg-gradient-to-br from-neon/20 to-neon-purple/20 rounded-xl flex items-center justify-center border border-neon/30">
+                    <svg class="w-6 h-6 text-neon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h2 class="text-xl font-bold text-white">Upload Product</h2>
+                    <p class="text-gray-500 text-sm">Add a new product to the marketplace</p>
+                </div>
+            </div>
+
+            <form id="uploadForm" class="space-y-6">
+                <!-- Product Name -->
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Product Name *</label>
+                    <input type="text" id="productName" class="w-full bg-surface border border-white/10 px-4 py-3 rounded-xl text-white placeholder-gray-600 transition" placeholder="e.g. Premium OG Kush" required>
+                </div>
+
+                <!-- Category & Type -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">Category</label>
+                        <select id="category" class="w-full bg-surface border border-white/10 px-4 py-3 rounded-xl text-white transition">
+                            <option>Flower</option>
+                            <option>Concentrates</option>
+                            <option>Edibles</option>
+                            <option>Vapes</option>
+                            <option>Tinctures</option>
+                            <option>Topicals</option>
+                            <option>Pre-Rolls</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">Type</label>
+                        <select id="productType" class="w-full bg-surface border border-white/10 px-4 py-3 rounded-xl text-white transition">
+                            <option>Indica</option>
+                            <option>Sativa</option>
+                            <option>Hybrid</option>
+                            <option>CBD</option>
+                            <option>N/A</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Price & Unit -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">Price ($) *</label>
+                        <input type="number" step="0.01" id="price" class="w-full bg-surface border border-white/10 px-4 py-3 rounded-xl text-white placeholder-gray-600 transition" placeholder="0.00" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">Unit</label>
+                        <input type="text" id="unit" class="w-full bg-surface border border-white/10 px-4 py-3 rounded-xl text-white placeholder-gray-600 transition" placeholder="e.g. lb, oz, g, ea" value="lb">
+                    </div>
+                </div>
+
+                <!-- THC & Description -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">THC %</label>
+                        <input type="number" step="0.1" id="thc" class="w-full bg-surface border border-white/10 px-4 py-3 rounded-xl text-white placeholder-gray-600 transition" placeholder="e.g. 25.5">
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">Quantity Available</label>
+                        <input type="number" id="quantity" class="w-full bg-surface border border-white/10 px-4 py-3 rounded-xl text-white placeholder-gray-600 transition" placeholder="e.g. 100">
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Description</label>
+                    <textarea id="description" rows="3" class="w-full bg-surface border border-white/10 px-4 py-3 rounded-xl text-white placeholder-gray-600 resize-none transition" placeholder="Optional product description..."></textarea>
+                </div>
+
+                <!-- Image Upload -->
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Product Image</label>
+                    <div class="border-2 border-dashed border-white/10 rounded-xl p-6 text-center hover:border-neon/30 transition cursor-pointer" onclick="document.getElementById('imageFile').click()">
+                        <input type="file" id="imageFile" accept="image/*" class="hidden">
+                        <div id="imagePreview" class="hidden mb-4">
+                            <img id="previewImg" class="max-h-48 mx-auto rounded-lg">
+                        </div>
+                        <svg class="w-10 h-10 text-gray-600 mx-auto mb-2" id="uploadIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        <p class="text-gray-500 text-sm">Click to upload product image</p>
+                    </div>
+                </div>
+
+                <!-- Visibility -->
+                <div class="flex items-center gap-3 p-4 bg-surface rounded-xl border border-white/10">
+                    <input type="checkbox" id="isPublic" checked class="w-5 h-5 rounded bg-surface border-white/20">
+                    <div>
+                        <label for="isPublic" class="text-white font-medium cursor-pointer">Public Listing</label>
+                        <p class="text-gray-500 text-xs">When enabled, this product is visible on the public marketplace</p>
+                    </div>
+                </div>
+
+                <!-- Submit -->
+                <button type="submit" id="submitBtn" class="w-full glow-btn text-obsidian py-4 rounded-xl font-bold uppercase tracking-wider transition">
+                    Upload Product
+                </button>
+            </form>
+        </div>
+
+        <!-- Recent Uploads -->
+        <div class="glass rounded-2xl p-6 mt-8">
+            <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-3">
+                <span class="w-2.5 h-2.5 bg-neon-green rounded-full live-dot"></span>
+                Your Recent Uploads
+            </h3>
+            <div id="recentUploads" class="space-y-3">
+                <p class="text-gray-500 text-sm">Loading...</p>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, collection, addDoc, query, where, onSnapshot, serverTimestamp, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCT9CEe97G48yJxg3zK5AtO13b2qB3rXYc",
+            authDomain: "traditions-c1cf5.firebaseapp.com",
+            projectId: "traditions-c1cf5",
+            storageBucket: "traditions-c1cf5.firebasestorage.app",
+            messagingSenderId: "531794024182",
+            appId: "1:531794024182:web:5e4043e03c1845b8e87ed7"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+
+        let currentUser = null;
+
+        // Image preview
+        document.getElementById('imageFile').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    document.getElementById('previewImg').src = event.target.result;
+                    document.getElementById('imagePreview').classList.remove('hidden');
+                    document.getElementById('uploadIcon').classList.add('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Auth check
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+            currentUser = user;
+            loadRecentUploads();
+        });
+
+        function loadRecentUploads() {
+            const q = query(
+                collection(db, 'inventory'),
+                where('vendorId', '==', currentUser.uid),
+                orderBy('createdAt', 'desc'),
+                limit(5)
+            );
+
+            onSnapshot(q, (snapshot) => {
+                const products = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderRecent(products);
+            });
+        }
+
+        function renderRecent(products) {
+            const container = document.getElementById('recentUploads');
+            if (products.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-sm">No products uploaded yet</p>';
+                return;
+            }
+
+            container.innerHTML = products.map(p => `
+                <div class="flex items-center gap-4 p-3 bg-surface rounded-lg border border-white/5">
+                    <div class="w-12 h-12 bg-surface rounded-lg overflow-hidden flex-shrink-0">
+                        ${p.imageUrl ? `<img src="${p.imageUrl}" class="w-full h-full object-cover">` : '<div class="w-full h-full flex items-center justify-center text-gray-600 text-xs">No img</div>'}
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h4 class="font-medium text-white text-sm truncate">${p.name}</h4>
+                        <p class="text-xs text-gray-500">${p.category || 'Flower'} • ${p.isPublic !== false ? 'Public' : 'Private'}</p>
+                    </div>
+                    <p class="stat-value font-bold">$${p.price}</p>
+                </div>
+            `).join('');
+        }
+
+        // Form submit
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.textContent = 'Uploading...';
+
+            try {
+                let imageUrl = null;
+                const imageFile = document.getElementById('imageFile').files[0];
+                
+                if (imageFile) {
+                    const storageRef = ref(storage, `products/${currentUser.uid}/${Date.now()}-${imageFile.name}`);
+                    await uploadBytes(storageRef, imageFile);
+                    imageUrl = await getDownloadURL(storageRef);
+                }
+
+                await addDoc(collection(db, 'inventory'), {
+                    name: document.getElementById('productName').value,
+                    category: document.getElementById('category').value,
+                    type: document.getElementById('productType').value,
+                    price: parseFloat(document.getElementById('price').value),
+                    unit: document.getElementById('unit').value,
+                    thc: parseFloat(document.getElementById('thc').value) || null,
+                    quantity: parseInt(document.getElementById('quantity').value) || null,
+                    description: document.getElementById('description').value,
+                    imageUrl,
+                    isPublic: document.getElementById('isPublic').checked,
+                    vendorId: currentUser.uid,
+                    createdAt: serverTimestamp()
+                });
+
+                alert('Product uploaded successfully!');
+                document.getElementById('uploadForm').reset();
+                document.getElementById('imagePreview').classList.add('hidden');
+                document.getElementById('uploadIcon').classList.remove('hidden');
+                
+            } catch (err) {
+                console.error(err);
+                alert('Upload failed: ' + err.message);
+            }
+
+            btn.disabled = false;
+            btn.textContent = 'Upload Product';
+        });
+
+        document.getElementById('signOutBtn').addEventListener('click', () => signOut(auth));
+    </script>
+</body>
+</html>

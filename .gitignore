@@ -1,0 +1,3 @@
+﻿node_modules/
+setup/firebase-key.json
+*.json.bak

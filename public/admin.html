@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRADITIONS | System Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        obsidian: '#050505',
+                        surface: '#0a0a0a',
+                        neon: '#00f0ff',
+                        'neon-green': '#00ff88',
+                        'neon-purple': '#a855f7',
+                        'neon-pink': '#ff0080'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        
+        .cosmic-bg {
+            background: radial-gradient(ellipse at 20% 20%, rgba(255, 0, 128, 0.06) 0%, transparent 50%),
+                        radial-gradient(ellipse at 80% 80%, rgba(168, 85, 247, 0.06) 0%, transparent 50%),
+                        #050505;
+        }
+        
+        .neural-grid {
+            background-image: 
+                linear-gradient(rgba(255, 0, 128, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 0, 128, 0.02) 1px, transparent 1px);
+            background-size: 60px 60px;
+            animation: gridPulse 8s ease-in-out infinite;
+        }
+        @keyframes gridPulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.7; }
+        }
+        
+        .glass { 
+            backdrop-filter: blur(20px); 
+            background: rgba(10, 10, 10, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .glow-btn {
+            background: linear-gradient(135deg, #ff0080, #a855f7);
+            box-shadow: 0 0 30px rgba(255, 0, 128, 0.3);
+            transition: all 0.3s ease;
+        }
+        .glow-btn:hover {
+            box-shadow: 0 0 50px rgba(255, 0, 128, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        .stat-value {
+            background: linear-gradient(135deg, #ff0080, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .live-dot {
+            animation: livePulse 2s ease-in-out infinite;
+        }
+        @keyframes livePulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 0, 128, 0.7); }
+            50% { box-shadow: 0 0 0 8px rgba(255, 0, 128, 0); }
+        }
+        
+        input:focus, select:focus {
+            border-color: rgba(255, 0, 128, 0.5) !important;
+            outline: none;
+        }
+        
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #050505; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #ff0080, #a855f7); border-radius: 3px; }
+        
+        .tab-btn.active {
+            border-color: #ff0080;
+            color: #ff0080;
+            background: rgba(255, 0, 128, 0.1);
+        }
+        
+        .user-card {
+            transition: all 0.3s ease;
+        }
+        .user-card:hover {
+            border-color: rgba(255, 0, 128, 0.3);
+        }
+    </style>
+</head>
+<body class="cosmic-bg text-white min-h-screen">
+    
+    <!-- Background -->
+    <div class="fixed inset-0 neural-grid pointer-events-none z-0"></div>
+
+    <!-- Login Screen -->
+    <div id="login-screen" class="min-h-screen flex items-center justify-center p-4 relative z-10">
+        <div class="w-full max-w-sm glass rounded-2xl p-8">
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 bg-gradient-to-br from-neon-pink/20 to-neon-purple/20 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-neon-pink/30">
+                    <svg class="w-8 h-8 text-neon-pink" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                    </svg>
+                </div>
+                <h1 class="text-2xl font-black tracking-[-0.02em] text-white">SYSTEM ADMIN</h1>
+                <p class="text-gray-500 mt-1">Restricted Access</p>
+            </div>
+            
+            <form id="loginForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Admin Email</label>
+                    <input type="email" id="email" class="w-full bg-surface border border-white/10 px-4 py-3 rounded-xl text-white placeholder-gray-600 transition" placeholder="admin@traditions.io" required>
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Password</label>
+                    <input type="password" id="password" class="w-full bg-surface border border-white/10 px-4 py-3 rounded-xl text-white placeholder-gray-600 transition" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="w-full glow-btn text-white py-3 rounded-xl font-bold uppercase tracking-wider transition">
+                    Access System
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div id="admin-panel" class="hidden min-h-screen relative z-10">
+        <!-- Header -->
+        <header class="glass sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+                <div class="flex items-center gap-4">
+                    <a href="index.html" class="text-2xl font-black tracking-[-0.02em] text-white hover:text-neon-pink transition">TRADITIONS</a>
+                    <span class="text-white/20">|</span>
+                    <span class="text-gray-400 text-sm">System Admin</span>
+                    <div class="hidden md:flex items-center gap-2 px-3 py-1 bg-neon-pink/20 border border-neon-pink/30 rounded-full">
+                        <div class="w-1.5 h-1.5 bg-neon-pink rounded-full live-dot"></div>
+                        <span class="text-[9px] font-bold text-neon-pink uppercase tracking-wider">Super Admin</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <a href="traditions-bulk.html" class="text-neon-pink hover:text-white text-sm font-medium transition">View Marketplace</a>
+                    <button id="signOutBtn" class="text-gray-400 hover:text-red-400 text-sm font-medium transition">Sign Out</button>
+                </div>
+            </div>
+        </header>
+
+        <div class="max-w-7xl mx-auto px-6 py-8">
+            <!-- Stats -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <div class="glass rounded-xl p-5 text-center">
+                    <p class="text-3xl font-black stat-value" id="totalUsers">0</p>
+                    <p class="text-gray-500 text-xs uppercase tracking-wider mt-1">Total Users</p>
+                </div>
+                <div class="glass rounded-xl p-5 text-center">
+                    <p class="text-3xl font-black stat-value" id="pendingCount">0</p>
+                    <p class="text-gray-500 text-xs uppercase tracking-wider mt-1">Pending</p>
+                </div>
+                <div class="glass rounded-xl p-5 text-center">
+                    <p class="text-3xl font-black stat-value" id="vendorCount">0</p>
+                    <p class="text-gray-500 text-xs uppercase tracking-wider mt-1">Vendors</p>
+                </div>
+                <div class="glass rounded-xl p-5 text-center">
+                    <p class="text-3xl font-black stat-value" id="brokerCount">0</p>
+                    <p class="text-gray-500 text-xs uppercase tracking-wider mt-1">Brokers</p>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="flex gap-2 border-b border-white/10 pb-4 mb-8">
+                <button class="tab-btn active px-5 py-2.5 rounded-xl font-bold text-sm border border-transparent transition" data-tab="pending">
+                    Pending Approvals
+                </button>
+                <button class="tab-btn px-5 py-2.5 rounded-xl font-bold text-sm border border-white/10 text-gray-400 hover:text-white transition" data-tab="users">
+                    All Users
+                </button>
+                <button class="tab-btn px-5 py-2.5 rounded-xl font-bold text-sm border border-white/10 text-gray-400 hover:text-white transition" data-tab="licenses">
+                    Licenses
+                </button>
+            </div>
+
+            <!-- Pending Tab -->
+            <div id="pending-tab" class="tab-content">
+                <div id="pendingList" class="space-y-4">
+                    <p class="text-gray-500 text-center py-8">Loading pending approvals...</p>
+                </div>
+            </div>
+
+            <!-- Users Tab -->
+            <div id="users-tab" class="tab-content hidden">
+                <div class="mb-4">
+                    <input type="text" id="userSearch" class="w-full bg-surface border border-white/10 px-4 py-3 rounded-xl text-white placeholder-gray-600 transition" placeholder="Search users by name or email...">
+                </div>
+                <div id="usersList" class="space-y-4">
+                    <p class="text-gray-500 text-center py-8">Loading users...</p>
+                </div>
+            </div>
+
+            <!-- Licenses Tab -->
+            <div id="licenses-tab" class="tab-content hidden">
+                <div class="glass rounded-2xl p-6">
+                    <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-3">
+                        <span class="w-3 h-3 bg-neon-purple rounded-full"></span>
+                        License Lookup
+                    </h3>
+                    <input type="text" id="licenseSearch" class="w-full bg-surface border border-white/10 px-4 py-3 rounded-xl text-white placeholder-gray-600 transition mb-4" placeholder="Enter license number...">
+                    <div id="licenseResult" class="text-gray-500 text-sm"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, collection, query, where, onSnapshot, doc, getDoc, updateDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCT9CEe97G48yJxg3zK5AtO13b2qB3rXYc",
+            authDomain: "traditions-c1cf5.firebaseapp.com",
+            projectId: "traditions-c1cf5",
+            storageBucket: "traditions-c1cf5.firebasestorage.app",
+            messagingSenderId: "531794024182",
+            appId: "1:531794024182:web:5e4043e03c1845b8e87ed7"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let allUsers = [];
+
+        // Tab switching
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+                btn.classList.add('active');
+                document.getElementById(btn.dataset.tab + '-tab').classList.remove('hidden');
+            });
+        });
+
+        // Auth state
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                if (userDoc.exists() && userDoc.data().role === 'admin') {
+                    document.getElementById('login-screen').classList.add('hidden');
+                    document.getElementById('admin-panel').classList.remove('hidden');
+                    loadData();
+                } else {
+                    alert('Access denied. Admin privileges required.');
+                    await signOut(auth);
+                }
+            } else {
+                document.getElementById('login-screen').classList.remove('hidden');
+                document.getElementById('admin-panel').classList.add('hidden');
+            }
+        });
+
+        // Login
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            try {
+                await signInWithEmailAndPassword(auth, 
+                    document.getElementById('email').value, 
+                    document.getElementById('password').value
+                );
+            } catch (err) {
+                alert('Login failed: ' + err.message);
+            }
+        });
+
+        document.getElementById('signOutBtn').addEventListener('click', () => signOut(auth));
+
+        function loadData() {
+            // Listen to all users
+            onSnapshot(collection(db, 'users'), (snapshot) => {
+                allUsers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                updateStats();
+                renderPending();
+                renderUsers();
+            });
+        }
+
+        function updateStats() {
+            document.getElementById('totalUsers').textContent = allUsers.length;
+            document.getElementById('pendingCount').textContent = allUsers.filter(u => !u.approved).length;
+            document.getElementById('vendorCount').textContent = allUsers.filter(u => u.role === 'vendor').length;
+            document.getElementById('brokerCount').textContent = allUsers.filter(u => u.role === 'broker').length;
+        }
+
+        function renderPending() {
+            const pending = allUsers.filter(u => !u.approved);
+            const container = document.getElementById('pendingList');
+            
+            if (pending.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-center py-8">No pending approvals</p>';
+                return;
+            }
+
+            container.innerHTML = pending.map(user => `
+                <div class="user-card glass rounded-xl p-5">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-bold text-white">${user.firstName || ''} ${user.lastName || ''}</h4>
+                            <p class="text-gray-500 text-sm">${user.email}</p>
+                            <div class="flex gap-4 mt-2 text-sm">
+                                <span class="text-gray-400">Company: <span class="stat-value font-bold">${user.companyName || 'N/A'}</span></span>
+                                <span class="text-gray-400">License: <span class="stat-value font-bold">${user.licenseNumber || 'N/A'}</span></span>
+                                <span class="text-gray-400">Role: <span class="text-neon-purple font-bold uppercase">${user.role || 'user'}</span></span>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="approveUser('${user.id}')" class="px-4 py-2 bg-neon-green/20 border border-neon-green/30 text-neon-green rounded-lg font-bold text-sm hover:bg-neon-green/30 transition">
+                                Approve
+                            </button>
+                            <button onclick="rejectUser('${user.id}')" class="px-4 py-2 bg-red-500/20 border border-red-500/30 text-red-400 rounded-lg font-bold text-sm hover:bg-red-500/30 transition">
+                                Reject
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderUsers() {
+            const container = document.getElementById('usersList');
+            const searchTerm = document.getElementById('userSearch')?.value?.toLowerCase() || '';
+            
+            let filtered = allUsers;
+            if (searchTerm) {
+                filtered = allUsers.filter(u => 
+                    (u.email || '').toLowerCase().includes(searchTerm) ||
+                    (u.firstName || '').toLowerCase().includes(searchTerm) ||
+                    (u.lastName || '').toLowerCase().includes(searchTerm)
+                );
+            }
+
+            container.innerHTML = filtered.map(user => `
+                <div class="user-card glass rounded-xl p-5">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-bold text-white">${user.firstName || ''} ${user.lastName || ''}</h4>
+                            <p class="text-gray-500 text-sm">${user.email}</p>
+                            <div class="flex gap-4 mt-2 text-sm">
+                                <span class="text-gray-400">Role: <span class="text-neon-purple font-bold uppercase">${user.role || 'user'}</span></span>
+                                <span class="text-gray-400">Status: <span class="${user.approved ? 'text-neon-green' : 'text-yellow-400'} font-bold uppercase">${user.approved ? 'Approved' : 'Pending'}</span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        document.getElementById('userSearch')?.addEventListener('input', renderUsers);
+
+        // Global functions for buttons
+        window.approveUser = async (userId) => {
+            try {
+                await updateDoc(doc(db, 'users', userId), { approved: true });
+                alert('User approved!');
+            } catch (err) {
+                alert('Error: ' + err.message);
+            }
+        };
+
+        window.rejectUser = async (userId) => {
+            if (!confirm('Are you sure you want to reject this user?')) return;
+            try {
+                await updateDoc(doc(db, 'users', userId), { approved: false, rejected: true });
+                alert('User rejected');
+            } catch (err) {
+                alert('Error: ' + err.message);
+            }
+        };
+    </script>
+</body>
+</html>

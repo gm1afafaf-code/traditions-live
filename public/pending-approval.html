@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRADITIONS | Pending Approval</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        obsidian: '#050505',
+                        surface: '#0a0a0a',
+                        neon: '#00f0ff',
+                        'neon-green': '#00ff88',
+                        'neon-purple': '#a855f7',
+                        'neon-pink': '#ff0080'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        
+        .cosmic-bg {
+            background: radial-gradient(ellipse at 20% 20%, rgba(0, 240, 255, 0.08) 0%, transparent 50%),
+                        radial-gradient(ellipse at 80% 80%, rgba(168, 85, 247, 0.08) 0%, transparent 50%),
+                        #050505;
+        }
+        
+        .neural-grid {
+            background-image: 
+                linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+        
+        .portal-ring {
+            animation: portalSpin 20s linear infinite;
+        }
+        @keyframes portalSpin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .glass { 
+            backdrop-filter: blur(20px); 
+            background: rgba(10, 10, 10, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .glow-btn {
+            background: linear-gradient(135deg, #00f0ff, #00ff88);
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+        .glow-btn:hover {
+            box-shadow: 0 0 50px rgba(0, 240, 255, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        .stat-value {
+            background: linear-gradient(135deg, #00f0ff, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .pulse-ring {
+            animation: pulseRing 2s ease-in-out infinite;
+        }
+        @keyframes pulseRing {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.7; }
+        }
+    </style>
+</head>
+<body class="cosmic-bg text-white min-h-screen flex flex-col">
+    
+    <!-- Background -->
+    <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
+        <div class="neural-grid absolute inset-0"></div>
+    </div>
+    
+    <!-- Portal Background -->
+    <div class="fixed inset-0 flex items-center justify-center pointer-events-none opacity-20">
+        <div class="relative w-[600px] h-[600px]">
+            <div class="portal-ring absolute inset-0 border border-yellow-500/20 rounded-full"></div>
+            <div class="portal-ring absolute inset-16 border border-neon/10 rounded-full" style="animation-direction: reverse;"></div>
+            <div class="portal-ring absolute inset-32 border border-neon-purple/10 rounded-full" style="animation-duration: 30s;"></div>
+        </div>
+    </div>
+
+    <div class="flex-1 flex items-center justify-center p-4 relative z-10">
+        <div class="w-full max-w-md glass rounded-2xl p-8 text-center">
+            <div class="mb-6">
+                <div class="w-20 h-20 mx-auto bg-yellow-500/20 rounded-full flex items-center justify-center mb-4 pulse-ring border border-yellow-500/30">
+                    <svg class="w-10 h-10 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+            </div>
+
+            <a href="index.html" class="inline-block mb-4">
+                <h1 class="text-2xl font-black tracking-[-0.02em] text-white hover:text-neon transition">TRADITIONS</h1>
+            </a>
+            
+            <h2 class="text-3xl font-bold mb-2">Approval Pending</h2>
+            <p class="text-gray-400 mb-8">Your account has been created and is awaiting admin approval.</p>
+
+            <div id="profileInfo" class="bg-surface/50 p-5 rounded-xl border border-white/10 text-left mb-6 space-y-4">
+                <div>
+                    <p class="text-gray-500 text-xs uppercase tracking-wider mb-1">Email</p>
+                    <p id="infoEmail" class="stat-value font-semibold"></p>
+                </div>
+                <div>
+                    <p class="text-gray-500 text-xs uppercase tracking-wider mb-1">License</p>
+                    <p id="infoLicense" class="text-neon font-mono font-bold"></p>
+                </div>
+                <div>
+                    <p class="text-gray-500 text-xs uppercase tracking-wider mb-1">Company</p>
+                    <p id="infoCompany" class="text-white font-semibold"></p>
+                </div>
+                <div>
+                    <p class="text-gray-500 text-xs uppercase tracking-wider mb-1">Role</p>
+                    <p id="infoRole" class="text-white capitalize"></p>
+                </div>
+            </div>
+
+            <div class="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4 mb-6 text-left">
+                <p class="text-sm text-yellow-400">
+                    <strong>What's next?</strong> An admin will review your information and approve your access within 24 hours. Check your email for updates.
+                </p>
+            </div>
+
+            <div class="space-y-3">
+                <button id="checkStatusBtn" class="w-full glow-btn text-obsidian py-4 rounded-xl font-bold uppercase tracking-wider transition">
+                    Check Status
+                </button>
+                <button id="signOutBtn" class="w-full bg-surface border border-white/10 text-white py-3 rounded-xl font-medium hover:border-white/30 transition">
+                    Sign Out
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { auth, db } from './js/firebase-init.js';
+        import { signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+        import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const userDoc = await getDoc(doc(db, 'users', user.uid));
+            if (userDoc.exists()) {
+                const userData = userDoc.data();
+                
+                if (userData.approved) {
+                    if (userData.role === 'admin') {
+                        window.location.href = 'admin-dashboard.html';
+                    } else if (userData.role === 'employee') {
+                        window.location.href = 'employee-dashboard.html';
+                    } else {
+                        window.location.href = 'broker-dashboard.html';
+                    }
+                    return;
+                }
+
+                document.getElementById('infoEmail').textContent = userData.email;
+                document.getElementById('infoLicense').textContent = userData.licenseNumber;
+                document.getElementById('infoCompany').textContent = userData.companyName;
+                document.getElementById('infoRole').textContent = userData.role;
+            }
+        });
+
+        document.getElementById('checkStatusBtn').addEventListener('click', async () => {
+            const userDoc = await getDoc(doc(db, 'users', auth.currentUser.uid));
+            if (userDoc.exists() && userDoc.data().approved) {
+                const userData = userDoc.data();
+                if (userData.role === 'admin') {
+                    window.location.href = 'admin-dashboard.html';
+                } else if (userData.role === 'employee') {
+                    window.location.href = 'employee-dashboard.html';
+                } else {
+                    window.location.href = 'broker-dashboard.html';
+                }
+            } else {
+                alert('Your account is still pending approval. Please check back soon.');
+            }
+        });
+
+        document.getElementById('signOutBtn').addEventListener('click', async () => {
+            await signOut(auth);
+            window.location.href = 'login.html';
+        });
+    </script>
+</body>
+</html>

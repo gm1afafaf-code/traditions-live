@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRADITIONS | Complete Your Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        obsidian: '#050505',
+                        surface: '#0a0a0a',
+                        neon: '#00f0ff',
+                        'neon-green': '#00ff88',
+                        'neon-purple': '#a855f7',
+                        'neon-pink': '#ff0080'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        
+        .cosmic-bg {
+            background: radial-gradient(ellipse at 20% 20%, rgba(0, 240, 255, 0.08) 0%, transparent 50%),
+                        radial-gradient(ellipse at 80% 80%, rgba(168, 85, 247, 0.08) 0%, transparent 50%),
+                        #050505;
+        }
+        
+        .neural-grid {
+            background-image: 
+                linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+        
+        .glass { 
+            backdrop-filter: blur(20px); 
+            background: rgba(10, 10, 10, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .glow-btn {
+            background: linear-gradient(135deg, #00f0ff, #00ff88);
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+        .glow-btn:hover {
+            box-shadow: 0 0 50px rgba(0, 240, 255, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        .stat-value {
+            background: linear-gradient(135deg, #00f0ff, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        input:focus, select:focus {
+            border-color: rgba(0, 240, 255, 0.5) !important;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.1);
+            outline: none;
+        }
+        
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #050505; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #00f0ff, #a855f7); border-radius: 3px; }
+        
+        .role-option {
+            transition: all 0.3s ease;
+        }
+        .role-option:hover {
+            border-color: rgba(0, 240, 255, 0.5);
+        }
+        .role-option input:checked + div {
+            border-color: #00f0ff;
+            background: rgba(0, 240, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="cosmic-bg text-white min-h-screen flex flex-col">
+    
+    <!-- Background -->
+    <div class="fixed inset-0 neural-grid pointer-events-none z-0"></div>
+
+    <div class="flex-1 flex items-center justify-center p-4 relative z-10">
+        <div class="w-full max-w-2xl glass rounded-2xl p-8">
+            <div class="text-center mb-8">
+                <a href="index.html" class="inline-block mb-4">
+                    <h1 class="text-2xl font-black tracking-[-0.02em] text-white hover:text-neon transition">TRADITIONS</h1>
+                </a>
+                <h2 class="text-3xl font-bold mb-2">Complete Your Profile</h2>
+                <p class="text-gray-400">Review and update your account information</p>
+            </div>
+
+            <div id="loadingSpinner" class="text-center py-12">
+                <div class="w-12 h-12 border-4 border-neon border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                <p class="text-gray-400">Loading your information...</p>
+            </div>
+
+            <form id="profileForm" class="hidden space-y-8">
+                <!-- Personal Info Section -->
+                <div>
+                    <h3 class="text-lg font-bold mb-4 pb-4 border-b border-white/10 flex items-center gap-3">
+                        <span class="w-8 h-8 bg-gradient-to-br from-neon/20 to-neon-purple/20 rounded-lg flex items-center justify-center text-sm text-neon">01</span>
+                        Personal Information
+                    </h3>
+                    
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-2">First Name</label>
+                            <input type="text" id="firstName" placeholder="First name" 
+                                   class="w-full bg-surface border border-white/10 px-4 py-3 rounded-xl text-white placeholder-gray-600 transition" />
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-2">Last Name</label>
+                            <input type="text" id="lastName" placeholder="Last name" 
+                                   class="w-full bg-surface border border-white/10 px-4 py-3 rounded-xl text-white placeholder-gray-600 transition" />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">Email Address</label>
+                        <input type="email" id="email" placeholder="email@example.com" 
+                               class="w-full bg-surface border border-white/10 px-4 py-3 rounded-xl text-gray-400 transition" readonly />
+                        <p class="text-xs text-gray-600 mt-1">Verified email address</p>
+                    </div>
+                </div>
+
+                <!-- Business Info Section -->
+                <div>
+                    <h3 class="text-lg font-bold mb-4 pb-4 border-b border-white/10 flex items-center gap-3">
+                        <span class="w-8 h-8 bg-gradient-to-br from-neon/20 to-neon-purple/20 rounded-lg flex items-center justify-center text-sm text-neon">02</span>
+                        Business Information
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-2">License Number</label>
+                            <input type="text" id="licenseNumber" 
+                                   class="w-full bg-surface border border-white/10 px-4 py-3 rounded-xl text-neon font-mono transition" readonly />
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-2">Company Name</label>
+                            <input type="text" id="companyName" 
+                                   class="w-full bg-surface border border-white/10 px-4 py-3 rounded-xl text-white transition" readonly />
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm text-gray-400 mb-2">License Holder</label>
+                                <input type="text" id="licenseHolder" 
+                                       class="w-full bg-surface border border-white/10 px-4 py-3 rounded-xl text-gray-300 transition" readonly />
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-400 mb-2">Business Type</label>
+                                <input type="text" id="businessType" 
+                                       class="w-full bg-surface border border-white/10 px-4 py-3 rounded-xl text-gray-300 transition" readonly />
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-2">Address</label>
+                            <input type="text" id="address" 
+                                   class="w-full bg-surface border border-white/10 px-4 py-3 rounded-xl text-gray-300 transition" readonly />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Role Selection -->
+                <div>
+                    <h3 class="text-lg font-bold mb-4 pb-4 border-b border-white/10 flex items-center gap-3">
+                        <span class="w-8 h-8 bg-gradient-to-br from-neon/20 to-neon-purple/20 rounded-lg flex items-center justify-center text-sm text-neon">03</span>
+                        Your Role
+                    </h3>
+                    <p class="text-gray-400 text-sm mb-4">Select your role in the organization. This determines your permissions.</p>
+                    
+                    <div class="space-y-3">
+                        <label class="role-option block cursor-pointer">
+                            <input type="radio" name="role" value="admin" id="roleAdmin" class="hidden" />
+                            <div class="p-4 bg-surface/50 border border-white/10 rounded-xl transition">
+                                <div class="font-bold text-white">Admin</div>
+                                <div class="text-sm text-gray-500">Full system access, user management, approvals</div>
+                            </div>
+                        </label>
+                        <label class="role-option block cursor-pointer">
+                            <input type="radio" name="role" value="employee" id="roleEmployee" class="hidden" />
+                            <div class="p-4 bg-surface/50 border border-white/10 rounded-xl transition">
+                                <div class="font-bold text-white">Employee</div>
+                                <div class="text-sm text-gray-500">Read-only access to inventory and reports</div>
+                            </div>
+                        </label>
+                        <label class="role-option block cursor-pointer">
+                            <input type="radio" name="role" value="broker" id="roleBroker" class="hidden" />
+                            <div class="p-4 bg-surface/50 border border-white/10 rounded-xl transition">
+                                <div class="font-bold text-white">Broker</div>
+                                <div class="text-sm text-gray-500">Create and manage products for your company</div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Status Message -->
+                <div id="statusMessage" class="hidden p-4 rounded-xl border-l-4 border-neon bg-neon/10">
+                    <p id="statusText" class="text-sm text-neon"></p>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex gap-4 pt-4">
+                    <button type="submit" class="flex-1 glow-btn text-obsidian py-4 rounded-xl font-bold uppercase tracking-wider transition">
+                        Save Profile & Continue
+                    </button>
+                    <button type="button" id="signOutBtn" class="flex-1 bg-surface border border-white/10 text-white py-4 rounded-xl font-medium hover:border-white/30 transition">
+                        Sign Out
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import { auth, db } from './js/firebase-init.js';
+        import { signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+        import { doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+        import { getLicenseByNumber } from './js/licenses.js';
+
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const userDoc = await getDoc(doc(db, 'users', user.uid));
+            if (userDoc.exists()) {
+                const userRole = userDoc.data().role;
+                if (userRole === 'admin') {
+                    window.location.href = 'admin-dashboard.html';
+                } else if (userRole === 'employee') {
+                    window.location.href = 'employee-dashboard.html';
+                } else {
+                    window.location.href = 'broker-dashboard.html';
+                }
+                return;
+            }
+
+            const pendingQuery = await db.collection('pending_accounts')
+                .where('email', '==', user.email)
+                .orderBy('requestedAt', 'desc')
+                .limit(1)
+                .get();
+
+            if (pendingQuery.empty) {
+                alert('No account request found. Please request an account first.');
+                await signOut(auth);
+                window.location.href = 'license-lookup.html';
+                return;
+            }
+
+            const pendingAccount = pendingQuery.docs[0].data();
+            const license = getLicenseByNumber(pendingAccount.licenseNumber);
+
+            document.getElementById('email').value = user.email;
+            document.getElementById('firstName').value = user.given_name || '';
+            document.getElementById('lastName').value = user.family_name || '';
+            document.getElementById('licenseNumber').value = license?.licenseNumber || pendingAccount.licenseNumber;
+            document.getElementById('companyName').value = license?.companyName || pendingAccount.companyName;
+            document.getElementById('licenseHolder').value = license?.licenseHolder || '';
+            document.getElementById('businessType').value = license?.licenseType || pendingAccount.businessType;
+            document.getElementById('address').value = license ? `${license.address}, ${license.city}, ${license.state} ${license.zip}` : '';
+
+            document.getElementById('loadingSpinner').classList.add('hidden');
+            document.getElementById('profileForm').classList.remove('hidden');
+        });
+
+        document.getElementById('profileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const role = document.querySelector('input[name="role"]:checked')?.value;
+            if (!role) {
+                alert('Please select a role');
+                return;
+            }
+
+            try {
+                await setDoc(doc(db, 'users', auth.currentUser.uid), {
+                    email: document.getElementById('email').value,
+                    firstName: document.getElementById('firstName').value,
+                    lastName: document.getElementById('lastName').value,
+                    licenseNumber: document.getElementById('licenseNumber').value,
+                    companyName: document.getElementById('companyName').value,
+                    businessType: document.getElementById('businessType').value,
+                    role: role,
+                    approved: false,
+                    createdAt: new Date()
+                });
+                window.location.href = 'pending-approval.html';
+            } catch (err) {
+                console.error(err);
+                alert('Error saving profile');
+            }
+        });
+
+        document.getElementById('signOutBtn').addEventListener('click', async () => {
+            await signOut(auth);
+            window.location.href = 'login.html';
+        });
+    </script>
+</body>
+</html>

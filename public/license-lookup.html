@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vouched | License Lookup & Account Request</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        obsidian: '#050505',
+                        surface: '#0a0a0a',
+                        neon: '#00f0ff',
+                        'neon-green': '#00ff88',
+                        'neon-purple': '#a855f7',
+                        'neon-pink': '#ff0080'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        
+        .cosmic-bg {
+            background: radial-gradient(ellipse at 20% 20%, rgba(0, 240, 255, 0.08) 0%, transparent 50%),
+                        radial-gradient(ellipse at 80% 80%, rgba(168, 85, 247, 0.08) 0%, transparent 50%),
+                        radial-gradient(ellipse at 50% 50%, rgba(0, 255, 136, 0.03) 0%, transparent 70%),
+                        #050505;
+        }
+        
+        .neural-grid {
+            background-image: 
+                linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            animation: gridPulse 8s ease-in-out infinite;
+        }
+        
+        @keyframes gridPulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.6; }
+        }
+        
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(0, 240, 255, 0.6);
+            border-radius: 50%;
+            animation: float 20s infinite ease-in-out;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0) scale(1); opacity: 0; }
+            10% { opacity: 1; }
+            50% { transform: translateY(-100vh) translateX(50px) scale(1.5); opacity: 0.5; }
+            90% { opacity: 1; }
+        }
+        
+        .neon-border {
+            position: relative;
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.05), rgba(168, 85, 247, 0.05));
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            backdrop-filter: blur(20px);
+        }
+        
+        .neon-border::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: linear-gradient(45deg, #00f0ff, #a855f7, #00ff88, #00f0ff);
+            border-radius: inherit;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            filter: blur(10px);
+        }
+        
+        .neon-border:hover::before {
+            opacity: 0.3;
+        }
+        
+        .portal-ring {
+            animation: portalSpin 20s linear infinite;
+        }
+        
+        @keyframes portalSpin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .live-dot {
+            animation: livePulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes livePulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.7); }
+            50% { box-shadow: 0 0 0 10px rgba(0, 255, 136, 0); }
+        }
+        
+        .glow-btn {
+            background: linear-gradient(135deg, #00f0ff, #00ff88);
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .glow-btn:hover {
+            box-shadow: 0 0 50px rgba(0, 240, 255, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        .fade-up {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 0.6s ease-out forwards;
+        }
+        
+        @keyframes fadeUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        
+        input:focus, select:focus {
+            border-color: rgba(0, 240, 255, 0.5) !important;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.1);
+        }
+        
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #050505; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #00f0ff, #a855f7); border-radius: 3px; }
+        
+        /* Autocomplete Dropdown */
+        .autocomplete-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            max-height: 300px;
+            overflow-y: auto;
+            background: rgba(10, 10, 10, 0.98);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-top: none;
+            border-radius: 0 0 12px 12px;
+            z-index: 100;
+        }
+        
+        .autocomplete-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.2s ease;
+        }
+        
+        .autocomplete-item:hover, .autocomplete-item.active {
+            background: rgba(0, 240, 255, 0.1);
+        }
+        
+        .autocomplete-item:last-child {
+            border-bottom: none;
+        }
+        
+        .grok-searching {
+            animation: grokPulse 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes grokPulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+    </style>
+</head>
+<body class="cosmic-bg text-white min-h-screen overflow-x-hidden">
+    
+    <!-- Floating Particles Background -->
+    <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
+        <div class="neural-grid absolute inset-0"></div>
+        <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+        <div class="particle" style="left: 25%; animation-delay: 3s;"></div>
+        <div class="particle" style="left: 50%; animation-delay: 6s;"></div>
+        <div class="particle" style="left: 75%; animation-delay: 9s;"></div>
+        <div class="particle" style="left: 90%; animation-delay: 12s;"></div>
+    </div>
+
+    <!-- Portal Background -->
+    <div class="fixed inset-0 flex items-center justify-center pointer-events-none opacity-20">
+        <div class="relative w-[800px] h-[800px]">
+            <div class="portal-ring absolute inset-0 border border-neon/10 rounded-full"></div>
+            <div class="portal-ring absolute inset-20 border border-neon-purple/10 rounded-full" style="animation-direction: reverse;"></div>
+            <div class="portal-ring absolute inset-40 border border-neon-green/5 rounded-full" style="animation-duration: 30s;"></div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-obsidian/80 backdrop-blur-xl">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-2 group">
+                <span class="font-black text-xl tracking-wider text-white group-hover:text-red-500 transition" style="font-family: 'Orbitron', sans-serif;">V</span>
+                <svg class="w-5 h-5 text-red-500" viewBox="0 0 100 100" fill="currentColor"><path d="M50 5 C50 5 60 25 75 30 C75 30 60 35 55 50 C55 50 65 45 80 50 C80 50 60 55 55 70 C55 70 60 65 75 70 C75 70 55 80 50 95 C45 80 25 70 25 70 C40 65 45 70 45 70 C40 55 20 50 20 50 C35 45 45 50 45 50 C40 35 25 30 25 30 C40 25 50 5 50 5Z"/></svg>
+                <span class="font-black text-xl tracking-wider text-white group-hover:text-red-500 transition" style="font-family: 'Orbitron', sans-serif;">UCHED</span>
+                <div class="hidden md:flex items-center gap-2 px-3 py-1 bg-neon/10 border border-neon/30 rounded-full">
+                    <div class="w-1.5 h-1.5 bg-neon-green rounded-full live-dot"></div>
+                    <span class="text-[9px] font-bold text-neon-green uppercase tracking-wider">Live</span>
+                </div>
+            </a>
+            <div class="flex items-center gap-4">
+                <a href="login.html" class="text-sm font-medium text-gray-400 hover:text-white transition">Sign In</a>
+                <a href="traditions-bulk.html" class="text-sm font-medium text-gray-400 hover:text-neon transition">Marketplace</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="relative z-10 min-h-screen flex items-center justify-center p-4 pt-24">
+        <div class="w-full max-w-2xl">
+            <!-- Card -->
+            <div class="fade-up neon-border rounded-2xl p-8 md:p-10">
+                <!-- Header -->
+                <div class="text-center mb-8">
+                    <div class="inline-flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-full text-xs font-bold uppercase tracking-widest text-gray-400 mb-4">
+                        <span class="w-1.5 h-1.5 bg-neon-green rounded-full live-dot"></span>
+                        NYS OCM Licensed
+                    </div>
+                    <h1 class="text-3xl md:text-4xl font-black text-white mb-2">Request Access</h1>
+                    <p class="text-gray-400">Join the future of cannabis wholesale</p>
+                </div>
+
+                <div class="space-y-8">
+                    <!-- License Lookup Section -->
+                    <div class="fade-up delay-1">
+                        <h2 class="text-lg font-bold mb-4 flex items-center gap-3">
+                            <span class="w-8 h-8 bg-gradient-to-br from-neon/20 to-neon-purple/20 rounded-lg flex items-center justify-center text-sm text-neon">01</span>
+                            Find Your License
+                        </h2>
+                        
+                        <!-- Autocomplete Input -->
+                        <div class="relative">
+                            <input type="text" id="licenseSearch" placeholder="Start typing license # or company name..." 
+                                   class="w-full bg-surface border border-white/10 p-4 rounded-xl text-white placeholder-gray-600 focus:outline-none transition"
+                                   autocomplete="off" />
+                            <div id="autocompleteDropdown" class="autocomplete-dropdown hidden"></div>
+                        </div>
+                        
+                        <!-- Grok AI Fallback Status -->
+                        <div id="grokStatus" class="hidden mt-3 p-4 bg-neon-purple/10 border border-neon-purple/30 rounded-xl">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 bg-neon-purple/20 rounded-lg flex items-center justify-center">
+                                    <svg class="w-4 h-4 text-neon-purple grok-searching" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p id="grokStatusText" class="text-sm font-medium text-neon-purple">Grok AI searching NYS OCM database...</p>
+                                    <p class="text-xs text-gray-500">Live verification in progress</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- License Details -->
+                        <div id="licenseDetails" class="hidden mt-4 bg-surface/50 p-5 rounded-xl border border-white/10 space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-500 text-xs uppercase tracking-wider mb-1">License Number</p>
+                                    <p id="detailLicenseNum" class="text-xl font-bold bg-gradient-to-r from-neon to-neon-green bg-clip-text text-transparent"></p>
+                                </div>
+                                <div id="verifiedBadge" class="flex items-center gap-2 px-3 py-1 bg-neon-green/20 border border-neon-green/30 rounded-full">
+                                    <svg class="w-4 h-4 text-neon-green" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                                    <span class="text-xs font-bold text-neon-green uppercase">Verified</span>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <p class="text-gray-500 text-xs uppercase tracking-wider mb-1">License Holder</p>
+                                    <p id="detailHolder" class="text-white font-semibold"></p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-500 text-xs uppercase tracking-wider mb-1">Company</p>
+                                    <p id="detailCompany" class="text-white font-semibold"></p>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <p class="text-gray-500 text-xs uppercase tracking-wider mb-1">Address</p>
+                                    <p id="detailAddress" class="text-gray-300 text-sm"></p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-500 text-xs uppercase tracking-wider mb-1">Type</p>
+                                    <p id="detailType" class="text-gray-300 text-sm"></p>
+                                </div>
+                            </div>
+                            <div id="grokFoundNote" class="hidden text-xs text-neon-purple bg-neon-purple/10 p-3 rounded-lg">
+                                <span class="font-bold">🤖 Grok AI:</span> This license was found via live OCM database verification
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Account Request Section -->
+                    <div id="requestSection" class="hidden fade-up delay-2">
+                        <h2 class="text-lg font-bold mb-4 flex items-center gap-3">
+                            <span class="w-8 h-8 bg-gradient-to-br from-neon/20 to-neon-purple/20 rounded-lg flex items-center justify-center text-sm text-neon">02</span>
+                            Request Account
+                        </h2>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm text-gray-400 mb-2">Email Address</label>
+                                <input type="email" id="requestEmail" placeholder="your@email.com" 
+                                       class="w-full bg-surface border border-white/10 p-4 rounded-xl text-white placeholder-gray-600 focus:outline-none transition" />
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-400 mb-2">Business Type</label>
+                                <select id="businessType" class="w-full bg-surface border border-white/10 p-4 rounded-xl text-white focus:outline-none transition">
+                                    <option value="">-- Select --</option>
+                                    <option value="Processor">Processor</option>
+                                    <option value="Distributor">Distributor</option>
+                                    <option value="Cultivator">Cultivator</option>
+                                    <option value="Dispensary">Dispensary</option>
+                                    <option value="Microbusiness">Microbusiness</option>
+                                </select>
+                            </div>
+                            <p class="text-xs text-gray-500">After requesting, an admin will review and approve access within 24 hours.</p>
+                            <button id="submitRequest" class="w-full glow-btn text-obsidian py-4 rounded-xl font-bold uppercase tracking-wider">
+                                Submit Account Request
+                            </button>
+                            <button id="cancelRequest" class="w-full bg-surface border border-white/10 text-white py-3 rounded-xl font-medium hover:border-white/30 transition">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Divider -->
+                    <div class="flex items-center gap-4">
+                        <div class="flex-1 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+                        <span class="text-xs text-gray-500 uppercase tracking-wider">or</span>
+                        <div class="flex-1 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+                    </div>
+
+                    <!-- Sign In Section -->
+                    <div id="signInSection" class="text-center fade-up delay-3">
+                        <p class="text-gray-400 mb-4">Already have an account?</p>
+                        <a href="login.html" class="inline-flex items-center gap-2 px-6 py-3 border border-neon/30 rounded-xl text-neon font-semibold hover:bg-neon/10 transition">
+                            <span>Sign In</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trust Badges -->
+            <div class="fade-up delay-3 flex flex-wrap justify-center gap-6 text-xs font-medium text-gray-500 mt-8">
+                <div class="flex items-center gap-2">
+                    <svg class="w-4 h-4 text-neon-green" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                    <span>OCM Verified</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <svg class="w-4 h-4 text-neon-green" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                    <span>METRC Ready</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <svg class="w-4 h-4 text-neon-purple" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                    <span>Grok AI Verified</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { searchLicenses, getLicenseByNumber, nyLicenses } from './js/licenses.js';
+        import { db } from './js/firebase-init.js';
+
+        let selectedLicense = null;
+        let grokFoundLicense = false;
+        let debounceTimer = null;
+        let activeIndex = -1;
+        let licensesLoaded = false;
+
+        const searchInput = document.getElementById('licenseSearch');
+        const dropdown = document.getElementById('autocompleteDropdown');
+        const grokStatus = document.getElementById('grokStatus');
+
+        // Listen for licenses loaded event
+        window.addEventListener('licenses-loaded', (e) => {
+            licensesLoaded = true;
+            console.log(`🔄 ${e.detail.count} licenses loaded from NYS OCM API`);
+            searchInput.placeholder = `Search ${e.detail.count.toLocaleString()} NYS licenses...`;
+        });
+
+        // Autocomplete functionality
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.trim();
+            activeIndex = -1;
+            
+            if (query.length < 1) {
+                dropdown.classList.add('hidden');
+                grokStatus.classList.add('hidden');
+                return;
+            }
+            
+            // Search local database first
+            const results = searchLicenses(query);
+            
+            if (results.length > 0) {
+                renderDropdown(results);
+                dropdown.classList.remove('hidden');
+                grokStatus.classList.add('hidden');
+            } else {
+                // No local results - trigger Grok search after debounce
+                dropdown.classList.add('hidden');
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    if (query.length >= 3) {
+                        searchWithGrok(query);
+                    }
+                }, 800);
+            }
+        });
+
+        // Keyboard navigation
+        searchInput.addEventListener('keydown', (e) => {
+            const items = dropdown.querySelectorAll('.autocomplete-item');
+            
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                activeIndex = Math.min(activeIndex + 1, items.length - 1);
+                updateActiveItem(items);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                activeIndex = Math.max(activeIndex - 1, 0);
+                updateActiveItem(items);
+            } else if (e.key === 'Enter' && activeIndex >= 0) {
+                e.preventDefault();
+                items[activeIndex]?.click();
+            } else if (e.key === 'Escape') {
+                dropdown.classList.add('hidden');
+            }
+        });
+
+        function updateActiveItem(items) {
+            items.forEach((item, i) => {
+                item.classList.toggle('active', i === activeIndex);
+            });
+            if (activeIndex >= 0) {
+                items[activeIndex]?.scrollIntoView({ block: 'nearest' });
+            }
+        }
+
+        function renderDropdown(results) {
+            dropdown.innerHTML = results.slice(0, 10).map((l, i) => `
+                <div class="autocomplete-item" data-license="${l.licenseNumber}">
+                    <div class="flex justify-between items-start">
+                        <div class="font-bold text-neon text-sm">${highlightMatch(l.licenseNumber, searchInput.value)}</div>
+                        <span class="text-[10px] px-2 py-0.5 rounded-full ${l.licenseStatus === 'Active' ? 'bg-neon-green/20 text-neon-green' : 'bg-yellow-500/20 text-yellow-400'}">${l.licenseStatus || 'Pending'}</span>
+                    </div>
+                    <div class="text-gray-400 text-xs">${highlightMatch(l.companyName, searchInput.value)}${l.dba ? ` <span class="text-gray-600">DBA: ${l.dba}</span>` : ''}</div>
+                    <div class="text-gray-600 text-xs mt-1">${l.licenseType} • ${l.city}, ${l.state}</div>
+                </div>
+            `).join('');
+            
+            // Add click handlers
+            dropdown.querySelectorAll('.autocomplete-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    selectLicense(item.dataset.license, false);
+                });
+            });
+        }
+
+        function highlightMatch(text, query) {
+            if (!query) return text;
+            const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+            return text.replace(regex, '<span class="text-neon-green font-bold">$1</span>');
+        }
+
+        // Grok AI License Lookup
+        async function searchWithGrok(query) {
+            grokStatus.classList.remove('hidden');
+            document.getElementById('grokStatusText').textContent = 'Grok AI searching NYS OCM database...';
+            
+            const apiKey = ''; // API KEY REMOVED - Set via environment variable
+            
+            try {
+                const response = await fetch('https://api.x.ai/v1/chat/completions', {
+                    method: 'POST',
+                    headers: { 
+                        'Authorization': `Bearer ${apiKey}`, 
+                        'Content-Type': 'application/json' 
+                    },
+                    body: JSON.stringify({
+                        model: 'grok-3-mini',
+                        messages: [{
+                            role: 'user',
+                            content: `You are a NYS Office of Cannabis Management license lookup assistant. Search for any NYS cannabis license matching: "${query}"
+                            
+This could be a license number, company name, or license holder name. NYS OCM licenses typically start with prefixes like:
+- AUCC (Adult-Use Cultivator)
+- AUCP (Adult-Use Processor)  
+- AUDIS (Adult-Use Distributor)
+- AUCM (Adult-Use Conditional Microbusiness)
+- OCM- (general)
+
+If you find a matching license, respond with JSON ONLY:
+{"found": true, "licenseNumber": "...", "companyName": "...", "licenseHolder": "...", "licenseType": "...", "city": "...", "state": "NY", "address": "..."}
+
+If no match found:
+{"found": false, "suggestion": "brief reason or suggestion"}
+
+IMPORTANT: Only return valid JSON, nothing else.`
+                        }],
+                        temperature: 0.1,
+                        max_tokens: 500
+                    })
+                });
+
+                if (!response.ok) throw new Error('Grok API error');
+                
+                const data = await response.json();
+                const content = data.choices[0].message.content;
+                
+                // Parse Grok response
+                try {
+                    const result = JSON.parse(content);
+                    
+                    if (result.found) {
+                        document.getElementById('grokStatusText').textContent = '✓ License found via Grok AI!';
+                        grokFoundLicense = true;
+                        
+                        // Display the found license
+                        selectedLicense = {
+                            licenseNumber: result.licenseNumber,
+                            companyName: result.companyName,
+                            licenseHolder: result.licenseHolder,
+                            licenseType: result.licenseType,
+                            city: result.city || 'NY',
+                            state: result.state || 'NY',
+                            address: result.address || 'Verified by Grok AI'
+                        };
+                        
+                        displayLicenseDetails(selectedLicense, true);
+                        
+                    } else {
+                        document.getElementById('grokStatusText').textContent = `License not found. ${result.suggestion || 'Try a different search term.'}`;
+                    }
+                } catch (parseErr) {
+                    console.log('Grok response:', content);
+                    document.getElementById('grokStatusText').textContent = 'No matching license found in OCM database.';
+                }
+                
+            } catch (err) {
+                console.error('Grok error:', err);
+                document.getElementById('grokStatusText').textContent = 'Grok AI temporarily unavailable. Please try again.';
+            }
+        }
+
+        function selectLicense(licenseNumber, fromGrok = false) {
+            selectedLicense = getLicenseByNumber(licenseNumber);
+            grokFoundLicense = fromGrok;
+            displayLicenseDetails(selectedLicense, fromGrok);
+        }
+
+        function displayLicenseDetails(license, fromGrok) {
+            searchInput.value = license.licenseNumber;
+            dropdown.classList.add('hidden');
+            grokStatus.classList.add('hidden');
+            
+            document.getElementById('detailLicenseNum').textContent = license.licenseNumber;
+            document.getElementById('detailHolder').textContent = license.licenseHolder;
+            document.getElementById('detailCompany').textContent = license.companyName;
+            document.getElementById('detailAddress').textContent = `${license.address}, ${license.city}, ${license.state}`;
+            document.getElementById('detailType').textContent = license.licenseType;
+            
+            document.getElementById('grokFoundNote').classList.toggle('hidden', !fromGrok);
+            document.getElementById('licenseDetails').classList.remove('hidden');
+            document.getElementById('requestSection').classList.remove('hidden');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
+
+        document.getElementById('submitRequest').addEventListener('click', async () => {
+            const email = document.getElementById('requestEmail').value.trim();
+            const businessType = document.getElementById('businessType').value;
+            if (!email || !businessType || !selectedLicense) {
+                alert('Please fill all fields');
+                return;
+            }
+            try {
+                await db.collection('pending_accounts').add({
+                    email,
+                    businessType,
+                    licenseNumber: selectedLicense.licenseNumber,
+                    companyName: selectedLicense.companyName,
+                    licenseHolder: selectedLicense.licenseHolder,
+                    verifiedByGrok: grokFoundLicense,
+                    status: 'pending',
+                    requestedAt: new Date()
+                });
+                alert('Account request submitted! You will be notified when approved.');
+                window.location.href = 'login.html';
+            } catch (err) {
+                console.error('Error:', err);
+                alert('Error submitting request. Please try again.');
+            }
+        });
+
+        document.getElementById('cancelRequest').addEventListener('click', () => {
+            document.getElementById('requestSection').classList.add('hidden');
+            document.getElementById('licenseDetails').classList.add('hidden');
+            document.getElementById('licenseSearch').value = '';
+            selectedLicense = null;
+            grokFoundLicense = false;
+        });
+    </script>
+</body>
+</html>

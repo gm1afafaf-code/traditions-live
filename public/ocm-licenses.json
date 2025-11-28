@@ -1,0 +1,29 @@
+[
+  {
+    "licenseNumber": "OCM-12345",
+    "companyName": "Green Valley Farms",
+    "firstName": "John",
+    "lastName": "Doe",
+    "address": "123 Green St, Albany, NY 12201",
+    "role": "vendor",
+    "email": "john@greenvalley.com"
+  },
+  {
+    "licenseNumber": "OCM-67890",
+    "companyName": "Blue Ridge Cannabis",
+    "firstName": "Jane",
+    "lastName": "Smith",
+    "address": "456 Blue Ave, Syracuse, NY 13201",
+    "role": "buyer",
+    "email": "jane@blueridge.com"
+  },
+  {
+    "licenseNumber": "OCM-11111",
+    "companyName": "Mountain High Extracts",
+    "firstName": "Bob",
+    "lastName": "Johnson",
+    "address": "789 Mountain Rd, Buffalo, NY 14201",
+    "role": "vendor",
+    "email": "bob@mountainhigh.com"
+  }
+]

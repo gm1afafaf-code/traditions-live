@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TRADITIONS | Product Details</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        obsidian: '#050505',
+                        surface: '#0a0a0a',
+                        neon: '#00f0ff',
+                        'neon-green': '#00ff88',
+                        'neon-purple': '#a855f7',
+                        'neon-pink': '#ff0080'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        
+        .cosmic-bg {
+            background: radial-gradient(ellipse at 20% 20%, rgba(0, 240, 255, 0.06) 0%, transparent 50%),
+                        radial-gradient(ellipse at 80% 80%, rgba(168, 85, 247, 0.06) 0%, transparent 50%),
+                        #050505;
+        }
+        
+        .neural-grid {
+            background-image: 
+                linear-gradient(rgba(0, 240, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 240, 255, 0.02) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+        
+        .fade-in { animation: fadeIn 0.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .glass { 
+            backdrop-filter: blur(20px); 
+            background: rgba(10, 10, 10, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #050505; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #00f0ff, #a855f7); border-radius: 3px; }
+        
+        .image-gallery img { 
+            transition: all 0.3s ease; 
+            cursor: pointer; 
+        }
+        .image-gallery img:hover { 
+            transform: scale(1.02); 
+            box-shadow: 0 10px 40px rgba(0, 240, 255, 0.3); 
+        }
+        .image-gallery img.active { 
+            outline: 3px solid #00f0ff; 
+            outline-offset: 2px; 
+        }
+        
+        .glow-btn {
+            background: linear-gradient(135deg, #00f0ff, #00ff88);
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+        .glow-btn:hover {
+            box-shadow: 0 0 50px rgba(0, 240, 255, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        .stat-value {
+            background: linear-gradient(135deg, #00f0ff, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .live-dot {
+            animation: livePulse 2s ease-in-out infinite;
+        }
+        @keyframes livePulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.7); }
+            50% { box-shadow: 0 0 0 8px rgba(0, 255, 136, 0); }
+        }
+    </style>
+</head>
+<body class="cosmic-bg text-white min-h-screen">
+    
+    <!-- Background Grid -->
+    <div class="fixed inset-0 neural-grid pointer-events-none z-0"></div>
+
+    <!-- Loading State -->
+    <div id="loading" class="min-h-screen flex items-center justify-center relative z-10">
+        <div class="text-center">
+            <div class="w-16 h-16 border-4 border-neon border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p class="text-gray-400">Loading product...</p>
+        </div>
+    </div>
+
+    <!-- Error State -->
+    <div id="error" class="hidden min-h-screen flex items-center justify-center relative z-10">
+        <div class="text-center glass rounded-2xl p-10">
+            <div class="w-20 h-20 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span class="text-4xl">🚫</span>
+            </div>
+            <h1 class="text-2xl font-bold text-white mb-2">Product Not Found</h1>
+            <p id="errorMessage" class="text-gray-400 mb-6">This product may have been removed or the link is invalid.</p>
+            <a href="traditions-bulk.html" class="inline-block glow-btn px-8 py-3 rounded-xl font-bold text-obsidian">Browse Marketplace →</a>
+        </div>
+    </div>
+
+    <!-- Product Page -->
+    <div id="productPage" class="hidden relative z-10">
+        <!-- Top Bar -->
+        <nav class="glass sticky top-0 z-50">
+            <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+                <a href="index.html" class="flex items-center gap-3">
+                    <span class="text-2xl font-black tracking-[-0.02em] text-white hover:text-neon transition">TRADITIONS</span>
+                    <span class="text-white/20">|</span>
+                    <span class="text-gray-400 text-sm">Product Details</span>
+                </a>
+                <div class="flex items-center gap-4">
+                    <span id="publicBadge" class="hidden px-3 py-1.5 bg-neon-green/20 text-neon-green text-xs font-bold rounded-full border border-neon-green/30">PUBLIC</span>
+                    <span id="privateBadge" class="hidden px-3 py-1.5 bg-neon-purple/20 text-neon-purple text-xs font-bold rounded-full border border-neon-purple/30">PRIVATE LINK</span>
+                    <a href="traditions-bulk.html" class="text-neon hover:text-neon-green text-sm font-medium transition">← Marketplace</a>
+                </div>
+            </div>
+        </nav>
+
+        <div class="max-w-6xl mx-auto px-6 py-8">
+            <div class="grid lg:grid-cols-2 gap-8">
+                <!-- Left: Images -->
+                <div class="space-y-4 fade-in">
+                    <!-- Main Image -->
+                    <div class="glass rounded-2xl overflow-hidden">
+                        <img id="mainImage" src="" alt="Product" class="w-full h-96 object-cover">
+                    </div>
+                    
+                    <!-- Gallery Thumbnails -->
+                    <div id="imageGallery" class="image-gallery grid grid-cols-5 gap-2"></div>
+                    
+                    <!-- Videos -->
+                    <div id="videoSection" class="hidden">
+                        <h3 class="text-sm font-medium text-gray-400 mb-2">Videos</h3>
+                        <div id="videoGallery" class="grid grid-cols-2 gap-2"></div>
+                    </div>
+                </div>
+
+                <!-- Right: Details -->
+                <div class="space-y-6 fade-in" style="animation-delay: 0.1s;">
+                    <!-- Product Header -->
+                    <div class="glass rounded-2xl p-6">
+                        <div class="flex items-start justify-between mb-4">
+                            <div>
+                                <h1 id="productName" class="text-3xl font-black text-white mb-3">Loading...</h1>
+                                <div class="flex items-center gap-3">
+                                    <span id="category" class="px-3 py-1 bg-surface text-gray-300 text-sm rounded-full border border-white/10">Flower</span>
+                                    <span id="type" class="px-3 py-1 bg-surface text-gray-300 text-sm rounded-full border border-white/10">Hybrid</span>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p id="price" class="text-4xl font-black stat-value">$0</p>
+                                <p id="unit" class="text-gray-500 text-sm">per lb</p>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-3 gap-4 pt-4 border-t border-white/10">
+                            <div class="text-center p-3 bg-surface rounded-xl">
+                                <p class="text-gray-500 text-xs uppercase tracking-wider mb-1">THC</p>
+                                <p id="thc" class="text-2xl font-bold text-white">0%</p>
+                            </div>
+                            <div class="text-center p-3 bg-surface rounded-xl">
+                                <p class="text-gray-500 text-xs uppercase tracking-wider mb-1">CBD</p>
+                                <p id="cbd" class="text-2xl font-bold text-white">0%</p>
+                            </div>
+                            <div class="text-center p-3 bg-surface rounded-xl">
+                                <p class="text-gray-500 text-xs uppercase tracking-wider mb-1">Stock</p>
+                                <p id="stock" class="text-2xl font-bold text-neon-green">0</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Vendor Info -->
+                    <div class="glass rounded-2xl p-6">
+                        <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Vendor</h3>
+                        <div class="flex items-center gap-4">
+                            <div class="w-14 h-14 bg-gradient-to-br from-neon/20 to-neon-purple/20 rounded-xl flex items-center justify-center text-2xl border border-neon/20">🏪</div>
+                            <div>
+                                <p id="vendorName" class="font-bold text-white text-lg">Loading...</p>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <div class="w-1.5 h-1.5 bg-neon-green rounded-full live-dot"></div>
+                                    <span class="text-neon-green text-xs font-medium">Verified Vendor</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lab Results (COA) -->
+                    <div id="labSection" class="hidden glass rounded-2xl p-6">
+                        <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Lab Results (COA)</h3>
+                        <a id="labLink" href="" target="_blank" class="flex items-center gap-4 p-4 bg-surface rounded-xl hover:bg-white/5 transition group border border-white/10">
+                            <div class="w-12 h-12 bg-red-500/20 rounded-xl flex items-center justify-center text-xl group-hover:scale-110 transition">📋</div>
+                            <div class="flex-1">
+                                <p class="font-semibold text-white">Certificate of Analysis</p>
+                                <p class="text-gray-500 text-sm">Click to view full lab report</p>
+                            </div>
+                            <span class="text-neon group-hover:text-neon-green transition">View PDF →</span>
+                        </a>
+                    </div>
+
+                    <!-- Share Link -->
+                    <div class="glass rounded-2xl p-6">
+                        <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Share This Product</h3>
+                        <div class="flex items-center gap-2">
+                            <input id="shareUrl" type="text" readonly class="flex-1 bg-surface border border-white/10 rounded-xl px-4 py-3 text-gray-400 text-sm">
+                            <button id="copyBtn" class="px-5 py-3 glow-btn text-obsidian font-bold rounded-xl transition">Copy</button>
+                        </div>
+                    </div>
+
+                    <!-- CTA -->
+                    <a href="traditions-bulk.html" class="block w-full text-center glow-btn py-4 rounded-xl font-bold text-obsidian transition">
+                        Browse More Products →
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Full Image Modal -->
+        <div id="imageModal" class="hidden fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-6 cursor-pointer" onclick="closeImageModal()">
+            <button class="absolute top-6 right-6 text-white/60 hover:text-white text-4xl transition" onclick="closeImageModal()">×</button>
+            <img id="modalImage" src="" class="max-w-full max-h-full object-contain rounded-2xl">
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCT9CEe97G48yJxg3zK5AtO13b2qB3rXYc",
+            authDomain: "traditions-c1cf5.firebaseapp.com",
+            projectId: "traditions-c1cf5",
+            storageBucket: "traditions-c1cf5.firebasestorage.app",
+            messagingSenderId: "531794024182",
+            appId: "1:531794024182:web:5e4043e03c1845b8e87ed7"
+        };
+        
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const params = new URLSearchParams(window.location.search);
+        const productId = params.get('id');
+        const shareToken = params.get('token');
+
+        async function loadProduct() {
+            if (!productId) {
+                showError('No product ID provided');
+                return;
+            }
+
+            try {
+                const docRef = doc(db, 'inventory', productId);
+                const docSnap = await getDoc(docRef);
+
+                if (!docSnap.exists()) {
+                    showError('Product not found');
+                    return;
+                }
+
+                const product = docSnap.data();
+
+                // Check access
+                if (product.isPublic === false) {
+                    if (!shareToken || shareToken !== product.shareToken) {
+                        showError('This product is private. You need a valid share link.');
+                        return;
+                    }
+                    document.getElementById('privateBadge').classList.remove('hidden');
+                } else {
+                    document.getElementById('publicBadge').classList.remove('hidden');
+                }
+
+                // Populate page
+                document.getElementById('productName').textContent = product.name || product.productName || 'Unknown Product';
+                document.getElementById('price').textContent = '$' + (product.price || 0);
+                document.getElementById('unit').textContent = 'per ' + (product.unit || 'lb');
+                document.getElementById('thc').textContent = (product.thc || 0) + '%';
+                document.getElementById('cbd').textContent = (product.cbd || 0) + '%';
+                document.getElementById('stock').textContent = product.stock || 0;
+                document.getElementById('vendorName').textContent = product.vendorName || product.companyName || 'Unknown Vendor';
+                document.getElementById('category').textContent = product.category || 'Flower';
+                document.getElementById('type').textContent = product.strain || product.type || 'Hybrid';
+
+                // Images
+                const images = product.imageUrls || product.images || (product.imageUrl ? [product.imageUrl] : []);
+                if (images.length > 0) {
+                    document.getElementById('mainImage').src = images[0];
+                    const gallery = document.getElementById('imageGallery');
+                    gallery.innerHTML = images.map((url, i) => `
+                        <img src="${url}" class="w-full h-16 object-cover rounded-lg border border-white/10 ${i === 0 ? 'active' : ''}" onclick="setMainImage('${url}', this)">
+                    `).join('');
+                }
+
+                // Videos
+                const videos = product.videoUrls || (product.video ? [product.video] : []);
+                if (videos.length > 0) {
+                    document.getElementById('videoSection').classList.remove('hidden');
+                    document.getElementById('videoGallery').innerHTML = videos.map(url => `
+                        <video src="${url}" controls class="w-full rounded-lg border border-white/10"></video>
+                    `).join('');
+                }
+
+                // Lab Results
+                const labUrl = product.labUrl || product.labPdf;
+                if (labUrl) {
+                    document.getElementById('labSection').classList.remove('hidden');
+                    document.getElementById('labLink').href = labUrl;
+                }
+
+                // Share URL
+                const shareUrl = window.location.origin + '/product.html?id=' + productId + (product.shareToken ? '&token=' + product.shareToken : '');
+                document.getElementById('shareUrl').value = shareUrl;
+
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('productPage').classList.remove('hidden');
+
+            } catch (err) {
+                console.error('Error:', err);
+                showError('Error loading product');
+            }
+        }
+
+        function showError(message) {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('errorMessage').textContent = message;
+            document.getElementById('error').classList.remove('hidden');
+        }
+
+        window.setMainImage = (url, el) => {
+            document.getElementById('mainImage').src = url;
+            document.querySelectorAll('.image-gallery img').forEach(img => img.classList.remove('active'));
+            el.classList.add('active');
+        };
+
+        window.openImageModal = (url) => {
+            document.getElementById('modalImage').src = url;
+            document.getElementById('imageModal').classList.remove('hidden');
+        };
+
+        window.closeImageModal = () => {
+            document.getElementById('imageModal').classList.add('hidden');
+        };
+
+        document.getElementById('mainImage')?.addEventListener('click', function() {
+            openImageModal(this.src);
+        });
+
+        document.getElementById('copyBtn')?.addEventListener('click', () => {
+            const url = document.getElementById('shareUrl').value;
+            navigator.clipboard.writeText(url);
+            document.getElementById('copyBtn').textContent = 'Copied!';
+            setTimeout(() => document.getElementById('copyBtn').textContent = 'Copy', 2000);
+        });
+
+        loadProduct();
+    </script>
+</body>
+</html>

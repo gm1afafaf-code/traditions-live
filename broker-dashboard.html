@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VOUCHED | Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: linear-gradient(180deg, #fafaf9 0%, #f5f5f4 100%); color: #1a1a1a; overflow: hidden; }
+        .serif { font-family: 'Cormorant Garamond', serif; }
+        
+        .container { display: flex; height: 100vh; }
+        
+        /* SIDEBAR */
+        .sidebar { 
+            width: 240px; 
+            height: 100vh; 
+            background: rgba(255,255,255,0.8); 
+            backdrop-filter: blur(20px); 
+            border-right: 1px solid rgba(0,0,0,0.05); 
+            display: flex; 
+            flex-direction: column; 
+            transition: width 0.3s ease;
+            overflow: hidden;
+            z-index: 40;
+        }
+        
+        .sidebar.collapsed { 
+            width: 60px; 
+        }
+        
+        .sidebar-header { 
+            padding: 1rem; 
+            border-bottom: 1px solid rgba(0,0,0,0.05); 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            gap: 0.5rem;
+            flex-shrink: 0;
+        }
+        
+        .sidebar-brand { 
+            font-family: 'Cormorant Garamond', serif; 
+            font-size: 1.125rem; 
+            font-weight: 600; 
+            letter-spacing: 0.12em; 
+            color: #1a1a1a;
+            border: 2px solid #b8a369;
+            padding: 0.375rem 0.75rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            order: 1;
+        }
+        
+        .sidebar.collapsed .sidebar-brand { 
+            font-size: 0;
+            padding: 0;
+            width: 40px;
+            height: 40px;
+            border: 2px solid #b8a369;
+        }
+        
+        .sidebar.collapsed .sidebar-brand::before {
+            content: 'V';
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .toggle-btn {
+            width: 32px;
+            height: 32px;
+            min-width: 32px;
+            border: none;
+            background: rgba(0,0,0,0.05);
+            border-radius: 0.375rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            flex-shrink: 0;
+            order: 2;
+        }
+        
+        .toggle-btn:hover { background: rgba(0,0,0,0.1); }
+        
+        .toggle-btn svg { 
+            width: 12px; 
+            height: 12px; 
+            stroke: #404040; 
+            transition: transform 0.3s; 
+            flex-shrink: 0;
+        }
+        
+        .user-section { 
+            padding: 1rem; 
+            border-bottom: 1px solid rgba(0,0,0,0.05); 
+            display: flex; 
+            align-items: center; 
+            gap: 0.75rem;
+            flex-shrink: 0;
+            min-height: 72px;
+        }
+        
+        .sidebar.collapsed .user-section { 
+            padding: 0.5rem;
+            min-height: auto;
+        }
+        
+        .user-avatar { 
+            width: 36px; 
+            height: 36px; 
+            border-radius: 50%; 
+            background: linear-gradient(135deg, rgba(184,163,105,0.3), rgba(184,163,105,0.1)); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            color: #b8a369; 
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .user-info { 
+            flex: 1; 
+            min-width: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .sidebar.collapsed .user-info {
+            display: none;
+        }
+        
+        .user-name { 
+            font-weight: 500; 
+            font-size: 0.875rem; 
+            color: #1a1a1a; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+            white-space: nowrap; 
+        }
+        
+        .user-role { 
+            font-size: 0.75rem; 
+            color: #b8a369; 
+            text-transform: uppercase; 
+            letter-spacing: 0.05em; 
+        }
+        
+        .nav { 
+            flex: 1; 
+            overflow-y: auto; 
+            padding: 0.5rem 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        
+        .nav-section { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 0.25rem;
+        }
+        
+        .nav-title { 
+            font-size: 0.7rem; 
+            text-transform: uppercase; 
+            letter-spacing: 0.1em; 
+            color: #6b6b6b; 
+            padding: 0.5rem 0.75rem;
+            margin-top: 0.5rem;
+            transition: opacity 0.3s;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        
+        .sidebar.collapsed .nav-title { 
+            opacity: 0; 
+            height: 0;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .nav-item { 
+            display: flex; 
+            align-items: center; 
+            gap: 0.75rem; 
+            padding: 0.75rem 0.75rem; 
+            margin: 0 0.5rem;
+            color: #404040; 
+            text-decoration: none; 
+            transition: all 0.2s;
+            white-space: nowrap;
+            border-radius: 0.375rem;
+            border: none;
+            background: none;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            text-align: left;
+            min-height: 44px;
+        }
+        
+        .nav-item:hover { 
+            background: rgba(184,163,105,0.15); 
+            color: #b8a369; 
+        }
+        
+        .nav-item.active { 
+            background: rgba(184,163,105,0.2); 
+            color: #b8a369;
+            font-weight: 600;
+        }
+        
+        .nav-icon { 
+            font-size: 1.1rem; 
+            flex-shrink: 0; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            width: 1.4rem;
+            height: 1.4rem;
+        }
+        
+        .nav-label { 
+            font-size: 0.9rem; 
+            flex: 1;
+            transition: opacity 0.3s;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+        
+        .sidebar.collapsed .nav-label { 
+            display: none; 
+        }
+        
+        .nav-badge { 
+            width: 18px; 
+            height: 18px; 
+            background: #b8a369; 
+            color: white; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 0.6rem;
+            font-weight: bold;
+            flex-shrink: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .sidebar.collapsed .nav-badge { 
+            display: none; 
+        }
+        
+        .signout-section { 
+            padding: 0.5rem; 
+            border-top: 1px solid rgba(0,0,0,0.05);
+            flex-shrink: 0;
+        }
+        
+        /* MAIN CONTENT */
+        .main { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            overflow: hidden;
+        }
+        
+        .content { 
+            flex: 1; 
+            overflow-y: auto; 
+            padding: 2rem;
+        }
+        
+        .header { margin-bottom: 2rem; }
+        .header-title { font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-weight: 600; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+        .header-subtitle { color: #6b6b6b; font-size: 0.875rem; }
+        
+        .stats { display: flex; gap: 2rem; margin-bottom: 2rem; }
+        .stat { text-align: right; }
+        .stat-label { font-size: 0.75rem; color: #6b6b6b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem; }
+        .stat-value { font-size: 1.5rem; font-weight: 600; color: #1a1a1a; }
+        .stat-value.gold { color: #b8a369; }
+        
+        .tabs { display: flex; gap: 2rem; border-bottom: 1px solid rgba(0,0,0,0.05); margin-bottom: 2rem; }
+        .tab-btn { 
+            border: none; 
+            background: none; 
+            font-size: 0.875rem; 
+            font-weight: 500; 
+            color: #6b6b6b; 
+            padding: 1rem 0; 
+            cursor: pointer; 
+            border-bottom: 2px solid transparent; 
+            transition: all 0.2s;
+        }
+        .tab-btn.active { color: #1a1a1a; border-bottom-color: #b8a369; }
+        
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        .card { 
+            background: rgba(255,255,255,0.7); 
+            backdrop-filter: blur(10px); 
+            border: 1px solid rgba(0,0,0,0.05); 
+            border-radius: 0.75rem; 
+            padding: 1.5rem; 
+            margin-bottom: 1.5rem;
+        }
+        
+        .card h2 { 
+            font-family: 'Cormorant Garamond', serif; 
+            font-size: 1.125rem; 
+            margin-bottom: 1rem;
+        }
+        
+        .button { 
+            padding: 0.5rem 1rem; 
+            border: none; 
+            border-radius: 0.375rem; 
+            font-size: 0.875rem; 
+            cursor: pointer; 
+            transition: all 0.2s;
+        }
+        
+        .button.primary { background: linear-gradient(135deg, #b8a369, #c4b896); color: white; }
+        .button.primary:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(184,163,105,0.3); }
+        
+        .button:disabled { opacity: 0.5; cursor: not-allowed; }
+        
+        .inventory-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1.5rem; }
+        
+        .inventory-item { 
+            background: rgba(255,255,255,0.7); 
+            border: 1px solid rgba(0,0,0,0.05); 
+            border-radius: 0.75rem; 
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+        
+        .inventory-item:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+        
+        .inventory-image { width: 100%; aspect-ratio: 1; background: #f5f5f4; display: flex; align-items: center; justify-content: center; }
+        
+        .inventory-image img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .inventory-info { padding: 1rem; }
+        
+        .inventory-name { font-weight: 500; margin-bottom: 0.25rem; }
+        
+        .inventory-meta { font-size: 0.75rem; color: #6b6b6b; line-height: 1.4; }
+        
+        .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem; }
+        
+        .media-item { 
+            position: relative; 
+            aspect-ratio: 1; 
+            background: #f5f5f4; 
+            border: 1px solid rgba(0,0,0,0.05); 
+            border-radius: 0.5rem; 
+            overflow: hidden;
+        }
+        
+        .media-item img, .media-item video { width: 100%; height: 100%; object-fit: cover; }
+        
+        .upload-zone { 
+            border: 2px dashed rgba(184,163,105,0.3); 
+            border-radius: 0.5rem; 
+            padding: 2rem; 
+            text-align: center; 
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .upload-zone:hover, .upload-zone.dragover { 
+            border-color: #b8a369; 
+            background: rgba(184,163,105,0.05);
+        }
+        
+        input[type="file"] { display: none; }
+        input, select, textarea { 
+            border: 1px solid rgba(0,0,0,0.1); 
+            border-radius: 0.375rem; 
+            padding: 0.5rem 0.75rem; 
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+        
+        input:focus, select:focus, textarea:focus { 
+            outline: none; 
+            border-color: rgba(184,163,105,0.5); 
+            box-shadow: 0 0 0 3px rgba(184,163,105,0.1);
+        }
+        
+        .checkbox { accent-color: #b8a369; }
+        
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(26,26,26,0.2); border-radius: 3px; }
+            /* Dark Mode */
+        .dark { background: #0a0a0a !important; }
+        .dark .marble-bg { background: #0a0a0a !important; }
+        .dark .sidebar { background: rgba(15,15,15,0.98) !important; border-right-color: #b8a369 !important; }
+        .dark .inventory-item, .dark .product-card { background: rgba(30,30,30,0.9) !important; border-color: rgba(184,163,105,0.2) !important; }
+        .dark .text-charcoal, .dark h1, .dark h2, .dark h3, .dark p, .dark label { color: #f0f0f0 !important; }
+        .dark .text-slate { color: #888 !important; }
+        .dark .bg-white, .dark .bg-marble { background: #1a1a1a !important; }
+        .dark input, .dark select, .dark textarea { background: #1a1a1a !important; border-color: #333 !important; color: #f0f0f0 !important; }
+        .dark .modal-content { background: #111 !important; }
+        .dark-toggle { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 999; width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, #b8a369, #c4b896); color: #0a0a0a; font-size: 20px; cursor: pointer; border: none; box-shadow: 0 4px 20px rgba(184,163,105,0.4); transition: transform 0.2s; }
+        .dark-toggle:hover { transform: scale(1.1); }
+    </style>
+</head>
+<body>
+    <!-- B2B Professional Gate -->
+    <div id="proGate" class="fixed inset-0 bg-black/95 flex items-center justify-center z-[9999]" style="display:none;">
+        <div style="background: white; border-radius: 1rem; padding: 3rem; max-width: 32rem; text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.5);">
+            <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-weight: 600; margin-bottom: 1.5rem;">Licensed Professionals Only</h2>
+            <p style="color: #6b6b6b; margin-bottom: 2rem; line-height: 1.6;">This platform is exclusively for New York State OCM-licensed cannabis businesses.<br>No retail dispensaries • Wholesale only</p>
+            <button onclick="localStorage.setItem('proVerified','true');document.getElementById('proGate').remove()" style="background: linear-gradient(135deg, #b8a369, #c4b896); color: white; padding: 1rem 2.5rem; border: none; border-radius: 0.5rem; font-weight: 600; cursor: pointer; font-size: 1rem;">I am a Licensed Professional</button>
+        </div>
+    </div>
+    <script>if (!localStorage.getItem('proVerified')) document.getElementById('proGate').style.display = 'flex';</script>
+    
+    <div class="container">
+        <!-- SIDEBAR -->
+        <aside id="sidebar" class="sidebar">
+            <div class="sidebar-header">
+                <a href="index.html" style="text-decoration: none;">
+                    <h1 class="serif sidebar-brand">VOUCHED</h1>
+                </a>
+                <button id="toggleSidebar" class="toggle-btn">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                </button>
+            </div>
+            
+            <div class="user-section">
+                <div class="user-avatar" id="userAvatar">?</div>
+                <div class="user-info">
+                    <div class="user-name" id="sidebarUserName">Loading...</div>
+                    <div class="user-role" id="sidebarUserRole">Member</div>
+                </div>
+            </div>
+            
+            <nav class="nav">
+                <div class="nav-section">
+                    <a href="traditions-bulk.html" class="nav-item">
+                        <span class="nav-icon">◇</span>
+                        <span class="nav-label">VAULT</span>
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <a href="broker-dashboard.html" class="nav-item active">
+                        <span class="nav-icon">◈</span>
+                        <span class="nav-label">PORTAL</span>
+                    </a>
+                    <button class="nav-item" onclick="document.querySelector('[data-tab=inventory]').click()">
+                        <span class="nav-icon">📋</span>
+                        <span class="nav-label">Inventory</span>
+                    </button>
+                    <button class="nav-item" onclick="document.querySelector('[data-tab=media]').click()">
+                        <span class="nav-icon">📸</span>
+                        <span class="nav-label">Media</span>
+                    </button>
+                    <button class="nav-item" onclick="document.querySelector('[data-tab=documents]').click()">
+                        <span class="nav-icon">📄</span>
+                        <span class="nav-label">PDF</span>
+                    </button>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-title">Activity</div>
+                    <a href="#" class="nav-item">
+                        <span class="nav-icon">❓</span>
+                        <span class="nav-label">Inquiries</span>
+                        <span class="nav-badge" id="inquiriesBadge">0</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <span class="nav-icon">⭐</span>
+                        <span class="nav-label">Favorites</span>
+                        <span class="nav-badge" id="favoritesBadge">0</span>
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-title">System</div>
+                    <a href="admin-dashboard.html" class="nav-item">
+                        <span class="nav-icon">⚙</span>
+                        <span class="nav-label">Admin</span>
+                    </a>
+                    <a href="#settings" class="nav-item">
+                        <span class="nav-icon">⚡</span>
+                        <span class="nav-label">Settings</span>
+                    </a>
+                </div>
+            </nav>
+            
+            <div class="signout-section">
+                <button id="signOutBtn" class="nav-item" style="width: 100%;">
+                    <span class="nav-icon">→</span>
+                    <span class="nav-label">Sign Out</span>
+                </button>
+            </div>
+        </aside>
+        
+        <!-- MAIN CONTENT -->
+        <main class="main">
+            <div class="content">
+                <div class="header">
+                    <h1 class="header-title">PORTAL</h1>
+                    <p class="header-subtitle">Manage inventory, media, and documents</p>
+                </div>
+                
+                <div class="stats">
+                    <div style="flex: 1;"></div>
+                    <div class="stat">
+                        <div class="stat-label">Products</div>
+                        <div class="stat-value" id="productCount">0</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">Public</div>
+                        <div class="stat-value gold" id="publicCount">0</div>
+                    </div>
+                </div>
+                
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="inventory">Inventory</button>
+                    <button class="tab-btn" data-tab="media">Media</button>
+                    <button class="tab-btn" data-tab="documents">Documents</button>
+                </div>
+                
+                <!-- INVENTORY TAB -->
+                <div id="inventoryTab" class="tab-content active">
+                    <div class="card">
+                        <h2>Add Product</h2>
+                        <form id="uploadForm" style="display: grid; gap: 1rem;">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                <div>
+                                    <label style="font-size: 0.75rem; text-transform: uppercase; color: #6b6b6b; display: block; margin-bottom: 0.25rem;">Product Name</label>
+                                    <input type="text" id="productName" required style="width: 100%;">
+                                </div>
+                                <div>
+                                    <label style="font-size: 0.75rem; text-transform: uppercase; color: #6b6b6b; display: block; margin-bottom: 0.25rem;">Price</label>
+                                    <input type="number" id="productPrice" step="0.01" required style="width: 100%;">
+                                </div>
+                            </div>
+                            
+                            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 1rem;">
+                                <div>
+                                    <label style="font-size: 0.75rem; text-transform: uppercase; color: #6b6b6b; display: block; margin-bottom: 0.25rem;">THC %</label>
+                                    <input type="number" id="productTHC" step="0.1" style="width: 100%;">
+                                </div>
+                                <div>
+                                    <label style="font-size: 0.75rem; text-transform: uppercase; color: #6b6b6b; display: block; margin-bottom: 0.25rem;">Stock</label>
+                                    <input type="number" id="productStock" style="width: 100%;">
+                                </div>
+                                <div>
+                                    <label style="font-size: 0.75rem; text-transform: uppercase; color: #6b6b6b; display: block; margin-bottom: 0.25rem;">Quality</label>
+                                    <select id="productQuality" style="width: 100%;">
+                                        <option value="INDOOR">Indoor</option>
+                                        <option value="LIGHT_ASSISTED">Light Assisted</option>
+                                        <option value="OUTDOOR">Outdoor</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label style="font-size: 0.75rem; text-transform: uppercase; color: #6b6b6b; display: block; margin-bottom: 0.25rem;">Category</label>
+                                    <select id="productCategory" style="width: 100%;">
+                                        <option value="FLOWER">Flower</option>
+                                        <option value="CONCENTRATES">Concentrates</option>
+                                        <option value="MATERIALS">Materials</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                <div>
+                                    <label style="font-size: 0.75rem; text-transform: uppercase; color: #6b6b6b; display: block; margin-bottom: 0.25rem;">Phone (for buyers)</label>
+                                    <input type="tel" id="vendorPhone" placeholder="(555) 123-4567" style="width: 100%;">
+                                </div>
+                                <div>
+                                    <label style="font-size: 0.75rem; text-transform: uppercase; color: #6b6b6b; display: block; margin-bottom: 0.25rem;">Contact Email</label>
+                                    <input type="email" id="vendorEmail" style="width: 100%;">
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label style="font-size: 0.75rem; text-transform: uppercase; color: #6b6b6b; display: block; margin-bottom: 0.25rem;">COA / Lab Results URL</label>
+                                <input type="url" id="labUrl" placeholder="https://example.com/coa.pdf" style="width: 100%;">
+                            </div>
+                            
+                            <div id="uploadZone" class="upload-zone" ondragover="event.preventDefault(); this.style.borderColor='#b8a369'; this.style.background='rgba(184,163,105,0.15)'" ondragleave="this.style.borderColor='rgba(0,0,0,0.2)'; this.style.background='transparent'" ondrop="event.preventDefault(); handleMediaDrop(event); this.style.borderColor='rgba(0,0,0,0.2)'; this.style.background='transparent'">
+                                <input type="file" id="mediaInput" multiple accept="image/*">
+                                <p style="margin: 0; font-size: 0.875rem;">Click to upload images</p>
+                                <p style="margin: 0.25rem 0 0 0; font-size: 0.75rem; color: #6b6b6b;">Product Photos</p>
+                            </div>
+                            
+                            <div>
+                                <label style="font-size: 0.75rem; text-transform: uppercase; color: #6b6b6b; display: block; margin-bottom: 0.25rem;">Product Videos</label>
+                                <input type="file" id="videoInput" multiple accept="video/*" style="width: 100%; padding: 0.5rem; border: 1px dashed rgba(0,0,0,0.2); border-radius: 0.5rem;">
+                            </div>
+                            
+                            <div style="display: flex; gap: 1rem; align-items: center;">
+                                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                    <input type="checkbox" id="isPublic" class="checkbox">
+                                    <span style="font-size: 0.875rem;">Public listing</span>
+                                </label>
+                                <button type="submit" class="button primary">Add Product</button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <div class="card">
+                        <h2>Your Inventory</h2>
+                        <div id="inventoryGrid" class="inventory-grid">
+                            <p style="grid-column: 1/-1; text-align: center; color: #6b6b6b; padding: 2rem;">Loading...</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- MEDIA TAB -->
+                <div id="mediaTab" class="tab-content">
+                    <div class="card">
+                        <h2>Media Library</h2>
+                        <div id="uploadMediaZone" class="upload-zone" style="margin-bottom: 1.5rem;">
+                            <input type="file" id="mediaUploadInput" multiple accept="image/*,video/*">
+                            <p style="margin: 0; font-size: 0.875rem;">Drag files or click to upload</p>
+                        </div>
+                        <div id="mediaLibrary" class="media-grid">
+                            <p style="grid-column: 1/-1; text-align: center; color: #6b6b6b; padding: 2rem;">No media yet</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- DOCUMENTS TAB -->
+                <div id="documentsTab" class="tab-content">
+                    <div class="card">
+                        <h2>Documents</h2>
+                        <p style="color: #6b6b6b; text-align: center; padding: 2rem;">Coming soon</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        import { auth, db } from './js/firebase-init.js';
+        import { getStorage, ref, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js';
+        import { onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+        import { collection, addDoc, doc, getDoc, setDoc, query, where, onSnapshot, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+        const storage = getStorage();
+
+        let currentUser = null;
+        let userData = null;
+        let allProducts = [];
+
+        function initUI() {
+            // SIDEBAR TOGGLE
+            const toggleBtn = document.getElementById('toggleSidebar');
+            if (toggleBtn) {
+                toggleBtn.addEventListener('click', () => {
+                    document.getElementById('sidebar').classList.toggle('collapsed');
+                    localStorage.setItem('sidebarCollapsed', document.getElementById('sidebar').classList.contains('collapsed'));
+                });
+            }
+            
+            if (localStorage.getItem('sidebarCollapsed') === 'true') {
+                document.getElementById('sidebar').classList.add('collapsed');
+            }
+
+            // TAB SWITCHING
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+                    btn.classList.add('active');
+                    document.getElementById(btn.dataset.tab + 'Tab').classList.add('active');
+                });
+            });
+
+            // SIGN OUT
+            const signOutBtn = document.getElementById('signOutBtn');
+            if (signOutBtn) {
+                signOutBtn.addEventListener('click', () => signOut(auth));
+            }
+
+            // UPLOAD PRODUCT
+            const uploadZone = document.getElementById('uploadZone');
+            const mediaInput = document.getElementById('mediaInput');
+            const uploadForm = document.getElementById('uploadForm');
+            let mediaFiles = [];
+
+            if (uploadZone && mediaInput) {
+                uploadZone.addEventListener('click', () => mediaInput.click());
+                uploadZone.addEventListener('dragover', (e) => { e.preventDefault(); uploadZone.classList.add('dragover'); });
+                uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragover'));
+                uploadZone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    uploadZone.classList.remove('dragover');
+                    mediaFiles = [...e.dataTransfer.files];
+                });
+                mediaInput.addEventListener('change', (e) => { mediaFiles = [...e.target.files]; });
+            }
+
+            if (uploadForm) {
+                uploadForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const btn = e.target.querySelector('button[type="submit"]');
+                    btn.disabled = true;
+                    btn.textContent = 'Uploading...';
+
+                    try {
+                        const imageUrls = [];
+                        const videoUrls = [];
+                        
+                        // Upload images
+                        for (const file of mediaFiles) {
+                            const path = `inventory/${currentUser.uid}/images/${Date.now()}_${file.name}`;
+                            const snap = await uploadBytes(ref(storage, path), file);
+                            const url = await getDownloadURL(snap.ref);
+                            imageUrls.push(url);
+                        }
+                        
+                        // Upload videos
+                        const videoFiles = document.getElementById('videoInput').files;
+                        for (const file of videoFiles) {
+                            const path = `inventory/${currentUser.uid}/videos/${Date.now()}_${file.name}`;
+                            const snap = await uploadBytes(ref(storage, path), file);
+                            const url = await getDownloadURL(snap.ref);
+                            videoUrls.push(url);
+                        }
+
+                        await addDoc(collection(db, 'inventory'), {
+                            name: document.getElementById('productName').value,
+                            price: parseFloat(document.getElementById('productPrice').value),
+                            thc: parseFloat(document.getElementById('productTHC').value) || 0,
+                            stock: parseInt(document.getElementById('productStock').value) || 0,
+                            quality: document.getElementById('productQuality').value,
+                            category: document.getElementById('productCategory').value,
+                            imageUrls,
+                            videoUrls,
+                            vendorPhone: document.getElementById('vendorPhone').value || '',
+                            vendorEmail: document.getElementById('vendorEmail').value || currentUser.email,
+                            labUrl: document.getElementById('labUrl').value || '',
+                            isPublic: document.getElementById('isPublic').checked,
+                            userId: currentUser.uid,
+                            vendorName: userData?.companyName || userData?.firstName || 'Unknown',
+                            createdAt: serverTimestamp()
+                        });
+
+                        e.target.reset();
+                        mediaFiles = [];
+                        btn.disabled = false;
+                        btn.textContent = 'Add Product';
+                        alert('Product uploaded successfully!');
+                    } catch (err) {
+                        alert('Upload failed: ' + err.message);
+                        btn.disabled = false;
+                        btn.textContent = 'Add Product';
+                    }
+                });
+            }
+        }
+
+        // LOAD INVENTORY
+        function loadInventory() {
+            const q = query(collection(db, 'inventory'), where('userId', '==', currentUser.uid));
+            onSnapshot(q, (snap) => {
+                allProducts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                document.getElementById('productCount').textContent = allProducts.length;
+                document.getElementById('publicCount').textContent = allProducts.filter(p => p.isPublic).length;
+                renderInventory();
+                loadMedia();
+            });
+        }
+
+        function renderInventory() {
+            const grid = document.getElementById('inventoryGrid');
+            if (!allProducts.length) {
+                grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #6b6b6b; padding: 2rem;">No products yet</p>';
+                return;
+            }
+            
+            grid.innerHTML = allProducts.map(p => `
+                <div class="inventory-item">
+                    <div class="inventory-image">
+                        ${p.imageUrls?.[0] ? `<img src="${p.imageUrls[0]}" alt="${p.name}">` : '<span style="color: #6b6b6b;">No image</span>'}
+                    </div>
+                    <div class="inventory-info">
+                        <div class="inventory-name">${p.name}</div>
+                        <div class="inventory-meta">
+                            <div>$${p.price} • ${p.stock || 0} in stock</div>
+                            <div>THC: ${p.thc || 0}%</div>
+                            <div>${p.isPublic ? '🟢 Public' : '⚫ Private'}</div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // LOAD MEDIA
+        function loadMedia() {
+            const mediaLibrary = document.getElementById('mediaLibrary');
+            if (!mediaLibrary) return;
+            
+            const allMedia = [];
+            
+            for (const product of allProducts) {
+                // Collect images
+                if (product.imageUrls && Array.isArray(product.imageUrls)) {
+                    allMedia.push(...product.imageUrls.filter(url => url).map(url => ({ 
+                        url, 
+                        type: 'image', 
+                        name: product.name 
+                    })));
+                }
+                // Collect videos if stored separately
+                if (product.videoUrls && Array.isArray(product.videoUrls)) {
+                    allMedia.push(...product.videoUrls.filter(url => url).map(url => ({ 
+                        url, 
+                        type: 'video', 
+                        name: product.name 
+                    })));
+                }
+            }
+            
+            if (!allMedia.length) {
+                mediaLibrary.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #6b6b6b; padding: 2rem;">No media yet - upload products with images to see them here</p>';
+            } else {
+                mediaLibrary.innerHTML = allMedia.map(m => {
+                    if (m.type === 'video') {
+                        return `<div class="media-item"><video src="${m.url}" controls style="width:100%; height:100%; object-fit: cover;"></video></div>`;
+                    }
+                    return `<div class="media-item"><img src="${m.url}" alt="${m.name}"></div>`;
+                }).join('');
+            }
+        }
+
+        // AUTH CHECK
+        let authChecked = false;
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                // Only redirect once, with a delay to ensure it takes
+                if (!authChecked) {
+                    authChecked = true;
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 500);
+                }
+                return;
+            }
+            
+            authChecked = true;
+            currentUser = user;
+            
+            try {
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                if (userDoc.exists()) {
+                    userData = userDoc.data();
+                } else {
+                    // User exists in auth but not in Firestore - create record
+                    await setDoc(doc(db, 'users', user.uid), {
+                        email: user.email,
+                        role: 'member',
+                        status: 'active',
+                        createdAt: serverTimestamp()
+                    });
+                }
+                
+                const name = userData?.companyName || userData?.firstName || user.email?.split('@')[0] || 'User';
+                document.getElementById('sidebarUserName').textContent = name;
+                document.getElementById('sidebarUserRole').textContent = userData?.role || 'Member';
+                document.getElementById('userAvatar').textContent = name.charAt(0).toUpperCase();
+            } catch (err) {
+                console.error('User doc error:', err);
+            }
+            
+            initUI();
+            loadInventory();
+        });
+    </script>
+    <!-- Dark Mode Toggle -->
+    <button id="darkToggle" class="dark-toggle" onclick="document.body.classList.toggle('dark'); localStorage.setItem('darkMode', document.body.classList.contains('dark'))">??</button>
+    <script>
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark');
+            document.getElementById('darkToggle').textContent = '??';
+        }
+        document.getElementById('darkToggle').addEventListener('click', function() {
+            this.textContent = document.body.classList.contains('dark') ? '??' : '??';
+        });
+                    // Media Drag-Drop
+        function handleMediaDrop(e) {
+            const files = e.dataTransfer.files;
+            const input = document.getElementById('mediaInput');
+            const dt = new DataTransfer();
+            for (let f of files) { if (f.type.startsWith('image/')) dt.items.add(f); }
+            input.files = dt.files;
+            input.dispatchEvent(new Event('change'));
+        }
+        // COA Drag-Drop Upload
+        document.getElementById('coaZone').addEventListener('click', () => document.getElementById('coaInput').click());
+        function handleCOADrop(e) {
+            const file = e.dataTransfer.files[0];
+            if (file) processCOAFile(file);
+        }
+        function handleCOASelect(input) {
+            const file = input.files[0];
+            if (file) processCOAFile(file);
+        }
+        async function processCOAFile(file) {
+            const preview = document.getElementById('coaPreview');
+            const text = document.getElementById('coaText');
+            // Show loading
+            text.textContent = '? Uploading...';
+            try {
+                const storageRef = ref(storage, coa/${currentUser.uid}/${Date.now()}_${file.name});
+                await uploadBytes(storageRef, file);
+                const url = await getDownloadURL(storageRef);
+                document.getElementById('labUrl').value = url;
+                // Show preview
+                if (file.type.startsWith('image/')) {
+                    preview.innerHTML = <img src="${url}" style="max-height: 120px; border-radius: 0.5rem; border: 1px solid rgba(184,163,105,0.3);">;
+                } else {
+                    preview.innerHTML = <div style="padding: 1rem; background: rgba(184,163,105,0.1); border-radius: 0.5rem;">?? ${file.name}</div>;
+                }
+                preview.style.display = 'block';
+                text.textContent = '? COA uploaded - click to replace';
+            } catch (err) {
+                console.error('COA upload error:', err);
+                text.textContent = '? Upload failed - try again';
+            }
+        }
+    </script>
+</body>
+</html>

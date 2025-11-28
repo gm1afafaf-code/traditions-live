@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Auth Test</title>
+    <style>
+        body { font-family: monospace; padding: 20px; background: #111; color: #0f0; }
+        .status { padding: 10px; margin: 10px 0; border: 1px solid #0f0; }
+    </style>
+</head>
+<body>
+    <h1>Firebase Auth Test</h1>
+    <div id="status" class="status">Checking auth state...</div>
+    <div id="user" class="status"></div>
+    <div id="firestore" class="status"></div>
+    
+    <script type="module">
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { db, auth } from './js/firebase-init.js';
+        
+        document.getElementById('status').textContent = 'Firebase loaded, checking auth...';
+        
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                document.getElementById('status').textContent = '✅ USER IS LOGGED IN';
+                document.getElementById('user').innerHTML = `
+                    <strong>User Info:</strong><br>
+                    UID: ${user.uid}<br>
+                    Email: ${user.email}<br>
+                    Email Verified: ${user.emailVerified}
+                `;
+                
+                // Try to get Firestore doc
+                try {
+                    const userDoc = await getDoc(doc(db, 'users', user.uid));
+                    if (userDoc.exists()) {
+                        document.getElementById('firestore').innerHTML = `
+                            <strong>✅ Firestore Profile Found:</strong><br>
+                            <pre>${JSON.stringify(userDoc.data(), null, 2)}</pre>
+                        `;
+                    } else {
+                        document.getElementById('firestore').textContent = '❌ No Firestore profile found for this user';
+                    }
+                } catch (err) {
+                    document.getElementById('firestore').textContent = '❌ Firestore error: ' + err.message;
+                }
+            } else {
+                document.getElementById('status').textContent = '❌ NO USER LOGGED IN';
+                document.getElementById('user').textContent = 'Try logging in at login.html first';
+            }
+        });
+    </script>
+</body>
+</html>
