@@ -716,6 +716,49 @@
                 uploadForm.addEventListener('submit', async (e) => {
                     e.preventDefault();
                     const btn = e.target.querySelector('button[type="submit"]');
+                    
+                    // Input validation
+                    const productName = document.getElementById('productName').value.trim();
+                    const productPrice = document.getElementById('productPrice').value;
+                    const productTHC = document.getElementById('productTHC').value;
+                    const productStock = document.getElementById('productStock').value;
+                    const vendorPhone = document.getElementById('vendorPhone').value.trim();
+                    const vendorEmail = document.getElementById('vendorEmail').value.trim();
+                    const labUrl = document.getElementById('labUrl').value.trim();
+                    
+                    if (!productName) {
+                        alert('Please enter a product name.');
+                        return;
+                    }
+                    if (productName.length < 2 || productName.length > 100) {
+                        alert('Product name must be between 2 and 100 characters.');
+                        return;
+                    }
+                    if (!productPrice || parseFloat(productPrice) <= 0) {
+                        alert('Please enter a valid price greater than 0.');
+                        return;
+                    }
+                    if (parseFloat(productPrice) > 100000) {
+                        alert('Price cannot exceed $100,000.');
+                        return;
+                    }
+                    if (productTHC && (parseFloat(productTHC) < 0 || parseFloat(productTHC) > 100)) {
+                        alert('THC percentage must be between 0 and 100.');
+                        return;
+                    }
+                    if (productStock && parseInt(productStock) < 0) {
+                        alert('Stock cannot be negative.');
+                        return;
+                    }
+                    if (vendorEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(vendorEmail)) {
+                        alert('Please enter a valid email address.');
+                        return;
+                    }
+                    if (labUrl && !labUrl.startsWith('http')) {
+                        alert('Lab URL must be a valid URL starting with http:// or https://');
+                        return;
+                    }
+                    
                     btn.disabled = true;
                     btn.textContent = 'Uploading...';
 
@@ -741,17 +784,17 @@
                         }
 
                         await addDoc(collection(db, 'inventory'), {
-                            name: document.getElementById('productName').value,
-                            price: parseFloat(document.getElementById('productPrice').value),
-                            thc: parseFloat(document.getElementById('productTHC').value) || 0,
-                            stock: parseInt(document.getElementById('productStock').value) || 0,
+                            name: productName,
+                            price: parseFloat(productPrice),
+                            thc: parseFloat(productTHC) || 0,
+                            stock: parseInt(productStock) || 0,
                             quality: document.getElementById('productQuality').value,
                             category: document.getElementById('productCategory').value,
                             imageUrls,
                             videoUrls,
-                            vendorPhone: document.getElementById('vendorPhone').value || '',
-                            vendorEmail: document.getElementById('vendorEmail').value || currentUser.email,
-                            labUrl: document.getElementById('labUrl').value || '',
+                            vendorPhone: vendorPhone,
+                            vendorEmail: vendorEmail || currentUser.email,
+                            labUrl: labUrl,
                             isPublic: document.getElementById('isPublic').checked,
                             userId: currentUser.uid,
                             vendorName: userData?.companyName || userData?.firstName || 'Unknown',
@@ -907,39 +950,6 @@
             for (let f of files) { if (f.type.startsWith('image/')) dt.items.add(f); }
             input.files = dt.files;
             input.dispatchEvent(new Event('change'));
-        }
-        // COA Drag-Drop Upload
-        document.getElementById('coaZone').addEventListener('click', () => document.getElementById('coaInput').click());
-        function handleCOADrop(e) {
-            const file = e.dataTransfer.files[0];
-            if (file) processCOAFile(file);
-        }
-        function handleCOASelect(input) {
-            const file = input.files[0];
-            if (file) processCOAFile(file);
-        }
-        async function processCOAFile(file) {
-            const preview = document.getElementById('coaPreview');
-            const text = document.getElementById('coaText');
-            // Show loading
-            text.textContent = '? Uploading...';
-            try {
-                const storageRef = ref(storage, coa/${currentUser.uid}/${Date.now()}_${file.name});
-                await uploadBytes(storageRef, file);
-                const url = await getDownloadURL(storageRef);
-                document.getElementById('labUrl').value = url;
-                // Show preview
-                if (file.type.startsWith('image/')) {
-                    preview.innerHTML = <img src="${url}" style="max-height: 120px; border-radius: 0.5rem; border: 1px solid rgba(184,163,105,0.3);">;
-                } else {
-                    preview.innerHTML = <div style="padding: 1rem; background: rgba(184,163,105,0.1); border-radius: 0.5rem;">?? ${file.name}</div>;
-                }
-                preview.style.display = 'block';
-                text.textContent = '? COA uploaded - click to replace';
-            } catch (err) {
-                console.error('COA upload error:', err);
-                text.textContent = '? Upload failed - try again';
-            }
         }
     </script>
 </body>

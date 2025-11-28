@@ -274,12 +274,39 @@
             document.getElementById('cancelAdd').addEventListener('click', () => modal.classList.add('hidden'));
             document.getElementById('addUserForm').addEventListener('submit', async (e) => {
                 e.preventDefault();
+                
+                // Input validation
+                const email = document.getElementById('newEmail').value.trim();
+                const password = document.getElementById('newPassword').value;
+                const name = document.getElementById('newName').value.trim();
+                
+                if (!email) {
+                    alert('Please enter an email address.');
+                    return;
+                }
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                    alert('Please enter a valid email address.');
+                    return;
+                }
+                if (!password) {
+                    alert('Please enter a password.');
+                    return;
+                }
+                if (password.length < 6) {
+                    alert('Password must be at least 6 characters.');
+                    return;
+                }
+                if (name && name.length > 100) {
+                    alert('Name cannot exceed 100 characters.');
+                    return;
+                }
+                
                 try {
-                    const res = await createUserWithEmailAndPassword(auth, document.getElementById('newEmail').value, document.getElementById('newPassword').value);
+                    const res = await createUserWithEmailAndPassword(auth, email, password);
                     await setDoc(doc(db, 'users', res.user.uid), {
-                        email: document.getElementById('newEmail').value,
-                        firstName: document.getElementById('newName').value,
-                        companyName: document.getElementById('newName').value,
+                        email: email,
+                        firstName: name,
+                        companyName: name,
                         role: document.getElementById('newRole').value,
                         status: document.getElementById('newStatus').value,
                         createdAt: new Date()
