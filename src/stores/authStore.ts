@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { User as FirebaseUser } from 'firebase/auth';
 import type { User } from '@/types';
-import { signInWithGoogle, signOut, onAuthChange } from '@/api/auth.service';
+import { signInWithGoogle, signInWithEmail, createAccountWithEmail, signOut, onAuthChange } from '@/api/auth.service';
 import { getUserById, updateLastSignIn } from '@/api/user.service';
 
 interface AuthState {
@@ -14,6 +14,8 @@ interface AuthState {
   // Actions
   initialize: () => void;
   login: () => Promise<void>;
+  loginWithEmail: (email: string, password: string) => Promise<void>;
+  signUpWithEmail: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
   clearError: () => void;
@@ -86,6 +88,50 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       set({
         isLoading: false,
         error: error instanceof Error ? error.message : 'Failed to sign in',
+      });
+      throw error;
+    }
+  },
+
+  loginWithEmail: async (email: string, password: string) => {
+    set({ isLoading: true, error: null });
+
+    try {
+      const { firebaseUser, user } = await signInWithEmail(email, password);
+
+      set({
+        firebaseUser,
+        user,
+        isLoading: false,
+        error: null,
+      });
+    } catch (error) {
+      console.error('Email login error:', error);
+      set({
+        isLoading: false,
+        error: error instanceof Error ? error.message : 'Failed to sign in',
+      });
+      throw error;
+    }
+  },
+
+  signUpWithEmail: async (email: string, password: string) => {
+    set({ isLoading: true, error: null });
+
+    try {
+      const { firebaseUser, user } = await createAccountWithEmail(email, password);
+
+      set({
+        firebaseUser,
+        user,
+        isLoading: false,
+        error: null,
+      });
+    } catch (error) {
+      console.error('Email sign-up error:', error);
+      set({
+        isLoading: false,
+        error: error instanceof Error ? error.message : 'Failed to create account',
       });
       throw error;
     }
