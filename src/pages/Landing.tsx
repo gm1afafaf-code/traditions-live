@@ -1,10 +1,8 @@
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Canvas } from '@react-three/fiber';
-import { Float, MeshDistortMaterial, Sparkles, Environment, OrbitControls } from '@react-three/drei';
 import { ROUTES } from '@/lib/constants';
-import { AnimatedCounter, GoldButton, LuxuryCard } from '@/components/ui';
+import { AnimatedCounter } from '@/components/ui';
 import { 
   Leaf, 
   Shield, 
@@ -20,113 +18,29 @@ import {
   X
 } from 'lucide-react';
 
-function GoldOrb({ position, scale = 1 }: { position: [number, number, number]; scale?: number }) {
-  return (
-    <Float speed={2} rotationIntensity={0.5} floatIntensity={1}>
-      <mesh position={position} scale={scale}>
-        <icosahedronGeometry args={[1, 4]} />
-        <MeshDistortMaterial
-          color="#d4af37"
-          metalness={0.9}
-          roughness={0.1}
-          distort={0.3}
-          speed={2}
-        />
-      </mesh>
-    </Float>
-  );
-}
-
-function HeroScene() {
-  return (
-    <>
-      <ambientLight intensity={0.2} />
-      <pointLight position={[10, 10, 10]} intensity={1} color="#d4af37" />
-      <pointLight position={[-10, -10, -10]} intensity={0.5} color="#f4d03f" />
-      <spotLight position={[0, 10, 0]} angle={0.3} penumbra={1} intensity={1} color="#d4af37" />
-      
-      <GoldOrb position={[0, 0, 0]} scale={2} />
-      <GoldOrb position={[-5, 2, -3]} scale={0.8} />
-      <GoldOrb position={[5, -1, -2]} scale={0.6} />
-      <GoldOrb position={[3, 3, -4]} scale={0.5} />
-      <GoldOrb position={[-3, -2, -3]} scale={0.4} />
-      
-      <Sparkles count={300} scale={20} size={3} speed={0.5} color="#d4af37" opacity={0.6} />
-      
-      <Environment preset="night" />
-      <fog attach="fog" args={['#0a0a0a', 5, 25]} />
-      
-      <OrbitControls 
-        enableZoom={false} 
-        enablePan={false} 
-        autoRotate 
-        autoRotateSpeed={0.5}
-        maxPolarAngle={Math.PI / 2}
-        minPolarAngle={Math.PI / 3}
-      />
-    </>
-  );
-}
-
-function FloatingLeaves() {
-  const leaves = Array.from({ length: 12 }, (_, i) => ({
-    id: i,
-    left: `${Math.random() * 100}%`,
-    delay: Math.random() * 10,
-    duration: 10 + Math.random() * 10,
-    size: 16 + Math.random() * 16,
-  }));
-
-  return (
-    <div className="fixed inset-0 pointer-events-none overflow-hidden z-10">
-      {leaves.map((leaf) => (
-        <motion.div
-          key={leaf.id}
-          className="absolute text-gold"
-          style={{ left: leaf.left, top: '-50px' }}
-          animate={{
-            y: ['0vh', '110vh'],
-            rotate: [0, 720],
-            x: [0, Math.random() * 100 - 50],
-          }}
-          transition={{
-            duration: leaf.duration,
-            delay: leaf.delay,
-            repeat: Infinity,
-            ease: 'linear',
-          }}
-        >
-          <Leaf size={leaf.size} style={{ filter: 'drop-shadow(0 0 10px rgba(212, 175, 55, 0.5))' }} />
-        </motion.div>
-      ))}
-    </div>
-  );
-}
-
 function CurtainAnimation({ onComplete }: { onComplete: () => void }) {
   useEffect(() => {
-    const timer = setTimeout(onComplete, 2500);
+    const timer = setTimeout(onComplete, 2000);
     return () => clearTimeout(timer);
   }, [onComplete]);
 
   return (
     <motion.div
-      className="fixed inset-0 z-50 flex items-center justify-center px-4"
-      style={{ background: 'linear-gradient(180deg, #0a0a0a 0%, #121212 100%)' }}
+      className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-stone-50"
       initial={{ y: 0 }}
       animate={{ y: '-100%' }}
-      transition={{ duration: 1.5, delay: 1, ease: [0.76, 0, 0.24, 1] }}
+      transition={{ duration: 1.2, delay: 0.8, ease: [0.76, 0, 0.24, 1] }}
     >
       <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
+        initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5 }}
+        transition={{ duration: 0.4 }}
         className="text-center"
       >
-        <h1 className="serif text-4xl sm:text-6xl md:text-8xl font-bold tracking-[0.1em] sm:tracking-[0.15em] text-white">
-          <span className="text-gold gold-glow">V</span>OUCHED
+        <h1 className="serif text-4xl sm:text-6xl md:text-8xl font-bold tracking-[0.1em] sm:tracking-[0.15em] text-stone-900">
+          <span className="text-amber-600">V</span>OUCHED
         </h1>
-        <p className="text-gold/60 tracking-[0.2em] sm:tracking-[0.3em] mt-3 sm:mt-4 text-xs sm:text-sm uppercase">Entering the Vault</p>
+        <p className="text-amber-600/60 tracking-[0.2em] sm:tracking-[0.3em] mt-3 sm:mt-4 text-xs sm:text-sm uppercase">Premium Cannabis Wholesale</p>
       </motion.div>
     </motion.div>
   );
@@ -182,73 +96,68 @@ export function Landing() {
   }, []);
 
   return (
-    <div className="min-h-screen luxury-bg gold-veins overflow-x-hidden">
+    <div className="min-h-screen bg-stone-50 overflow-x-hidden">
       <AnimatePresence>
         {showCurtain && <CurtainAnimation onComplete={() => setShowCurtain(false)} />}
       </AnimatePresence>
 
-      <FloatingLeaves />
-
-      {/* Navigation */}
       <motion.nav
-        className="fixed top-0 left-0 right-0 z-40 px-4 sm:px-6 lg:px-8 py-4 sm:py-6"
+        className="fixed top-0 left-0 right-0 z-40 px-4 sm:px-6 lg:px-8 py-4 sm:py-6 bg-stone-50/80 backdrop-blur-md border-b border-amber-200/30"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 2.5, duration: 0.5 }}
+        transition={{ delay: 2, duration: 0.5 }}
       >
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <Link to={ROUTES.HOME} className="flex items-center gap-2 sm:gap-3">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-gold to-gold-dark flex items-center justify-center">
-              <Leaf className="w-4 h-4 sm:w-5 sm:h-5 text-void" />
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-lg shadow-amber-500/20">
+              <Leaf className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
             </div>
-            <span className="serif text-xl sm:text-2xl font-semibold text-white tracking-wider">
-              <span className="text-gold">V</span>OUCHED
+            <span className="serif text-xl sm:text-2xl font-semibold text-stone-900 tracking-wider">
+              <span className="text-amber-600">V</span>OUCHED
             </span>
           </Link>
           
           <div className="hidden md:flex items-center gap-8">
-            <Link to={ROUTES.VAULT} className="nav-link text-sm tracking-wider">Marketplace</Link>
-            <Link to="/compliance" className="nav-link text-sm tracking-wider">Compliance</Link>
-            <Link to="/network" className="nav-link text-sm tracking-wider">Network</Link>
-            <Link to="/tracking" className="nav-link text-sm tracking-wider">Tracking</Link>
+            <Link to={ROUTES.VAULT} className="text-stone-600 hover:text-amber-600 transition text-sm tracking-wider font-medium">Marketplace</Link>
+            <Link to="/compliance" className="text-stone-600 hover:text-amber-600 transition text-sm tracking-wider font-medium">Compliance</Link>
+            <Link to="/network" className="text-stone-600 hover:text-amber-600 transition text-sm tracking-wider font-medium">Network</Link>
+            <Link to="/tracking" className="text-stone-600 hover:text-amber-600 transition text-sm tracking-wider font-medium">Tracking</Link>
           </div>
 
           <div className="flex items-center gap-3">
             <Link to={ROUTES.LOGIN} className="hidden sm:block">
-              <GoldButton variant="outline" size="sm">
+              <button className="px-5 py-2.5 bg-stone-900 text-white text-sm font-medium rounded-lg hover:bg-stone-800 transition shadow-lg shadow-stone-900/20">
                 Enter Platform
-              </GoldButton>
+              </button>
             </Link>
             
-            {/* Mobile Menu Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 text-gold hover:bg-gold/10 rounded-lg transition"
+              className="md:hidden p-2 text-stone-700 hover:bg-stone-100 rounded-lg transition"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
         </div>
 
-        {/* Mobile Menu */}
         <AnimatePresence>
           {mobileMenuOpen && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="md:hidden mt-4 bg-obsidian/95 backdrop-blur-xl border border-gold/20 rounded-xl overflow-hidden"
+              className="md:hidden mt-4 bg-white border border-amber-200/50 rounded-xl overflow-hidden shadow-xl"
             >
-              <div className="p-4 space-y-3">
-                <Link to={ROUTES.VAULT} className="block py-2 px-4 text-white/80 hover:text-gold hover:bg-gold/5 rounded-lg transition" onClick={() => setMobileMenuOpen(false)}>Marketplace</Link>
-                <Link to="/compliance" className="block py-2 px-4 text-white/80 hover:text-gold hover:bg-gold/5 rounded-lg transition" onClick={() => setMobileMenuOpen(false)}>Compliance</Link>
-                <Link to="/network" className="block py-2 px-4 text-white/80 hover:text-gold hover:bg-gold/5 rounded-lg transition" onClick={() => setMobileMenuOpen(false)}>Network</Link>
-                <Link to="/tracking" className="block py-2 px-4 text-white/80 hover:text-gold hover:bg-gold/5 rounded-lg transition" onClick={() => setMobileMenuOpen(false)}>Tracking</Link>
-                <div className="pt-2 border-t border-gold/10">
+              <div className="p-4 space-y-1">
+                <Link to={ROUTES.VAULT} className="block py-3 px-4 text-stone-700 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition font-medium" onClick={() => setMobileMenuOpen(false)}>Marketplace</Link>
+                <Link to="/compliance" className="block py-3 px-4 text-stone-700 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition font-medium" onClick={() => setMobileMenuOpen(false)}>Compliance</Link>
+                <Link to="/network" className="block py-3 px-4 text-stone-700 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition font-medium" onClick={() => setMobileMenuOpen(false)}>Network</Link>
+                <Link to="/tracking" className="block py-3 px-4 text-stone-700 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition font-medium" onClick={() => setMobileMenuOpen(false)}>Tracking</Link>
+                <div className="pt-3 border-t border-stone-100">
                   <Link to={ROUTES.LOGIN} className="block" onClick={() => setMobileMenuOpen(false)}>
-                    <GoldButton variant="primary" size="md" className="w-full">
+                    <button className="w-full py-3 bg-stone-900 text-white font-medium rounded-lg hover:bg-stone-800 transition">
                       Enter Platform
-                    </GoldButton>
+                    </button>
                   </Link>
                 </div>
               </div>
@@ -257,100 +166,93 @@ export function Landing() {
         </AnimatePresence>
       </motion.nav>
 
-      {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center pt-16 sm:pt-20">
-        {/* 3D Background */}
-        <div className="absolute inset-0 z-0">
-          <Suspense fallback={null}>
-            <Canvas camera={{ position: [0, 0, 12], fov: 60 }}>
-              <HeroScene />
-            </Canvas>
-          </Suspense>
-        </div>
-
-        {/* Hero Content */}
-        <div className="relative z-20 text-center px-4 max-w-6xl mx-auto">
+      <section className="relative min-h-screen flex items-center justify-center pt-20 sm:pt-24">
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-amber-400 to-transparent opacity-50" />
+        
+        <div className="relative z-10 text-center px-4 max-w-5xl mx-auto">
           <motion.p
-            className="ens-causa text-base sm:text-lg md:text-xl mb-4 sm:mb-8"
+            className="text-amber-600 uppercase tracking-[0.3em] text-xs sm:text-sm mb-6 sm:mb-8 font-medium"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 2.7, duration: 0.5 }}
+            transition={{ delay: 2.2, duration: 0.5 }}
           >
-            Ens Causa Sui
+            New York's Premier Wholesale Platform
           </motion.p>
 
           <motion.div
-            className="mb-6 sm:mb-8"
-            initial={{ opacity: 0, scale: 0.9 }}
+            className="mb-8 sm:mb-10"
+            initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 2.9, duration: 0.8 }}
+            transition={{ delay: 2.4, duration: 0.6 }}
           >
-            <div className="inline-block px-6 sm:px-10 md:px-16 pt-4 sm:pt-6 pb-6 sm:pb-8 border border-gold/30 bg-obsidian/30 backdrop-blur-sm">
-              <h1 className="serif text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-bold tracking-[0.08em] sm:tracking-[0.12em] text-white illuminated leading-tight">
-                <span className="text-gold gold-glow">V</span>OUCHED
-              </h1>
-              <p className="text-xs sm:text-sm tracking-[0.3em] sm:tracking-[0.5em] text-white/60 mt-2 sm:mt-4">N E W &nbsp; Y O R K</p>
+            <h1 className="serif text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-bold tracking-tight text-stone-900 leading-none">
+              <span className="text-amber-600">V</span>OUCHED
+            </h1>
+            <div className="mt-4 sm:mt-6 flex items-center justify-center gap-4">
+              <div className="h-px w-12 sm:w-20 bg-gradient-to-r from-transparent to-amber-400" />
+              <p className="text-stone-500 tracking-[0.2em] text-xs sm:text-sm uppercase">Est. 2024</p>
+              <div className="h-px w-12 sm:w-20 bg-gradient-to-l from-transparent to-amber-400" />
             </div>
           </motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 3.1, duration: 0.5 }}
+            transition={{ delay: 2.6, duration: 0.5 }}
           >
-            <p className="text-gold uppercase tracking-[0.15em] sm:tracking-[0.25em] text-xs sm:text-sm mb-2">The Platform</p>
-            <p className="text-xl sm:text-2xl md:text-3xl lg:text-4xl text-white/80 font-light tracking-wider sm:tracking-widest serif italic">
+            <p className="text-xl sm:text-2xl md:text-3xl text-stone-600 font-light tracking-wide serif">
               Premium Cannabis Wholesale
+            </p>
+            <p className="text-stone-500 mt-4 max-w-xl mx-auto text-sm sm:text-base">
+              The exclusive B2B marketplace connecting licensed cultivators, processors, and retailers across New York State.
             </p>
           </motion.div>
 
           <motion.div
-            className="mt-8 sm:mt-12 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4"
+            className="mt-10 sm:mt-12 flex flex-col sm:flex-row items-center justify-center gap-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 3.3, duration: 0.5 }}
+            transition={{ delay: 2.8, duration: 0.5 }}
           >
             <Link to={ROUTES.LOGIN} className="w-full sm:w-auto">
-              <GoldButton size="lg" className="w-full sm:w-auto sm:min-w-[200px]">
-                Enter Vault
-                <ArrowRight className="ml-2 w-5 h-5 inline" />
-              </GoldButton>
+              <button className="w-full sm:w-auto px-8 py-4 bg-stone-900 text-white font-medium rounded-lg hover:bg-stone-800 transition shadow-xl shadow-stone-900/20 flex items-center justify-center gap-2">
+                Enter Platform
+                <ArrowRight className="w-5 h-5" />
+              </button>
             </Link>
             <Link to={ROUTES.VAULT} className="w-full sm:w-auto">
-              <GoldButton variant="secondary" size="lg" className="w-full sm:w-auto sm:min-w-[200px]">
+              <button className="w-full sm:w-auto px-8 py-4 bg-white text-stone-900 font-medium rounded-lg border-2 border-stone-200 hover:border-amber-400 hover:text-amber-600 transition shadow-lg">
                 Browse Inventory
-              </GoldButton>
+              </button>
             </Link>
           </motion.div>
         </div>
 
-        {/* Scroll Indicator */}
         <motion.div
-          className="absolute bottom-4 sm:bottom-8 left-1/2 -translate-x-1/2 z-20"
+          className="absolute bottom-8 sm:bottom-12 left-1/2 -translate-x-1/2"
           initial={{ opacity: 0 }}
-          animate={{ opacity: 1, y: [0, 10, 0] }}
-          transition={{ delay: 4, duration: 2, repeat: Infinity }}
+          animate={{ opacity: 1, y: [0, 8, 0] }}
+          transition={{ delay: 3.5, duration: 2, repeat: Infinity }}
         >
-          <div className="w-5 h-8 sm:w-6 sm:h-10 border-2 border-gold/50 rounded-full flex justify-center pt-1.5 sm:pt-2">
-            <div className="w-1 h-2 sm:h-3 bg-gold rounded-full" />
+          <div className="w-6 h-10 border-2 border-stone-300 rounded-full flex justify-center pt-2">
+            <div className="w-1.5 h-3 bg-amber-500 rounded-full" />
           </div>
         </motion.div>
       </section>
 
-      {/* Stats Section */}
-      <section className="relative z-20 py-12 sm:py-16 md:py-20 px-4">
+      <section className="relative z-10 py-16 sm:py-20 md:py-24 px-4 bg-white border-y border-amber-200/30">
         <div className="max-w-7xl mx-auto">
           <motion.div
-            className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6"
+            className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8"
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
           >
             {stats.map((stat, index) => (
-              <LuxuryCard key={stat.label} variant="glass" className="text-center py-4 sm:py-6 md:py-8 px-2 sm:px-4" glow={index === 0}>
-                <stat.icon className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-gold mx-auto mb-2 sm:mb-3 md:mb-4" />
-                <p className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light text-gold mb-1 sm:mb-2">
+              <div key={stat.label} className={`text-center py-6 sm:py-8 px-4 rounded-2xl ${index === 0 ? 'bg-gradient-to-br from-amber-50 to-amber-100/50 border border-amber-200/50' : 'bg-stone-50 border border-stone-200/50'}`}>
+                <stat.icon className={`w-7 h-7 sm:w-8 sm:h-8 mx-auto mb-3 sm:mb-4 ${index === 0 ? 'text-amber-600' : 'text-stone-400'}`} />
+                <p className={`text-3xl sm:text-4xl md:text-5xl font-light mb-2 ${index === 0 ? 'text-amber-600' : 'text-stone-900'}`}>
                   <AnimatedCounter
                     value={stat.value}
                     prefix={stat.prefix}
@@ -358,67 +260,63 @@ export function Landing() {
                     duration={2.5}
                   />
                 </p>
-                <p className="text-xs text-white/60 uppercase tracking-wider sm:tracking-[0.2em]">{stat.label}</p>
-              </LuxuryCard>
+                <p className="text-xs sm:text-sm text-stone-500 uppercase tracking-wider">{stat.label}</p>
+              </div>
             ))}
           </motion.div>
         </div>
       </section>
 
-      {/* Featured Strains Carousel */}
-      <section className="relative z-20 py-12 sm:py-16 md:py-20 px-4 overflow-hidden">
+      <section className="relative z-10 py-16 sm:py-20 md:py-24 px-4 overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <motion.div
-            className="text-center mb-8 sm:mb-12 md:mb-16"
+            className="text-center mb-10 sm:mb-14"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <p className="text-gold uppercase tracking-[0.2em] sm:tracking-[0.3em] text-xs sm:text-sm mb-2 sm:mb-4">Live Inventory</p>
-            <h2 className="serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-white">Featured Strains</h2>
+            <p className="text-amber-600 uppercase tracking-[0.2em] text-xs sm:text-sm mb-3 font-medium">Live Inventory</p>
+            <h2 className="serif text-3xl sm:text-4xl md:text-5xl font-semibold text-stone-900">Featured Strains</h2>
           </motion.div>
 
           <div className="relative">
-            <div className="flex justify-center gap-6 overflow-hidden">
+            <div className="flex justify-center gap-4 sm:gap-6 overflow-hidden">
               {strains.map((strain, index) => (
                 <motion.div
                   key={strain.name}
-                  className={`flex-shrink-0 w-72 transition-all duration-500 ${
-                    index === activeStrain ? 'scale-110 z-10' : 'scale-90 opacity-50'
+                  className={`flex-shrink-0 w-64 sm:w-72 transition-all duration-500 ${
+                    index === activeStrain ? 'scale-105 z-10' : 'scale-95 opacity-50'
                   }`}
-                  animate={{
-                    x: (index - activeStrain) * 100,
-                  }}
+                  animate={{ x: (index - activeStrain) * 80 }}
                 >
-                  <LuxuryCard variant="elevated" className="text-center" glow={index === activeStrain}>
-                    <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-green-900 to-green-700 flex items-center justify-center">
-                      <Leaf className="w-12 h-12 text-gold" />
+                  <div className={`bg-white rounded-2xl p-6 text-center shadow-xl border ${index === activeStrain ? 'border-amber-300 shadow-amber-100' : 'border-stone-200'}`}>
+                    <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-5 rounded-full bg-gradient-to-br from-emerald-100 to-emerald-200 flex items-center justify-center">
+                      <Leaf className={`w-10 h-10 sm:w-12 sm:h-12 ${index === activeStrain ? 'text-amber-600' : 'text-emerald-600'}`} />
                     </div>
-                    <span className="text-xs text-gold/60 uppercase tracking-wider">{strain.type}</span>
-                    <h3 className="text-2xl font-semibold text-white mt-2 mb-4">{strain.name}</h3>
-                    <div className="flex justify-between items-center border-t border-gold/20 pt-4 mt-4">
+                    <span className="text-xs text-amber-600 uppercase tracking-wider font-medium">{strain.type}</span>
+                    <h3 className="text-xl sm:text-2xl font-semibold text-stone-900 mt-2 mb-4">{strain.name}</h3>
+                    <div className="flex justify-between items-center border-t border-stone-100 pt-4 mt-4">
                       <div>
-                        <p className="text-xs text-white/40 uppercase">THC</p>
-                        <p className="text-gold text-lg">{strain.thc}%</p>
+                        <p className="text-xs text-stone-400 uppercase">THC</p>
+                        <p className="text-amber-600 text-lg font-medium">{strain.thc}%</p>
                       </div>
                       <div>
-                        <p className="text-xs text-white/40 uppercase">Price/lb</p>
-                        <p className="text-gold text-lg">${strain.price.toLocaleString()}</p>
+                        <p className="text-xs text-stone-400 uppercase">Price/lb</p>
+                        <p className="text-amber-600 text-lg font-medium">${strain.price.toLocaleString()}</p>
                       </div>
                     </div>
-                  </LuxuryCard>
+                  </div>
                 </motion.div>
               ))}
             </div>
 
-            {/* Carousel Indicators */}
             <div className="flex justify-center gap-2 mt-8">
               {strains.map((_, index) => (
                 <button
                   key={index}
                   onClick={() => setActiveStrain(index)}
-                  className={`w-2 h-2 rounded-full transition-all ${
-                    index === activeStrain ? 'bg-gold w-8' : 'bg-gold/30'
+                  className={`h-2 rounded-full transition-all ${
+                    index === activeStrain ? 'bg-amber-500 w-8' : 'bg-stone-300 w-2'
                   }`}
                 />
               ))}
@@ -427,20 +325,19 @@ export function Landing() {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="relative z-20 py-12 sm:py-16 md:py-20 px-4">
+      <section className="relative z-10 py-16 sm:py-20 md:py-24 px-4 bg-white border-y border-amber-200/30">
         <div className="max-w-7xl mx-auto">
           <motion.div
-            className="text-center mb-8 sm:mb-12 md:mb-16"
+            className="text-center mb-10 sm:mb-14"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <p className="text-gold uppercase tracking-[0.2em] sm:tracking-[0.3em] text-xs sm:text-sm mb-2 sm:mb-4">Platform Capabilities</p>
-            <h2 className="serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-white">Built for Excellence</h2>
+            <p className="text-amber-600 uppercase tracking-[0.2em] text-xs sm:text-sm mb-3 font-medium">Platform Capabilities</p>
+            <h2 className="serif text-3xl sm:text-4xl md:text-5xl font-semibold text-stone-900">Built for Excellence</h2>
           </motion.div>
 
-          <div className="grid sm:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
+          <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
             {features.map((feature, index) => (
               <motion.div
                 key={feature.title}
@@ -449,42 +346,41 @@ export function Landing() {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
               >
-                <LuxuryCard variant="glass" className="h-full">
-                  <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6">
-                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-lg bg-gold/10 flex items-center justify-center flex-shrink-0">
-                      <feature.icon className="w-6 h-6 sm:w-7 sm:h-7 text-gold" />
+                <div className="h-full p-6 sm:p-8 bg-stone-50 rounded-2xl border border-stone-200/50 hover:border-amber-300 hover:shadow-lg hover:shadow-amber-100/50 transition-all">
+                  <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-5">
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center flex-shrink-0">
+                      <feature.icon className="w-6 h-6 sm:w-7 sm:h-7 text-amber-600" />
                     </div>
                     <div>
-                      <h3 className="text-lg sm:text-xl font-semibold text-white mb-2 sm:mb-3">{feature.title}</h3>
-                      <p className="text-sm sm:text-base text-white/60 leading-relaxed">{feature.description}</p>
+                      <h3 className="text-lg sm:text-xl font-semibold text-stone-900 mb-2">{feature.title}</h3>
+                      <p className="text-sm sm:text-base text-stone-500 leading-relaxed">{feature.description}</p>
                     </div>
                   </div>
-                </LuxuryCard>
+                </div>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Network Preview */}
-      <section className="relative z-20 py-12 sm:py-16 md:py-20 px-4">
+      <section className="relative z-10 py-16 sm:py-20 md:py-24 px-4">
         <div className="max-w-7xl mx-auto">
           <motion.div
-            className="text-center mb-8 sm:mb-12 md:mb-16"
+            className="text-center mb-10 sm:mb-14"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <p className="text-gold uppercase tracking-[0.2em] sm:tracking-[0.3em] text-xs sm:text-sm mb-2 sm:mb-4">Our Network</p>
-            <h2 className="serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-white mb-4 sm:mb-6">Who We Serve</h2>
-            <p className="text-white/60 max-w-2xl mx-auto text-sm sm:text-base md:text-lg px-2">
-              We partner exclusively with the best in the industry. If you're{' '}
-              <span className="serif italic text-gold">VOUCHED</span>, you've been{' '}
-              <span className="text-white font-semibold">vetted for integrity, quality, and compliance</span>.
+            <p className="text-amber-600 uppercase tracking-[0.2em] text-xs sm:text-sm mb-3 font-medium">Our Network</p>
+            <h2 className="serif text-3xl sm:text-4xl md:text-5xl font-semibold text-stone-900 mb-4">Who We Serve</h2>
+            <p className="text-stone-500 max-w-2xl mx-auto text-sm sm:text-base">
+              We partner exclusively with the best in the industry. If you are{' '}
+              <span className="serif italic text-amber-600">VOUCHED</span>, you have been{' '}
+              <span className="text-stone-900 font-semibold">vetted for integrity, quality, and compliance</span>.
             </p>
           </motion.div>
 
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
             {[
               { icon: Leaf, title: 'Cultivators', count: '340+', desc: 'Premium flower producers with full COA documentation' },
               { icon: Package, title: 'Processors', count: '180+', desc: 'Licensed extraction and manufacturing partners' },
@@ -497,64 +393,62 @@ export function Landing() {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.15 }}
               >
-                <LuxuryCard variant="bordered" className="text-center h-full">
-                  <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 mx-auto mb-4 sm:mb-6 rounded-full bg-gold/10 flex items-center justify-center">
-                    <item.icon className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-gold" />
+                <div className="text-center h-full p-6 sm:p-8 bg-white rounded-2xl border border-stone-200 hover:border-amber-300 hover:shadow-xl hover:shadow-amber-100/50 transition-all">
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 mx-auto mb-5 rounded-full bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center">
+                    <item.icon className="w-7 h-7 sm:w-8 sm:h-8 text-amber-600" />
                   </div>
-                  <p className="text-2xl sm:text-3xl md:text-4xl font-light text-gold mb-1 sm:mb-2">{item.count}</p>
-                  <h3 className="text-lg sm:text-xl font-semibold text-white mb-2 sm:mb-3">{item.title}</h3>
-                  <p className="text-white/60 text-xs sm:text-sm">{item.desc}</p>
-                </LuxuryCard>
+                  <p className="text-3xl sm:text-4xl font-light text-amber-600 mb-2">{item.count}</p>
+                  <h3 className="text-lg sm:text-xl font-semibold text-stone-900 mb-2">{item.title}</h3>
+                  <p className="text-stone-500 text-sm">{item.desc}</p>
+                </div>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="relative z-20 py-16 sm:py-24 md:py-32 px-4">
+      <section className="relative z-10 py-16 sm:py-20 md:py-24 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
           >
-            <LuxuryCard variant="elevated" className="py-10 sm:py-12 md:py-16 px-4 sm:px-6 md:px-8" glow>
-              <h2 className="serif text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-white mb-4 sm:mb-6">
-                Ready to Enter the Vault?
+            <div className="py-12 sm:py-16 px-6 sm:px-10 bg-gradient-to-br from-stone-900 to-stone-800 rounded-3xl shadow-2xl">
+              <h2 className="serif text-2xl sm:text-3xl md:text-4xl font-semibold text-white mb-4 sm:mb-6">
+                Ready to Enter the Platform?
               </h2>
-              <p className="text-white/60 text-sm sm:text-base md:text-lg mb-6 sm:mb-8 md:mb-10 max-w-xl mx-auto px-2">
+              <p className="text-stone-400 text-sm sm:text-base mb-8 max-w-xl mx-auto">
                 Join New York's premier cannabis wholesale network. Apply for verification today.
               </p>
               <Link to={ROUTES.LOGIN}>
-                <GoldButton size="lg" className="w-full sm:w-auto">
+                <button className="px-8 py-4 bg-gradient-to-r from-amber-500 to-amber-600 text-white font-medium rounded-lg hover:from-amber-600 hover:to-amber-700 transition shadow-xl shadow-amber-500/30 flex items-center justify-center gap-2 mx-auto">
                   Apply for Access
-                  <ArrowRight className="ml-2 w-5 h-5 inline" />
-                </GoldButton>
+                  <ArrowRight className="w-5 h-5" />
+                </button>
               </Link>
-            </LuxuryCard>
+            </div>
           </motion.div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="relative z-20 py-8 sm:py-10 md:py-12 px-4 border-t border-gold/10">
+      <footer className="relative z-10 py-10 sm:py-12 px-4 bg-white border-t border-stone-200">
         <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col items-center gap-4 sm:gap-6 md:flex-row md:justify-between">
-            <div className="flex items-center gap-2 sm:gap-3">
-              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-gold to-gold-dark flex items-center justify-center">
-                <Leaf className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-void" />
+          <div className="flex flex-col items-center gap-6 md:flex-row md:justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center">
+                <Leaf className="w-4 h-4 text-white" />
               </div>
-              <span className="serif text-lg sm:text-xl font-semibold text-white">
-                <span className="text-gold">V</span>OUCHED
+              <span className="serif text-xl font-semibold text-stone-900">
+                <span className="text-amber-600">V</span>OUCHED
               </span>
             </div>
 
-            <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 md:gap-8 text-xs sm:text-sm text-white/40">
-              <a href="#" className="hover:text-gold transition">Terms</a>
-              <a href="#" className="hover:text-gold transition">Privacy</a>
-              <a href="#" className="hover:text-gold transition">Contact</a>
-              <span className="w-full text-center md:w-auto">© 2025 VOUCHED</span>
+            <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8 text-sm text-stone-500">
+              <a href="#" className="hover:text-amber-600 transition">Terms</a>
+              <a href="#" className="hover:text-amber-600 transition">Privacy</a>
+              <a href="#" className="hover:text-amber-600 transition">Contact</a>
+              <span className="w-full text-center md:w-auto text-stone-400">2025 VOUCHED</span>
             </div>
           </div>
         </div>
