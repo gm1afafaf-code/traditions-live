@@ -188,7 +188,8 @@ export async function getProducts(
     };
   } catch (error) {
     console.error('Error getting products:', error);
-    throw new Error('Failed to fetch products');
+    // Rethrow original error to preserve Firestore error message (e.g., missing index)
+    throw error;
   }
 }
 

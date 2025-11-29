@@ -248,7 +248,7 @@ export function Vault() {
   useRequireAuth();
   useRequireApproval();
 
-  const { products, filters, isLoading, setFilters, fetchProducts } = useProducts();
+  const { products, filters, isLoading, error, setFilters, fetchProducts } = useProducts();
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showFilters, setShowFilters] = useState(false);
@@ -404,6 +404,16 @@ export function Vault() {
             <div className="flex items-center justify-center py-32">
               <Loading size="lg" text="Loading inventory..." />
             </div>
+          ) : error ? (
+            <LuxuryCard variant="glass" className="text-center py-20">
+              <SparklesIcon className="w-16 h-16 text-red-400/50 mx-auto mb-6" />
+              <h3 className="text-2xl font-semibold text-white mb-3">Failed to Load Products</h3>
+              <p className="text-white/50 mb-4">There was an error loading the inventory.</p>
+              <p className="text-red-400/80 text-sm mb-6 max-w-lg mx-auto break-words font-mono bg-obsidian/50 p-3 rounded">{error}</p>
+              <GoldButton variant="secondary" onClick={() => fetchProducts(1)}>
+                Try Again
+              </GoldButton>
+            </LuxuryCard>
           ) : products.length === 0 ? (
             <LuxuryCard variant="glass" className="text-center py-20">
               <SparklesIcon className="w-16 h-16 text-gold/30 mx-auto mb-6" />
