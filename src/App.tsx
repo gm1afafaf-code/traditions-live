@@ -10,6 +10,8 @@ import {
   Vault,
   BrokerDashboard,
   AdminDashboard,
+  Compliance,
+  Tracking,
 } from '@/pages';
 
 function App() {
@@ -19,6 +21,8 @@ function App() {
         {/* Public Routes */}
         <Route path={ROUTES.HOME} element={<Landing />} />
         <Route path={ROUTES.LOGIN} element={<Login />} />
+        <Route path={ROUTES.COMPLIANCE} element={<Compliance />} />
+        <Route path={ROUTES.TRACKING} element={<Tracking />} />
 
         {/* Protected Routes */}
         <Route

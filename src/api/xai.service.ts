@@ -1,5 +1,3 @@
-import type { LicenseVerificationResult } from '@/types';
-
 /**
  * xAI/Grok API Service for NYS OCM License Verification
  *
