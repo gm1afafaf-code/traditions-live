@@ -10,6 +10,9 @@ import {
   Vault,
   BrokerDashboard,
   AdminDashboard,
+  Compliance,
+  Network,
+  Tracking,
 } from '@/pages';
 
 function App() {
@@ -62,6 +65,11 @@ function App() {
           }
         />
 
+        {/* Public Luxury Pages */}
+        <Route path={ROUTES.COMPLIANCE} element={<Compliance />} />
+        <Route path={ROUTES.NETWORK} element={<Network />} />
+        <Route path={ROUTES.TRACKING} element={<Tracking />} />
+
         {/* Catch all - redirect to home */}
         <Route path="*" element={<Navigate to={ROUTES.HOME} replace />} />
       </Routes>
@@ -80,7 +88,7 @@ function ProtectedRoute({ children, requireApproval, requireRole }: ProtectedRou
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-marble flex items-center justify-center">
+      <div className="min-h-screen bg-void flex items-center justify-center">
         <Loading size="lg" text="Loading..." />
       </div>
     );
