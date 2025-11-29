@@ -1,5 +1,17 @@
 {
   "projects": {
     "default": "traditions-c1cf5"
+  },
+  "targets": {
+    "traditions-c1cf5": {
+      "hosting": {
+        "production": [
+          "traditions-c1cf5"
+        ],
+        "modernized": [
+          "traditions-v2"
+        ]
+      }
+    }
   }
 }
