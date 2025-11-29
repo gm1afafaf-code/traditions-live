@@ -4,9 +4,9 @@ import { Canvas } from '@react-three/fiber';
 import { Float, MeshDistortMaterial, Sparkles } from '@react-three/drei';
 import { useRequireAuth, useRequireApproval, useProducts, useDebounce } from '@/hooks';
 import { AppLayout } from '@/components/layout';
-import { Input, Select, Loading, LuxuryCard, GoldButton, AnimatedCounter } from '@/components/ui';
+import { Input, Select, Loading } from '@/components/ui';
 import { PRODUCT_TYPES, QUALITY_GRADES, SORT_OPTIONS } from '@/lib/constants';
-import { formatCurrency } from '@/lib/utils';
+import { formatCurrency, cn } from '@/lib/utils';
 import type { ProductFilters, Product } from '@/types';
 import { 
   Search, 
@@ -15,7 +15,6 @@ import {
   List, 
   Leaf, 
   Sparkles as SparklesIcon,
-  TrendingUp,
   Package,
   ChevronDown,
   X,
@@ -42,19 +41,6 @@ function ProductOrb() {
   );
 }
 
-function Product3DPreview() {
-  return (
-    <div className="w-full h-48">
-      <Canvas camera={{ position: [0, 0, 3], fov: 50 }}>
-        <ambientLight intensity={0.3} />
-        <pointLight position={[5, 5, 5]} intensity={0.8} color="#d4af37" />
-        <ProductOrb />
-        <Sparkles count={50} scale={3} size={2} speed={0.3} color="#d4af37" opacity={0.4} />
-      </Canvas>
-    </div>
-  );
-}
-
 interface ProductCardProps {
   product: Product;
   index: number;
@@ -62,83 +48,74 @@ interface ProductCardProps {
 }
 
 function ProductCard({ product, index, onView }: ProductCardProps) {
-  const [isHovered, setIsHovered] = useState(false);
-
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30 }}
+      initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.05, duration: 0.4 }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      transition={{ delay: index * 0.03, duration: 0.3 }}
+      onClick={() => onView(product)}
+      className="group cursor-pointer"
     >
-      <LuxuryCard 
-        variant="elevated" 
-        className="overflow-hidden group cursor-pointer"
-        hover
-      >
-        <div className="relative">
-          {isHovered ? (
-            <Suspense fallback={
-              <div className="w-full h-48 bg-obsidian flex items-center justify-center">
-                <Leaf className="w-12 h-12 text-gold/30 animate-pulse" />
-              </div>
-            }>
-              <Product3DPreview />
-            </Suspense>
-          ) : (
-            <div className="w-full h-48 bg-gradient-to-br from-obsidian to-graphite flex items-center justify-center relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-t from-void/80 to-transparent z-10" />
-              <Leaf className="w-16 h-16 text-gold/40 group-hover:text-gold/60 transition-colors" />
-              {product.quality && (
-                <span className="absolute top-3 right-3 z-20 px-2 py-1 bg-gold/20 text-gold text-xs rounded uppercase tracking-wider">
-                  {product.quality}
-                </span>
-              )}
-            </div>
+      <div className="bg-white rounded-2xl shadow-sm border border-stone-200 overflow-hidden hover:shadow-lg hover:border-amber-200 transition-all duration-300">
+        {/* Product Image/Icon Area */}
+        <div className="relative h-40 sm:h-48 bg-gradient-to-br from-stone-100 to-stone-50 flex items-center justify-center overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-t from-white/60 to-transparent z-10" />
+          <Leaf className="w-14 h-14 sm:w-16 sm:h-16 text-amber-500/40 group-hover:text-amber-500/60 transition-colors group-hover:scale-110 duration-300" />
+          
+          {/* Quality Badge */}
+          {product.quality && (
+            <span className="absolute top-3 right-3 z-20 px-2.5 py-1 bg-amber-500 text-white text-xs font-medium rounded-full uppercase tracking-wider shadow-sm">
+              {product.quality}
+            </span>
           )}
+          
+          {/* Live indicator */}
+          <div className="absolute top-3 left-3 z-20 flex items-center gap-1.5 px-2 py-1 bg-white/90 backdrop-blur-sm rounded-full">
+            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+            <span className="text-xs font-medium text-stone-600">Live</span>
+          </div>
         </div>
 
-        <div className="p-5">
-          <div className="flex items-start justify-between mb-2">
-            <div>
-              <span className="text-xs text-gold/60 uppercase tracking-wider">{product.type}</span>
-              <h3 className="text-lg font-semibold text-white truncate mt-1">{product.name}</h3>
-            </div>
+        {/* Product Info */}
+        <div className="p-4 sm:p-5">
+          <div className="mb-3">
+            <span className="text-xs text-amber-600 uppercase tracking-wider font-medium">{product.type}</span>
+            <h3 className="text-base sm:text-lg font-semibold text-stone-900 truncate mt-0.5">{product.name}</h3>
+            <p className="text-sm text-stone-500 truncate">{product.companyName}</p>
           </div>
 
-          <p className="text-sm text-white/50 mb-3 truncate">{product.companyName}</p>
-
-          <div className="flex items-center justify-between border-t border-gold/10 pt-3">
+          <div className="flex items-end justify-between border-t border-stone-100 pt-3">
             <div>
-              <p className="text-2xl font-light text-gold">{formatCurrency(product.price)}</p>
-              <p className="text-xs text-white/40">per {product.unit}</p>
+              <p className="text-xl sm:text-2xl font-semibold text-stone-900">{formatCurrency(product.price)}</p>
+              <p className="text-xs text-stone-400">per {product.unit}</p>
             </div>
             {product.thc && (
-              <div className="text-right">
-                <p className="text-lg text-gold/80">{product.thc}%</p>
-                <p className="text-xs text-white/40">THC</p>
+              <div className="text-right bg-amber-50 px-3 py-1.5 rounded-lg">
+                <p className="text-lg font-semibold text-amber-700">{product.thc}%</p>
+                <p className="text-xs text-amber-600">THC</p>
               </div>
             )}
           </div>
 
+          {/* Action Buttons */}
           <div className="flex gap-2 mt-4">
-            <GoldButton 
-              variant="secondary" 
-              size="sm" 
-              className="flex-1"
-              onClick={() => onView(product)}
+            <button 
+              onClick={(e) => { e.stopPropagation(); onView(product); }}
+              className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl border border-stone-200 text-stone-600 hover:bg-stone-50 hover:border-stone-300 transition text-sm font-medium"
             >
-              <Eye className="w-4 h-4 mr-1" />
-              View
-            </GoldButton>
-            <GoldButton variant="primary" size="sm" className="flex-1">
-              <ShoppingCart className="w-4 h-4 mr-1" />
-              Add
-            </GoldButton>
+              <Eye className="w-4 h-4" />
+              <span>Details</span>
+            </button>
+            <button 
+              onClick={(e) => e.stopPropagation()}
+              className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-amber-500 text-white hover:bg-amber-600 transition text-sm font-medium shadow-sm"
+            >
+              <ShoppingCart className="w-4 h-4" />
+              <span>Add</span>
+            </button>
           </div>
         </div>
-      </LuxuryCard>
+      </div>
     </motion.div>
   );
 }
@@ -159,85 +136,94 @@ function ProductModal({ product, onClose }: ProductModalProps) {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
-        <div className="absolute inset-0 bg-void/90 backdrop-blur-sm" onClick={onClose} />
+        <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
         
         <motion.div
-          className="relative w-full max-w-4xl max-h-[95vh] sm:max-h-[90vh] overflow-auto"
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.9, opacity: 0 }}
+          className="relative w-full max-w-4xl max-h-[95vh] sm:max-h-[90vh] overflow-auto rounded-2xl bg-white shadow-2xl"
+          initial={{ scale: 0.95, opacity: 0, y: 20 }}
+          animate={{ scale: 1, opacity: 1, y: 0 }}
+          exit={{ scale: 0.95, opacity: 0, y: 20 }}
         >
-          <LuxuryCard variant="elevated" className="p-0 overflow-hidden">
-            <button
-              onClick={onClose}
-              className="absolute top-2 right-2 sm:top-4 sm:right-4 z-10 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-obsidian/80 flex items-center justify-center text-white/60 hover:text-gold transition"
-            >
-              <X className="w-4 h-4 sm:w-5 sm:h-5" />
-            </button>
+          <button
+            onClick={onClose}
+            className="absolute top-3 right-3 sm:top-4 sm:right-4 z-10 w-10 h-10 rounded-xl bg-stone-100 hover:bg-stone-200 flex items-center justify-center text-stone-500 hover:text-stone-700 transition"
+          >
+            <X className="w-5 h-5" />
+          </button>
 
-            <div className="flex flex-col md:grid md:grid-cols-2 gap-0">
-              <div className="h-48 sm:h-64 md:h-auto bg-gradient-to-br from-obsidian to-graphite">
-                <Suspense fallback={
-                  <div className="w-full h-full flex items-center justify-center">
-                    <Leaf className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 text-gold/30 animate-pulse" />
+          <div className="flex flex-col md:grid md:grid-cols-2 gap-0">
+            {/* 3D Preview - Only show on desktop */}
+            <div className="h-48 sm:h-64 md:h-auto md:min-h-[400px] bg-gradient-to-br from-stone-100 to-stone-50 hidden md:block">
+              <Suspense fallback={
+                <div className="w-full h-full flex items-center justify-center">
+                  <Leaf className="w-16 h-16 md:w-20 md:h-20 text-amber-500/30 animate-pulse" />
+                </div>
+              }>
+                <Canvas camera={{ position: [0, 0, 4], fov: 50 }}>
+                  <ambientLight intensity={0.5} />
+                  <pointLight position={[5, 5, 5]} intensity={1} color="#d4af37" />
+                  <ProductOrb />
+                  <Sparkles count={100} scale={5} size={3} speed={0.3} color="#d4af37" opacity={0.5} />
+                </Canvas>
+              </Suspense>
+            </div>
+
+            {/* Mobile: Static image placeholder */}
+            <div className="h-40 sm:h-48 bg-gradient-to-br from-stone-100 to-stone-50 flex items-center justify-center md:hidden">
+              <Leaf className="w-16 h-16 text-amber-500/40" />
+              {product.quality && (
+                <span className="absolute top-3 left-3 px-2.5 py-1 bg-amber-500 text-white text-xs font-medium rounded-full uppercase tracking-wider">
+                  {product.quality}
+                </span>
+              )}
+            </div>
+
+            <div className="p-5 sm:p-6 md:p-8">
+              <span className="text-xs text-amber-600 uppercase tracking-wider font-medium">{product.type}</span>
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold text-stone-900 mt-1 mb-3">{product.name}</h2>
+              
+              <p className="text-sm sm:text-base text-stone-500 mb-5">{product.description || 'Premium quality cannabis product from a verified vendor.'}</p>
+
+              <div className="grid grid-cols-2 gap-3 mb-5">
+                <div className="p-3 sm:p-4 bg-stone-50 rounded-xl border border-stone-100">
+                  <p className="text-xs text-stone-400 uppercase mb-1">Price</p>
+                  <p className="text-xl sm:text-2xl font-semibold text-stone-900">{formatCurrency(product.price)}</p>
+                  <p className="text-xs text-stone-400">per {product.unit}</p>
+                </div>
+                {product.thc && (
+                  <div className="p-3 sm:p-4 bg-amber-50 rounded-xl border border-amber-100">
+                    <p className="text-xs text-amber-600 uppercase mb-1">THC Content</p>
+                    <p className="text-xl sm:text-2xl font-semibold text-amber-700">{product.thc}%</p>
                   </div>
-                }>
-                  <Canvas camera={{ position: [0, 0, 4], fov: 50 }}>
-                    <ambientLight intensity={0.3} />
-                    <pointLight position={[5, 5, 5]} intensity={1} color="#d4af37" />
-                    <ProductOrb />
-                    <Sparkles count={100} scale={5} size={3} speed={0.3} color="#d4af37" opacity={0.5} />
-                  </Canvas>
-                </Suspense>
+                )}
+                <div className="p-3 sm:p-4 bg-stone-50 rounded-xl border border-stone-100">
+                  <p className="text-xs text-stone-400 uppercase mb-1">Available Stock</p>
+                  <p className="text-xl sm:text-2xl font-semibold text-stone-900">{product.stock}</p>
+                  <p className="text-xs text-stone-400">{product.unit}s</p>
+                </div>
+                <div className="p-3 sm:p-4 bg-stone-50 rounded-xl border border-stone-100">
+                  <p className="text-xs text-stone-400 uppercase mb-1">Quality</p>
+                  <p className="text-lg sm:text-xl font-semibold text-stone-900">{product.quality || 'Standard'}</p>
+                </div>
               </div>
 
-              <div className="p-4 sm:p-6 md:p-8">
-                <span className="text-xs text-gold uppercase tracking-wider">{product.type}</span>
-                <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold text-white mt-1 sm:mt-2 mb-2 sm:mb-4">{product.name}</h2>
-                
-                <p className="text-sm sm:text-base text-white/60 mb-4 sm:mb-6">{product.description || 'Premium quality cannabis product from a verified vendor.'}</p>
+              <div className="border-t border-stone-100 pt-5 mb-5">
+                <p className="text-xs text-stone-400 uppercase mb-2">Vendor</p>
+                <p className="text-base text-stone-900 font-medium">{product.companyName}</p>
+                <p className="text-sm text-stone-400">License: {product.licenseNumber}</p>
+              </div>
 
-                <div className="grid grid-cols-2 gap-2 sm:gap-3 md:gap-4 mb-4 sm:mb-6">
-                  <div className="p-2 sm:p-3 md:p-4 bg-obsidian/50 rounded-lg">
-                    <p className="text-xs text-white/40 uppercase mb-1">Price</p>
-                    <p className="text-lg sm:text-xl md:text-2xl text-gold">{formatCurrency(product.price)}</p>
-                    <p className="text-xs text-white/40">per {product.unit}</p>
-                  </div>
-                  {product.thc && (
-                    <div className="p-2 sm:p-3 md:p-4 bg-obsidian/50 rounded-lg">
-                      <p className="text-xs text-white/40 uppercase mb-1">THC Content</p>
-                      <p className="text-lg sm:text-xl md:text-2xl text-gold">{product.thc}%</p>
-                    </div>
-                  )}
-                  <div className="p-2 sm:p-3 md:p-4 bg-obsidian/50 rounded-lg">
-                    <p className="text-xs text-white/40 uppercase mb-1">Available Stock</p>
-                    <p className="text-lg sm:text-xl md:text-2xl text-gold">{product.stock}</p>
-                    <p className="text-xs text-white/40">{product.unit}s</p>
-                  </div>
-                  <div className="p-2 sm:p-3 md:p-4 bg-obsidian/50 rounded-lg">
-                    <p className="text-xs text-white/40 uppercase mb-1">Quality</p>
-                    <p className="text-base sm:text-lg md:text-xl text-gold">{product.quality || 'Standard'}</p>
-                  </div>
-                </div>
-
-                <div className="border-t border-gold/10 pt-4 sm:pt-6 mb-4 sm:mb-6">
-                  <p className="text-xs sm:text-sm text-white/40 mb-1 sm:mb-2">Vendor</p>
-                  <p className="text-sm sm:text-base text-white font-medium">{product.companyName}</p>
-                  <p className="text-xs text-white/40">License: {product.licenseNumber}</p>
-                </div>
-
-                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-                  <GoldButton variant="primary" size="md" className="flex-1">
-                    <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-                    Add to Cart
-                  </GoldButton>
-                  <GoldButton variant="secondary" size="md" className="flex-1 sm:flex-none">
-                    View COA
-                  </GoldButton>
-                </div>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <button className="flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-amber-500 text-white hover:bg-amber-600 transition font-medium shadow-sm">
+                  <ShoppingCart className="w-5 h-5" />
+                  Add to Cart
+                </button>
+                <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-3 rounded-xl border border-stone-200 text-stone-600 hover:bg-stone-50 transition font-medium">
+                  View COA
+                </button>
               </div>
             </div>
-          </LuxuryCard>
+          </div>
         </motion.div>
       </motion.div>
     </AnimatePresence>
@@ -275,75 +261,82 @@ export function Vault() {
 
   return (
     <AppLayout>
-      <div className="min-h-screen luxury-bg">
+      <div className="min-h-screen bg-stone-50">
         {/* Header */}
-        <div className="sticky top-0 z-30 bg-void/80 backdrop-blur-xl border-b border-gold/10">
-          <div className="max-w-8xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4 sm:mb-6">
+        <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-stone-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-5">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
               <div>
-                <h1 className="serif text-2xl sm:text-3xl md:text-4xl font-semibold text-white tracking-wide">
-                  <span className="text-gold">Live</span> Marketplace
+                <h1 className="serif text-2xl sm:text-3xl font-semibold text-stone-900 tracking-wide">
+                  <span className="text-amber-600">Live</span> Marketplace
                 </h1>
-                <p className="text-white/50 text-xs sm:text-sm mt-1">Real-time inventory from verified vendors</p>
+                <div className="flex items-center gap-3 mt-1">
+                  <span className="flex items-center gap-1.5 text-xs text-stone-500">
+                    <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                    Real-time inventory
+                  </span>
+                  <span className="hidden sm:flex items-center gap-1.5 text-xs text-stone-500">
+                    <Package className="w-3.5 h-3.5" />
+                    {products.length} SKUs
+                  </span>
+                </div>
               </div>
 
-              <div className="flex items-center gap-3 sm:gap-4">
-                <div className="hidden md:flex items-center gap-4 lg:gap-6 text-sm">
-                  <div className="flex items-center gap-2 text-gold">
-                    <Package className="w-4 h-4" />
-                    <AnimatedCounter value={products.length} suffix=" SKUs" />
-                  </div>
-                  <div className="flex items-center gap-2 text-gold/70">
-                    <TrendingUp className="w-4 h-4" />
-                    <span>Live Sync</span>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-1 sm:gap-2 border-l border-gold/20 pl-3 sm:pl-4">
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1 p-1 bg-stone-100 rounded-lg">
                   <button
                     onClick={() => setViewMode('grid')}
-                    className={`p-1.5 sm:p-2 rounded ${viewMode === 'grid' ? 'bg-gold/20 text-gold' : 'text-white/40 hover:text-white'}`}
+                    className={cn(
+                      'p-2 rounded-md transition',
+                      viewMode === 'grid' ? 'bg-white text-amber-600 shadow-sm' : 'text-stone-400 hover:text-stone-600'
+                    )}
                   >
-                    <Grid3X3 className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <Grid3X3 className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => setViewMode('list')}
-                    className={`p-1.5 sm:p-2 rounded ${viewMode === 'list' ? 'bg-gold/20 text-gold' : 'text-white/40 hover:text-white'}`}
+                    className={cn(
+                      'p-2 rounded-md transition',
+                      viewMode === 'list' ? 'bg-white text-amber-600 shadow-sm' : 'text-stone-400 hover:text-stone-600'
+                    )}
                   >
-                    <List className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <List className="w-4 h-4" />
                   </button>
                 </div>
               </div>
             </div>
 
             {/* Search & Filters */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
               <div className="relative flex-1">
-                <Search className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-white/30" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-stone-400" />
                 <Input
                   placeholder="Search strains, vendors..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 sm:pl-12 bg-obsidian/50 border-gold/20 text-white placeholder:text-white/30 focus:border-gold text-sm sm:text-base"
+                  className="pl-10 bg-stone-50 border-stone-200 text-stone-900 placeholder:text-stone-400 focus:border-amber-500 focus:ring-amber-500/20"
                 />
               </div>
 
-              <div className="flex items-center gap-2 sm:gap-3">
+              <div className="flex items-center gap-2">
                 <button
                   onClick={() => setShowFilters(!showFilters)}
-                  className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg border transition text-sm ${
-                    showFilters ? 'bg-gold/20 border-gold text-gold' : 'border-gold/20 text-white/60 hover:border-gold/40'
-                  }`}
+                  className={cn(
+                    'flex items-center gap-2 px-4 py-2.5 rounded-xl border transition text-sm font-medium',
+                    showFilters 
+                      ? 'bg-amber-50 border-amber-200 text-amber-700' 
+                      : 'border-stone-200 text-stone-600 hover:bg-stone-50'
+                  )}
                 >
                   <Filter className="w-4 h-4" />
                   <span className="hidden sm:inline">Filters</span>
-                  <ChevronDown className={`w-4 h-4 transition ${showFilters ? 'rotate-180' : ''}`} />
+                  <ChevronDown className={cn('w-4 h-4 transition', showFilters && 'rotate-180')} />
                 </button>
 
-                <GoldButton variant="primary" size="sm" className="flex-1 sm:flex-none">
-                  <Zap className="w-4 h-4 sm:mr-2" />
+                <button className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 text-white hover:bg-amber-600 transition text-sm font-medium shadow-sm">
+                  <Zap className="w-4 h-4" />
                   <span className="hidden sm:inline">AI Match</span>
-                </GoldButton>
+                </button>
               </div>
             </div>
 
@@ -356,7 +349,7 @@ export function Vault() {
                   exit={{ height: 0, opacity: 0 }}
                   className="overflow-hidden"
                 >
-                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 pt-4 sm:pt-6">
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 pt-4">
                     <Select
                       options={[
                         { value: '', label: 'All Types' },
@@ -364,7 +357,7 @@ export function Vault() {
                       ]}
                       value={filters.type || ''}
                       onChange={(e) => handleFilterChange('type', e.target.value)}
-                      className="bg-obsidian/50 border-gold/20 text-white"
+                      className="bg-white border-stone-200 text-stone-900"
                     />
 
                     <Select
@@ -374,14 +367,14 @@ export function Vault() {
                       ]}
                       value={filters.quality || ''}
                       onChange={(e) => handleFilterChange('quality', e.target.value)}
-                      className="bg-obsidian/50 border-gold/20 text-white"
+                      className="bg-white border-stone-200 text-stone-900"
                     />
 
                     <Select
                       options={SORT_OPTIONS.map((opt) => ({ value: opt.value, label: opt.label }))}
                       value={filters.sortBy || 'newest'}
                       onChange={(e) => handleFilterChange('sortBy', e.target.value)}
-                      className="bg-obsidian/50 border-gold/20 text-white"
+                      className="bg-white border-stone-200 text-stone-900"
                     />
 
                     <Input
@@ -389,7 +382,7 @@ export function Vault() {
                       placeholder="Min THC %"
                       value={filters.minTHC || ''}
                       onChange={(e) => handleFilterChange('minTHC', e.target.value)}
-                      className="bg-obsidian/50 border-gold/20 text-white placeholder:text-white/30"
+                      className="bg-white border-stone-200 text-stone-900 placeholder:text-stone-400"
                     />
                   </div>
                 </motion.div>
@@ -399,37 +392,44 @@ export function Vault() {
         </div>
 
         {/* Product Grid */}
-        <div className="max-w-8xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
           {isLoading ? (
             <div className="flex items-center justify-center py-32">
               <Loading size="lg" text="Loading inventory..." />
             </div>
           ) : error ? (
-            <LuxuryCard variant="glass" className="text-center py-20">
-              <SparklesIcon className="w-16 h-16 text-red-400/50 mx-auto mb-6" />
-              <h3 className="text-2xl font-semibold text-white mb-3">Failed to Load Products</h3>
-              <p className="text-white/50 mb-4">There was an error loading the inventory.</p>
-              <p className="text-red-400/80 text-sm mb-6 max-w-lg mx-auto break-words font-mono bg-obsidian/50 p-3 rounded">{error}</p>
-              <GoldButton variant="secondary" onClick={() => fetchProducts(1)}>
+            <div className="bg-white rounded-2xl shadow-sm border border-stone-200 text-center py-16 px-6">
+              <SparklesIcon className="w-14 h-14 text-red-400/60 mx-auto mb-5" />
+              <h3 className="text-xl font-semibold text-stone-900 mb-2">Failed to Load Products</h3>
+              <p className="text-stone-500 mb-4">There was an error loading the inventory.</p>
+              <p className="text-red-500 text-sm mb-6 max-w-lg mx-auto break-words font-mono bg-red-50 p-3 rounded-lg">{error}</p>
+              <button 
+                onClick={() => fetchProducts(1)}
+                className="px-5 py-2.5 rounded-xl border border-stone-200 text-stone-600 hover:bg-stone-50 transition font-medium"
+              >
                 Try Again
-              </GoldButton>
-            </LuxuryCard>
+              </button>
+            </div>
           ) : products.length === 0 ? (
-            <LuxuryCard variant="glass" className="text-center py-20">
-              <SparklesIcon className="w-16 h-16 text-gold/30 mx-auto mb-6" />
-              <h3 className="text-2xl font-semibold text-white mb-3">No Products Found</h3>
-              <p className="text-white/50 mb-6">Try adjusting your filters or search terms</p>
-              <GoldButton variant="secondary" onClick={() => setFilters({})}>
+            <div className="bg-white rounded-2xl shadow-sm border border-stone-200 text-center py-16 px-6">
+              <SparklesIcon className="w-14 h-14 text-amber-400/60 mx-auto mb-5" />
+              <h3 className="text-xl font-semibold text-stone-900 mb-2">No Products Found</h3>
+              <p className="text-stone-500 mb-6">Try adjusting your filters or search terms</p>
+              <button 
+                onClick={() => setFilters({})}
+                className="px-5 py-2.5 rounded-xl border border-stone-200 text-stone-600 hover:bg-stone-50 transition font-medium"
+              >
                 Clear Filters
-              </GoldButton>
-            </LuxuryCard>
+              </button>
+            </div>
           ) : (
             <>
-              <div className={`grid gap-6 ${
+              <div className={cn(
+                'grid gap-4 sm:gap-5',
                 viewMode === 'grid' 
-                  ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5' 
+                  ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' 
                   : 'grid-cols-1'
-              }`}>
+              )}>
                 {products.map((product, index) => (
                   <ProductCard 
                     key={product.id} 
@@ -441,10 +441,13 @@ export function Vault() {
               </div>
 
               {/* Load More */}
-              <div className="flex justify-center mt-12">
-                <GoldButton variant="secondary" size="lg" onClick={handleLoadMore}>
+              <div className="flex justify-center mt-10">
+                <button 
+                  onClick={handleLoadMore}
+                  className="px-6 py-3 rounded-xl border border-stone-200 text-stone-600 hover:bg-stone-100 transition font-medium"
+                >
                   Load More Products
-                </GoldButton>
+                </button>
               </div>
             </>
           )}
