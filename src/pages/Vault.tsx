@@ -262,8 +262,8 @@ export function Vault() {
   return (
     <AppLayout>
       <div className="min-h-screen bg-stone-50">
-        {/* Header */}
-        <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-stone-200">
+        {/* Header - top-16 on mobile to account for AppLayout mobile header */}
+        <div className="sticky top-16 md:top-0 z-30 bg-white/95 backdrop-blur-md border-b border-stone-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-5">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
               <div>

@@ -29,9 +29,9 @@ interface AppLayoutProps {
 const navItems = [
   { to: ROUTES.VAULT, icon: Store, label: 'Marketplace' },
   { to: ROUTES.BROKER_DASHBOARD, icon: LayoutDashboard, label: 'Portal' },
-  { to: '/compliance', icon: Shield, label: 'Compliance' },
-  { to: '/network', icon: Network, label: 'Network' },
-  { to: '/tracking', icon: Truck, label: 'Tracking' },
+  { to: ROUTES.COMPLIANCE, icon: Shield, label: 'Compliance' },
+  { to: ROUTES.NETWORK, icon: Network, label: 'Network' },
+  { to: ROUTES.TRACKING, icon: Truck, label: 'Tracking' },
 ];
 
 export function AppLayout({ children, showSidebar = true }: AppLayoutProps) {
