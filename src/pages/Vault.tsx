@@ -154,7 +154,7 @@ function ProductModal({ product, onClose }: ProductModalProps) {
   return (
     <AnimatePresence>
       <motion.div
-        className="fixed inset-0 z-50 flex items-center justify-center p-4"
+        className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -162,7 +162,7 @@ function ProductModal({ product, onClose }: ProductModalProps) {
         <div className="absolute inset-0 bg-void/90 backdrop-blur-sm" onClick={onClose} />
         
         <motion.div
-          className="relative w-full max-w-4xl max-h-[90vh] overflow-auto"
+          className="relative w-full max-w-4xl max-h-[95vh] sm:max-h-[90vh] overflow-auto"
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
@@ -170,16 +170,16 @@ function ProductModal({ product, onClose }: ProductModalProps) {
           <LuxuryCard variant="elevated" className="p-0 overflow-hidden">
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-obsidian/80 flex items-center justify-center text-white/60 hover:text-gold transition"
+              className="absolute top-2 right-2 sm:top-4 sm:right-4 z-10 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-obsidian/80 flex items-center justify-center text-white/60 hover:text-gold transition"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
 
-            <div className="grid md:grid-cols-2 gap-0">
-              <div className="h-80 md:h-auto bg-gradient-to-br from-obsidian to-graphite">
+            <div className="flex flex-col md:grid md:grid-cols-2 gap-0">
+              <div className="h-48 sm:h-64 md:h-auto bg-gradient-to-br from-obsidian to-graphite">
                 <Suspense fallback={
                   <div className="w-full h-full flex items-center justify-center">
-                    <Leaf className="w-20 h-20 text-gold/30 animate-pulse" />
+                    <Leaf className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 text-gold/30 animate-pulse" />
                   </div>
                 }>
                   <Canvas camera={{ position: [0, 0, 4], fov: 50 }}>
@@ -191,47 +191,47 @@ function ProductModal({ product, onClose }: ProductModalProps) {
                 </Suspense>
               </div>
 
-              <div className="p-8">
+              <div className="p-4 sm:p-6 md:p-8">
                 <span className="text-xs text-gold uppercase tracking-wider">{product.type}</span>
-                <h2 className="text-3xl font-semibold text-white mt-2 mb-4">{product.name}</h2>
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold text-white mt-1 sm:mt-2 mb-2 sm:mb-4">{product.name}</h2>
                 
-                <p className="text-white/60 mb-6">{product.description || 'Premium quality cannabis product from a verified vendor.'}</p>
+                <p className="text-sm sm:text-base text-white/60 mb-4 sm:mb-6">{product.description || 'Premium quality cannabis product from a verified vendor.'}</p>
 
-                <div className="grid grid-cols-2 gap-4 mb-6">
-                  <div className="p-4 bg-obsidian/50 rounded-lg">
+                <div className="grid grid-cols-2 gap-2 sm:gap-3 md:gap-4 mb-4 sm:mb-6">
+                  <div className="p-2 sm:p-3 md:p-4 bg-obsidian/50 rounded-lg">
                     <p className="text-xs text-white/40 uppercase mb-1">Price</p>
-                    <p className="text-2xl text-gold">{formatCurrency(product.price)}</p>
+                    <p className="text-lg sm:text-xl md:text-2xl text-gold">{formatCurrency(product.price)}</p>
                     <p className="text-xs text-white/40">per {product.unit}</p>
                   </div>
                   {product.thc && (
-                    <div className="p-4 bg-obsidian/50 rounded-lg">
+                    <div className="p-2 sm:p-3 md:p-4 bg-obsidian/50 rounded-lg">
                       <p className="text-xs text-white/40 uppercase mb-1">THC Content</p>
-                      <p className="text-2xl text-gold">{product.thc}%</p>
+                      <p className="text-lg sm:text-xl md:text-2xl text-gold">{product.thc}%</p>
                     </div>
                   )}
-                  <div className="p-4 bg-obsidian/50 rounded-lg">
+                  <div className="p-2 sm:p-3 md:p-4 bg-obsidian/50 rounded-lg">
                     <p className="text-xs text-white/40 uppercase mb-1">Available Stock</p>
-                    <p className="text-2xl text-gold">{product.stock}</p>
+                    <p className="text-lg sm:text-xl md:text-2xl text-gold">{product.stock}</p>
                     <p className="text-xs text-white/40">{product.unit}s</p>
                   </div>
-                  <div className="p-4 bg-obsidian/50 rounded-lg">
+                  <div className="p-2 sm:p-3 md:p-4 bg-obsidian/50 rounded-lg">
                     <p className="text-xs text-white/40 uppercase mb-1">Quality</p>
-                    <p className="text-xl text-gold">{product.quality || 'Standard'}</p>
+                    <p className="text-base sm:text-lg md:text-xl text-gold">{product.quality || 'Standard'}</p>
                   </div>
                 </div>
 
-                <div className="border-t border-gold/10 pt-6 mb-6">
-                  <p className="text-sm text-white/40 mb-2">Vendor</p>
-                  <p className="text-white font-medium">{product.companyName}</p>
+                <div className="border-t border-gold/10 pt-4 sm:pt-6 mb-4 sm:mb-6">
+                  <p className="text-xs sm:text-sm text-white/40 mb-1 sm:mb-2">Vendor</p>
+                  <p className="text-sm sm:text-base text-white font-medium">{product.companyName}</p>
                   <p className="text-xs text-white/40">License: {product.licenseNumber}</p>
                 </div>
 
-                <div className="flex gap-3">
-                  <GoldButton variant="primary" size="lg" className="flex-1">
-                    <ShoppingCart className="w-5 h-5 mr-2" />
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                  <GoldButton variant="primary" size="md" className="flex-1">
+                    <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                     Add to Cart
                   </GoldButton>
-                  <GoldButton variant="secondary" size="lg">
+                  <GoldButton variant="secondary" size="md" className="flex-1 sm:flex-none">
                     View COA
                   </GoldButton>
                 </div>
@@ -278,17 +278,17 @@ export function Vault() {
       <div className="min-h-screen luxury-bg">
         {/* Header */}
         <div className="sticky top-0 z-30 bg-void/80 backdrop-blur-xl border-b border-gold/10">
-          <div className="max-w-8xl mx-auto px-6 py-6">
-            <div className="flex items-center justify-between mb-6">
+          <div className="max-w-8xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4 sm:mb-6">
               <div>
-                <h1 className="serif text-4xl font-semibold text-white tracking-wide">
+                <h1 className="serif text-2xl sm:text-3xl md:text-4xl font-semibold text-white tracking-wide">
                   <span className="text-gold">Live</span> Marketplace
                 </h1>
-                <p className="text-white/50 text-sm mt-1">Real-time inventory from verified vendors</p>
+                <p className="text-white/50 text-xs sm:text-sm mt-1">Real-time inventory from verified vendors</p>
               </div>
 
-              <div className="flex items-center gap-4">
-                <div className="hidden md:flex items-center gap-6 text-sm">
+              <div className="flex items-center gap-3 sm:gap-4">
+                <div className="hidden md:flex items-center gap-4 lg:gap-6 text-sm">
                   <div className="flex items-center gap-2 text-gold">
                     <Package className="w-4 h-4" />
                     <AnimatedCounter value={products.length} suffix=" SKUs" />
@@ -299,50 +299,52 @@ export function Vault() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 border-l border-gold/20 pl-4">
+                <div className="flex items-center gap-1 sm:gap-2 border-l border-gold/20 pl-3 sm:pl-4">
                   <button
                     onClick={() => setViewMode('grid')}
-                    className={`p-2 rounded ${viewMode === 'grid' ? 'bg-gold/20 text-gold' : 'text-white/40 hover:text-white'}`}
+                    className={`p-1.5 sm:p-2 rounded ${viewMode === 'grid' ? 'bg-gold/20 text-gold' : 'text-white/40 hover:text-white'}`}
                   >
-                    <Grid3X3 className="w-5 h-5" />
+                    <Grid3X3 className="w-4 h-4 sm:w-5 sm:h-5" />
                   </button>
                   <button
                     onClick={() => setViewMode('list')}
-                    className={`p-2 rounded ${viewMode === 'list' ? 'bg-gold/20 text-gold' : 'text-white/40 hover:text-white'}`}
+                    className={`p-1.5 sm:p-2 rounded ${viewMode === 'list' ? 'bg-gold/20 text-gold' : 'text-white/40 hover:text-white'}`}
                   >
-                    <List className="w-5 h-5" />
+                    <List className="w-4 h-4 sm:w-5 sm:h-5" />
                   </button>
                 </div>
               </div>
             </div>
 
             {/* Search & Filters */}
-            <div className="flex flex-wrap items-center gap-4">
-              <div className="relative flex-1 min-w-[300px]">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-white/30" />
                 <Input
-                  placeholder="Search strains, vendors, products..."
+                  placeholder="Search strains, vendors..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-12 bg-obsidian/50 border-gold/20 text-white placeholder:text-white/30 focus:border-gold"
+                  className="pl-10 sm:pl-12 bg-obsidian/50 border-gold/20 text-white placeholder:text-white/30 focus:border-gold text-sm sm:text-base"
                 />
               </div>
 
-              <button
-                onClick={() => setShowFilters(!showFilters)}
-                className={`flex items-center gap-2 px-4 py-3 rounded-lg border transition ${
-                  showFilters ? 'bg-gold/20 border-gold text-gold' : 'border-gold/20 text-white/60 hover:border-gold/40'
-                }`}
-              >
-                <Filter className="w-4 h-4" />
-                Filters
-                <ChevronDown className={`w-4 h-4 transition ${showFilters ? 'rotate-180' : ''}`} />
-              </button>
+              <div className="flex items-center gap-2 sm:gap-3">
+                <button
+                  onClick={() => setShowFilters(!showFilters)}
+                  className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg border transition text-sm ${
+                    showFilters ? 'bg-gold/20 border-gold text-gold' : 'border-gold/20 text-white/60 hover:border-gold/40'
+                  }`}
+                >
+                  <Filter className="w-4 h-4" />
+                  <span className="hidden sm:inline">Filters</span>
+                  <ChevronDown className={`w-4 h-4 transition ${showFilters ? 'rotate-180' : ''}`} />
+                </button>
 
-              <GoldButton variant="primary" size="md">
-                <Zap className="w-4 h-4 mr-2" />
-                AI Match
-              </GoldButton>
+                <GoldButton variant="primary" size="sm" className="flex-1 sm:flex-none">
+                  <Zap className="w-4 h-4 sm:mr-2" />
+                  <span className="hidden sm:inline">AI Match</span>
+                </GoldButton>
+              </div>
             </div>
 
             {/* Expanded Filters */}
@@ -354,7 +356,7 @@ export function Vault() {
                   exit={{ height: 0, opacity: 0 }}
                   className="overflow-hidden"
                 >
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-6">
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 pt-4 sm:pt-6">
                     <Select
                       options={[
                         { value: '', label: 'All Types' },
@@ -397,7 +399,7 @@ export function Vault() {
         </div>
 
         {/* Product Grid */}
-        <div className="max-w-8xl mx-auto px-6 py-8">
+        <div className="max-w-8xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
           {isLoading ? (
             <div className="flex items-center justify-center py-32">
               <Loading size="lg" text="Loading inventory..." />

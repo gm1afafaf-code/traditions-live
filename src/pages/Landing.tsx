@@ -15,7 +15,9 @@ import {
   ArrowRight,
   Zap,
   Lock,
-  Globe
+  Globe,
+  Menu,
+  X
 } from 'lucide-react';
 
 function GoldOrb({ position, scale = 1 }: { position: [number, number, number]; scale?: number }) {
@@ -109,7 +111,7 @@ function CurtainAnimation({ onComplete }: { onComplete: () => void }) {
 
   return (
     <motion.div
-      className="fixed inset-0 z-50 flex items-center justify-center"
+      className="fixed inset-0 z-50 flex items-center justify-center px-4"
       style={{ background: 'linear-gradient(180deg, #0a0a0a 0%, #121212 100%)' }}
       initial={{ y: 0 }}
       animate={{ y: '-100%' }}
@@ -121,10 +123,10 @@ function CurtainAnimation({ onComplete }: { onComplete: () => void }) {
         transition={{ duration: 0.5 }}
         className="text-center"
       >
-        <h1 className="serif text-8xl font-bold tracking-[0.15em] text-white">
+        <h1 className="serif text-4xl sm:text-6xl md:text-8xl font-bold tracking-[0.1em] sm:tracking-[0.15em] text-white">
           <span className="text-gold gold-glow">V</span>OUCHED
         </h1>
-        <p className="text-gold/60 tracking-[0.3em] mt-4 text-sm uppercase">Entering the Vault</p>
+        <p className="text-gold/60 tracking-[0.2em] sm:tracking-[0.3em] mt-3 sm:mt-4 text-xs sm:text-sm uppercase">Entering the Vault</p>
       </motion.div>
     </motion.div>
   );
@@ -170,6 +172,7 @@ const strains = [
 export function Landing() {
   const [showCurtain, setShowCurtain] = useState(true);
   const [activeStrain, setActiveStrain] = useState(0);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -188,17 +191,17 @@ export function Landing() {
 
       {/* Navigation */}
       <motion.nav
-        className="fixed top-0 left-0 right-0 z-40 px-8 py-6"
+        className="fixed top-0 left-0 right-0 z-40 px-4 sm:px-6 lg:px-8 py-4 sm:py-6"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 2.5, duration: 0.5 }}
       >
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <Link to={ROUTES.HOME} className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gold to-gold-dark flex items-center justify-center">
-              <Leaf className="w-5 h-5 text-void" />
+          <Link to={ROUTES.HOME} className="flex items-center gap-2 sm:gap-3">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-gold to-gold-dark flex items-center justify-center">
+              <Leaf className="w-4 h-4 sm:w-5 sm:h-5 text-void" />
             </div>
-            <span className="serif text-2xl font-semibold text-white tracking-wider">
+            <span className="serif text-xl sm:text-2xl font-semibold text-white tracking-wider">
               <span className="text-gold">V</span>OUCHED
             </span>
           </Link>
@@ -210,16 +213,52 @@ export function Landing() {
             <Link to="/tracking" className="nav-link text-sm tracking-wider">Tracking</Link>
           </div>
 
-          <Link to={ROUTES.LOGIN}>
-            <GoldButton variant="outline" size="sm">
-              Enter Platform
-            </GoldButton>
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link to={ROUTES.LOGIN} className="hidden sm:block">
+              <GoldButton variant="outline" size="sm">
+                Enter Platform
+              </GoldButton>
+            </Link>
+            
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-2 text-gold hover:bg-gold/10 rounded-lg transition"
+            >
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
         </div>
+
+        {/* Mobile Menu */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="md:hidden mt-4 bg-obsidian/95 backdrop-blur-xl border border-gold/20 rounded-xl overflow-hidden"
+            >
+              <div className="p-4 space-y-3">
+                <Link to={ROUTES.VAULT} className="block py-2 px-4 text-white/80 hover:text-gold hover:bg-gold/5 rounded-lg transition" onClick={() => setMobileMenuOpen(false)}>Marketplace</Link>
+                <Link to="/compliance" className="block py-2 px-4 text-white/80 hover:text-gold hover:bg-gold/5 rounded-lg transition" onClick={() => setMobileMenuOpen(false)}>Compliance</Link>
+                <Link to="/network" className="block py-2 px-4 text-white/80 hover:text-gold hover:bg-gold/5 rounded-lg transition" onClick={() => setMobileMenuOpen(false)}>Network</Link>
+                <Link to="/tracking" className="block py-2 px-4 text-white/80 hover:text-gold hover:bg-gold/5 rounded-lg transition" onClick={() => setMobileMenuOpen(false)}>Tracking</Link>
+                <div className="pt-2 border-t border-gold/10">
+                  <Link to={ROUTES.LOGIN} className="block" onClick={() => setMobileMenuOpen(false)}>
+                    <GoldButton variant="primary" size="md" className="w-full">
+                      Enter Platform
+                    </GoldButton>
+                  </Link>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.nav>
 
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center pt-20">
+      <section className="relative min-h-screen flex items-center justify-center pt-16 sm:pt-20">
         {/* 3D Background */}
         <div className="absolute inset-0 z-0">
           <Suspense fallback={null}>
@@ -232,7 +271,7 @@ export function Landing() {
         {/* Hero Content */}
         <div className="relative z-20 text-center px-4 max-w-6xl mx-auto">
           <motion.p
-            className="ens-causa text-xl mb-8"
+            className="ens-causa text-base sm:text-lg md:text-xl mb-4 sm:mb-8"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 2.7, duration: 0.5 }}
@@ -241,16 +280,16 @@ export function Landing() {
           </motion.p>
 
           <motion.div
-            className="mb-8"
+            className="mb-6 sm:mb-8"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 2.9, duration: 0.8 }}
           >
-            <div className="inline-block px-16 pt-6 pb-8 border border-gold/30 bg-obsidian/30 backdrop-blur-sm">
-              <h1 className="serif text-8xl md:text-9xl font-bold tracking-[0.12em] text-white illuminated leading-tight">
+            <div className="inline-block px-6 sm:px-10 md:px-16 pt-4 sm:pt-6 pb-6 sm:pb-8 border border-gold/30 bg-obsidian/30 backdrop-blur-sm">
+              <h1 className="serif text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-bold tracking-[0.08em] sm:tracking-[0.12em] text-white illuminated leading-tight">
                 <span className="text-gold gold-glow">V</span>OUCHED
               </h1>
-              <p className="text-sm tracking-[0.5em] text-white/60 mt-4">N E W &nbsp; Y O R K</p>
+              <p className="text-xs sm:text-sm tracking-[0.3em] sm:tracking-[0.5em] text-white/60 mt-2 sm:mt-4">N E W &nbsp; Y O R K</p>
             </div>
           </motion.div>
 
@@ -259,26 +298,26 @@ export function Landing() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 3.1, duration: 0.5 }}
           >
-            <p className="text-gold uppercase tracking-[0.25em] text-sm mb-2">The Platform</p>
-            <p className="text-3xl md:text-4xl text-white/80 font-light tracking-widest serif italic">
+            <p className="text-gold uppercase tracking-[0.15em] sm:tracking-[0.25em] text-xs sm:text-sm mb-2">The Platform</p>
+            <p className="text-xl sm:text-2xl md:text-3xl lg:text-4xl text-white/80 font-light tracking-wider sm:tracking-widest serif italic">
               Premium Cannabis Wholesale
             </p>
           </motion.div>
 
           <motion.div
-            className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4"
+            className="mt-8 sm:mt-12 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 3.3, duration: 0.5 }}
           >
-            <Link to={ROUTES.LOGIN}>
-              <GoldButton size="xl" className="min-w-[200px]">
+            <Link to={ROUTES.LOGIN} className="w-full sm:w-auto">
+              <GoldButton size="lg" className="w-full sm:w-auto sm:min-w-[200px]">
                 Enter Vault
                 <ArrowRight className="ml-2 w-5 h-5 inline" />
               </GoldButton>
             </Link>
-            <Link to={ROUTES.VAULT}>
-              <GoldButton variant="secondary" size="xl" className="min-w-[200px]">
+            <Link to={ROUTES.VAULT} className="w-full sm:w-auto">
+              <GoldButton variant="secondary" size="lg" className="w-full sm:w-auto sm:min-w-[200px]">
                 Browse Inventory
               </GoldButton>
             </Link>
@@ -287,31 +326,31 @@ export function Landing() {
 
         {/* Scroll Indicator */}
         <motion.div
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20"
+          className="absolute bottom-4 sm:bottom-8 left-1/2 -translate-x-1/2 z-20"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1, y: [0, 10, 0] }}
           transition={{ delay: 4, duration: 2, repeat: Infinity }}
         >
-          <div className="w-6 h-10 border-2 border-gold/50 rounded-full flex justify-center pt-2">
-            <div className="w-1 h-3 bg-gold rounded-full" />
+          <div className="w-5 h-8 sm:w-6 sm:h-10 border-2 border-gold/50 rounded-full flex justify-center pt-1.5 sm:pt-2">
+            <div className="w-1 h-2 sm:h-3 bg-gold rounded-full" />
           </div>
         </motion.div>
       </section>
 
       {/* Stats Section */}
-      <section className="relative z-20 py-20 px-4">
+      <section className="relative z-20 py-12 sm:py-16 md:py-20 px-4">
         <div className="max-w-7xl mx-auto">
           <motion.div
-            className="grid grid-cols-2 md:grid-cols-4 gap-6"
+            className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6"
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
           >
             {stats.map((stat, index) => (
-              <LuxuryCard key={stat.label} variant="glass" className="text-center py-8" glow={index === 0}>
-                <stat.icon className="w-8 h-8 text-gold mx-auto mb-4" />
-                <p className="text-4xl md:text-5xl font-light text-gold mb-2">
+              <LuxuryCard key={stat.label} variant="glass" className="text-center py-4 sm:py-6 md:py-8 px-2 sm:px-4" glow={index === 0}>
+                <stat.icon className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-gold mx-auto mb-2 sm:mb-3 md:mb-4" />
+                <p className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light text-gold mb-1 sm:mb-2">
                   <AnimatedCounter
                     value={stat.value}
                     prefix={stat.prefix}
@@ -319,7 +358,7 @@ export function Landing() {
                     duration={2.5}
                   />
                 </p>
-                <p className="text-xs text-white/60 uppercase tracking-[0.2em]">{stat.label}</p>
+                <p className="text-xs text-white/60 uppercase tracking-wider sm:tracking-[0.2em]">{stat.label}</p>
               </LuxuryCard>
             ))}
           </motion.div>
@@ -327,16 +366,16 @@ export function Landing() {
       </section>
 
       {/* Featured Strains Carousel */}
-      <section className="relative z-20 py-20 px-4 overflow-hidden">
+      <section className="relative z-20 py-12 sm:py-16 md:py-20 px-4 overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <motion.div
-            className="text-center mb-16"
+            className="text-center mb-8 sm:mb-12 md:mb-16"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <p className="text-gold uppercase tracking-[0.3em] text-sm mb-4">Live Inventory</p>
-            <h2 className="serif text-5xl md:text-6xl font-semibold text-white">Featured Strains</h2>
+            <p className="text-gold uppercase tracking-[0.2em] sm:tracking-[0.3em] text-xs sm:text-sm mb-2 sm:mb-4">Live Inventory</p>
+            <h2 className="serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-white">Featured Strains</h2>
           </motion.div>
 
           <div className="relative">
@@ -389,19 +428,19 @@ export function Landing() {
       </section>
 
       {/* Features Section */}
-      <section className="relative z-20 py-20 px-4">
+      <section className="relative z-20 py-12 sm:py-16 md:py-20 px-4">
         <div className="max-w-7xl mx-auto">
           <motion.div
-            className="text-center mb-16"
+            className="text-center mb-8 sm:mb-12 md:mb-16"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <p className="text-gold uppercase tracking-[0.3em] text-sm mb-4">Platform Capabilities</p>
-            <h2 className="serif text-5xl md:text-6xl font-semibold text-white">Built for Excellence</h2>
+            <p className="text-gold uppercase tracking-[0.2em] sm:tracking-[0.3em] text-xs sm:text-sm mb-2 sm:mb-4">Platform Capabilities</p>
+            <h2 className="serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-white">Built for Excellence</h2>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="grid sm:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
             {features.map((feature, index) => (
               <motion.div
                 key={feature.title}
@@ -411,13 +450,13 @@ export function Landing() {
                 transition={{ delay: index * 0.1 }}
               >
                 <LuxuryCard variant="glass" className="h-full">
-                  <div className="flex items-start gap-6">
-                    <div className="w-14 h-14 rounded-lg bg-gold/10 flex items-center justify-center flex-shrink-0">
-                      <feature.icon className="w-7 h-7 text-gold" />
+                  <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6">
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-lg bg-gold/10 flex items-center justify-center flex-shrink-0">
+                      <feature.icon className="w-6 h-6 sm:w-7 sm:h-7 text-gold" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-semibold text-white mb-3">{feature.title}</h3>
-                      <p className="text-white/60 leading-relaxed">{feature.description}</p>
+                      <h3 className="text-lg sm:text-xl font-semibold text-white mb-2 sm:mb-3">{feature.title}</h3>
+                      <p className="text-sm sm:text-base text-white/60 leading-relaxed">{feature.description}</p>
                     </div>
                   </div>
                 </LuxuryCard>
@@ -428,24 +467,24 @@ export function Landing() {
       </section>
 
       {/* Network Preview */}
-      <section className="relative z-20 py-20 px-4">
+      <section className="relative z-20 py-12 sm:py-16 md:py-20 px-4">
         <div className="max-w-7xl mx-auto">
           <motion.div
-            className="text-center mb-16"
+            className="text-center mb-8 sm:mb-12 md:mb-16"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <p className="text-gold uppercase tracking-[0.3em] text-sm mb-4">Our Network</p>
-            <h2 className="serif text-5xl md:text-6xl font-semibold text-white mb-6">Who We Serve</h2>
-            <p className="text-white/60 max-w-2xl mx-auto text-lg">
+            <p className="text-gold uppercase tracking-[0.2em] sm:tracking-[0.3em] text-xs sm:text-sm mb-2 sm:mb-4">Our Network</p>
+            <h2 className="serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-white mb-4 sm:mb-6">Who We Serve</h2>
+            <p className="text-white/60 max-w-2xl mx-auto text-sm sm:text-base md:text-lg px-2">
               We partner exclusively with the best in the industry. If you're{' '}
               <span className="serif italic text-gold">VOUCHED</span>, you've been{' '}
               <span className="text-white font-semibold">vetted for integrity, quality, and compliance</span>.
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
             {[
               { icon: Leaf, title: 'Cultivators', count: '340+', desc: 'Premium flower producers with full COA documentation' },
               { icon: Package, title: 'Processors', count: '180+', desc: 'Licensed extraction and manufacturing partners' },
@@ -459,12 +498,12 @@ export function Landing() {
                 transition={{ delay: index * 0.15 }}
               >
                 <LuxuryCard variant="bordered" className="text-center h-full">
-                  <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-gold/10 flex items-center justify-center">
-                    <item.icon className="w-8 h-8 text-gold" />
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 mx-auto mb-4 sm:mb-6 rounded-full bg-gold/10 flex items-center justify-center">
+                    <item.icon className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-gold" />
                   </div>
-                  <p className="text-4xl font-light text-gold mb-2">{item.count}</p>
-                  <h3 className="text-xl font-semibold text-white mb-3">{item.title}</h3>
-                  <p className="text-white/60 text-sm">{item.desc}</p>
+                  <p className="text-2xl sm:text-3xl md:text-4xl font-light text-gold mb-1 sm:mb-2">{item.count}</p>
+                  <h3 className="text-lg sm:text-xl font-semibold text-white mb-2 sm:mb-3">{item.title}</h3>
+                  <p className="text-white/60 text-xs sm:text-sm">{item.desc}</p>
                 </LuxuryCard>
               </motion.div>
             ))}
@@ -473,22 +512,22 @@ export function Landing() {
       </section>
 
       {/* CTA Section */}
-      <section className="relative z-20 py-32 px-4">
+      <section className="relative z-20 py-16 sm:py-24 md:py-32 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
           >
-            <LuxuryCard variant="elevated" className="py-16 px-8" glow>
-              <h2 className="serif text-4xl md:text-5xl font-semibold text-white mb-6">
+            <LuxuryCard variant="elevated" className="py-10 sm:py-12 md:py-16 px-4 sm:px-6 md:px-8" glow>
+              <h2 className="serif text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-white mb-4 sm:mb-6">
                 Ready to Enter the Vault?
               </h2>
-              <p className="text-white/60 text-lg mb-10 max-w-xl mx-auto">
+              <p className="text-white/60 text-sm sm:text-base md:text-lg mb-6 sm:mb-8 md:mb-10 max-w-xl mx-auto px-2">
                 Join New York's premier cannabis wholesale network. Apply for verification today.
               </p>
               <Link to={ROUTES.LOGIN}>
-                <GoldButton size="xl">
+                <GoldButton size="lg" className="w-full sm:w-auto">
                   Apply for Access
                   <ArrowRight className="ml-2 w-5 h-5 inline" />
                 </GoldButton>
@@ -499,23 +538,23 @@ export function Landing() {
       </section>
 
       {/* Footer */}
-      <footer className="relative z-20 py-12 px-4 border-t border-gold/10">
+      <footer className="relative z-20 py-8 sm:py-10 md:py-12 px-4 border-t border-gold/10">
         <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gold to-gold-dark flex items-center justify-center">
-                <Leaf className="w-4 h-4 text-void" />
+          <div className="flex flex-col items-center gap-4 sm:gap-6 md:flex-row md:justify-between">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-gold to-gold-dark flex items-center justify-center">
+                <Leaf className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-void" />
               </div>
-              <span className="serif text-xl font-semibold text-white">
+              <span className="serif text-lg sm:text-xl font-semibold text-white">
                 <span className="text-gold">V</span>OUCHED
               </span>
             </div>
 
-            <div className="flex items-center gap-8 text-sm text-white/40">
+            <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 md:gap-8 text-xs sm:text-sm text-white/40">
               <a href="#" className="hover:text-gold transition">Terms</a>
               <a href="#" className="hover:text-gold transition">Privacy</a>
               <a href="#" className="hover:text-gold transition">Contact</a>
-              <span>© 2025 VOUCHED. All rights reserved.</span>
+              <span className="w-full text-center md:w-auto">© 2025 VOUCHED</span>
             </div>
           </div>
         </div>

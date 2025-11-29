@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { 
   LineChart, 
@@ -26,7 +26,9 @@ import {
   RefreshCw,
   Zap,
   Shield,
-  TrendingUp
+  TrendingUp,
+  Menu,
+  X
 } from 'lucide-react';
 
 interface Shipment {
@@ -89,7 +91,7 @@ function ShipmentHeatmap() {
   ];
 
   return (
-    <div className="relative w-full h-[400px] bg-obsidian/50 rounded-lg overflow-hidden">
+    <div className="relative w-full h-64 sm:h-80 md:h-[400px] bg-obsidian/50 rounded-lg overflow-hidden">
       {/* NY State Outline */}
       <svg viewBox="0 0 400 300" className="absolute inset-0 w-full h-full opacity-30">
         <path
@@ -154,13 +156,13 @@ function ShipmentHeatmap() {
       </svg>
 
       {/* Legend */}
-      <div className="absolute bottom-4 left-4 flex gap-4 text-xs">
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-gold animate-pulse" />
+      <div className="absolute bottom-2 sm:bottom-4 left-2 sm:left-4 flex flex-wrap gap-2 sm:gap-4 text-xs">
+        <div className="flex items-center gap-1 sm:gap-2">
+          <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-gold animate-pulse" />
           <span className="text-white/60">High Activity</span>
         </div>
-        <div className="flex items-center gap-2">
-          <Truck className="w-3 h-3 text-gold" />
+        <div className="flex items-center gap-1 sm:gap-2">
+          <Truck className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-gold" />
           <span className="text-white/60">Active Shipment</span>
         </div>
       </div>
@@ -199,6 +201,7 @@ function ShipmentTimeline({ events }: { events: typeof timelineEvents }) {
 export function Tracking() {
   const [selectedShipment, setSelectedShipment] = useState<Shipment | null>(shipments[0]);
   const [filterStatus, setFilterStatus] = useState<string | null>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const filteredShipments = filterStatus 
     ? shipments.filter(s => s.status === filterStatus)
@@ -228,13 +231,13 @@ export function Tracking() {
     <div className="min-h-screen luxury-bg gold-veins">
       {/* Navigation */}
       <nav className="sticky top-0 z-40 bg-void/80 backdrop-blur-xl border-b border-gold/10">
-        <div className="max-w-8xl mx-auto px-6 py-4">
+        <div className="max-w-8xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
           <div className="flex items-center justify-between">
-            <Link to={ROUTES.HOME} className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gold to-gold-dark flex items-center justify-center">
-                <Leaf className="w-5 h-5 text-void" />
+            <Link to={ROUTES.HOME} className="flex items-center gap-2 sm:gap-3">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-gold to-gold-dark flex items-center justify-center">
+                <Leaf className="w-4 h-4 sm:w-5 sm:h-5 text-void" />
               </div>
-              <span className="serif text-2xl font-semibold text-white tracking-wider">
+              <span className="serif text-xl sm:text-2xl font-semibold text-white tracking-wider">
                 <span className="text-gold">V</span>OUCHED
               </span>
             </Link>
@@ -246,38 +249,73 @@ export function Tracking() {
               <Link to="/tracking" className="text-gold text-sm tracking-wider">Tracking</Link>
             </div>
 
-            <Link to={ROUTES.LOGIN}>
-              <GoldButton variant="outline" size="sm">
-                Enter Platform
-              </GoldButton>
-            </Link>
+            <div className="flex items-center gap-3">
+              <Link to={ROUTES.LOGIN} className="hidden sm:block">
+                <GoldButton variant="outline" size="sm">
+                  Enter Platform
+                </GoldButton>
+              </Link>
+              
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="md:hidden p-2 text-gold hover:bg-gold/10 rounded-lg transition"
+              >
+                {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              </button>
+            </div>
           </div>
+
+          {/* Mobile Menu */}
+          <AnimatePresence>
+            {mobileMenuOpen && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="md:hidden mt-4 bg-obsidian/95 backdrop-blur-xl border border-gold/20 rounded-xl overflow-hidden"
+              >
+                <div className="p-4 space-y-3">
+                  <Link to={ROUTES.VAULT} className="block py-2 px-4 text-white/80 hover:text-gold hover:bg-gold/5 rounded-lg transition" onClick={() => setMobileMenuOpen(false)}>Marketplace</Link>
+                  <Link to="/compliance" className="block py-2 px-4 text-white/80 hover:text-gold hover:bg-gold/5 rounded-lg transition" onClick={() => setMobileMenuOpen(false)}>Compliance</Link>
+                  <Link to="/network" className="block py-2 px-4 text-white/80 hover:text-gold hover:bg-gold/5 rounded-lg transition" onClick={() => setMobileMenuOpen(false)}>Network</Link>
+                  <Link to="/tracking" className="block py-2 px-4 text-gold bg-gold/10 rounded-lg" onClick={() => setMobileMenuOpen(false)}>Tracking</Link>
+                  <div className="pt-2 border-t border-gold/10">
+                    <Link to={ROUTES.LOGIN} className="block" onClick={() => setMobileMenuOpen(false)}>
+                      <GoldButton variant="primary" size="md" className="w-full">
+                        Enter Platform
+                      </GoldButton>
+                    </Link>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="relative py-20 px-6">
+      <section className="relative py-12 sm:py-16 md:py-20 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto">
           <motion.div
-            className="text-center mb-16"
+            className="text-center mb-8 sm:mb-12 md:mb-16"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-gold/10 rounded-full mb-6">
-              <Navigation className="w-4 h-4 text-gold" />
-              <span className="text-gold text-sm uppercase tracking-wider">Live Tracking</span>
+            <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-gold/10 rounded-full mb-4 sm:mb-6">
+              <Navigation className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gold" />
+              <span className="text-gold text-xs sm:text-sm uppercase tracking-wider">Live Tracking</span>
             </div>
-            <h1 className="serif text-5xl md:text-6xl font-semibold text-white mb-6">
+            <h1 className="serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-white mb-4 sm:mb-6 px-2">
               Shipment <span className="text-gold">Tracking</span>
             </h1>
-            <p className="text-white/60 text-lg max-w-2xl mx-auto">
+            <p className="text-white/60 text-sm sm:text-base md:text-lg max-w-2xl mx-auto px-2">
               Real-time GPS tracking with Grok-forecasted ETAs, Metrc manifests, 
               and proof-of-delivery documentation.
             </p>
           </motion.div>
 
           {/* Stats Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 mb-8 sm:mb-12">
             {deliveryStats.map((stat, index) => (
               <motion.div
                 key={stat.label}
@@ -285,9 +323,9 @@ export function Tracking() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
               >
-                <LuxuryCard variant="glass" className="text-center py-6">
-                  <stat.icon className="w-8 h-8 text-gold mx-auto mb-3" />
-                  <p className="text-3xl md:text-4xl font-light text-gold mb-1">
+                <LuxuryCard variant="glass" className="text-center py-4 sm:py-5 md:py-6 px-2 sm:px-4">
+                  <stat.icon className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-gold mx-auto mb-2 sm:mb-3" />
+                  <p className="text-2xl sm:text-3xl md:text-4xl font-light text-gold mb-1">
                     <AnimatedCounter 
                       value={stat.value} 
                       prefix={stat.prefix} 
@@ -305,22 +343,23 @@ export function Tracking() {
       </section>
 
       {/* Heatmap Section */}
-      <section className="py-12 px-6">
+      <section className="py-8 sm:py-12 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto">
           <LuxuryCard variant="elevated">
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0 mb-4 sm:mb-6">
               <div>
-                <h3 className="text-xl font-semibold text-white">GPS Heatmap</h3>
-                <p className="text-white/50 text-sm">Real-time shipment activity across New York</p>
+                <h3 className="text-lg sm:text-xl font-semibold text-white">GPS Heatmap</h3>
+                <p className="text-white/50 text-xs sm:text-sm">Real-time shipment activity across New York</p>
               </div>
-              <div className="flex gap-3">
+              <div className="flex gap-2 sm:gap-3">
                 <GoldButton variant="ghost" size="sm">
-                  <RefreshCw className="w-4 h-4 mr-1" />
-                  Refresh
+                  <RefreshCw className="w-4 h-4 sm:mr-1" />
+                  <span className="hidden sm:inline">Refresh</span>
                 </GoldButton>
                 <GoldButton variant="secondary" size="sm">
-                  <Zap className="w-4 h-4 mr-1" />
-                  AI Forecast
+                  <Zap className="w-4 h-4 sm:mr-1" />
+                  <span className="hidden sm:inline">AI Forecast</span>
+                  <span className="sm:hidden">AI</span>
                 </GoldButton>
               </div>
             </div>
@@ -330,23 +369,23 @@ export function Tracking() {
       </section>
 
       {/* Shipments & Timeline */}
-      <section className="py-12 px-6">
+      <section className="py-8 sm:py-12 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-3 gap-8">
+          <div className="grid lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
             {/* Shipment List */}
             <div className="lg:col-span-2">
               <LuxuryCard variant="elevated">
-                <div className="flex items-center justify-between mb-6">
+                <div className="flex flex-col gap-3 sm:gap-0 sm:flex-row sm:items-center justify-between mb-4 sm:mb-6">
                   <div>
-                    <h3 className="text-xl font-semibold text-white">Active Shipments</h3>
-                    <p className="text-white/50 text-sm">Click to view details</p>
+                    <h3 className="text-lg sm:text-xl font-semibold text-white">Active Shipments</h3>
+                    <p className="text-white/50 text-xs sm:text-sm">Click to view details</p>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-1 sm:gap-2">
                     {['all', 'in_transit', 'delivered', 'pending', 'delayed'].map((status) => (
                       <button
                         key={status}
                         onClick={() => setFilterStatus(status === 'all' ? null : status)}
-                        className={`px-3 py-1 text-xs rounded capitalize ${
+                        className={`px-2 sm:px-3 py-1 text-xs rounded capitalize ${
                           (status === 'all' && !filterStatus) || filterStatus === status
                             ? 'bg-gold text-void'
                             : 'bg-obsidian text-white/60 hover:text-white'
@@ -358,7 +397,7 @@ export function Tracking() {
                   </div>
                 </div>
 
-                <div className="space-y-4">
+                <div className="space-y-3 sm:space-y-4">
                   {filteredShipments.map((shipment, index) => {
                     const StatusIcon = getStatusIcon(shipment.status);
                     return (
@@ -368,37 +407,37 @@ export function Tracking() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.05 }}
                         onClick={() => setSelectedShipment(shipment)}
-                        className={`p-4 rounded-lg border cursor-pointer transition ${
+                        className={`p-3 sm:p-4 rounded-lg border cursor-pointer transition ${
                           selectedShipment?.id === shipment.id
                             ? 'bg-gold/10 border-gold/40'
                             : 'bg-obsidian/50 border-gold/10 hover:border-gold/30'
                         }`}
                       >
-                        <div className="flex items-center justify-between mb-3">
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center">
-                              <Truck className="w-5 h-5 text-gold" />
+                        <div className="flex items-center justify-between mb-2 sm:mb-3">
+                          <div className="flex items-center gap-2 sm:gap-3">
+                            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gold/10 flex items-center justify-center">
+                              <Truck className="w-4 h-4 sm:w-5 sm:h-5 text-gold" />
                             </div>
                             <div>
-                              <p className="text-white font-medium">{shipment.id}</p>
+                              <p className="text-white font-medium text-sm sm:text-base">{shipment.id}</p>
                               <p className="text-white/40 text-xs">{shipment.carrier}</p>
                             </div>
                           </div>
-                          <span className={`inline-flex items-center gap-1 px-2 py-1 rounded text-xs uppercase ${getStatusColor(shipment.status)}`}>
+                          <span className={`inline-flex items-center gap-1 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-xs uppercase ${getStatusColor(shipment.status)}`}>
                             <StatusIcon className="w-3 h-3" />
-                            {shipment.status.replace('_', ' ')}
+                            <span className="hidden sm:inline">{shipment.status.replace('_', ' ')}</span>
                           </span>
                         </div>
 
-                        <div className="flex items-center gap-2 text-sm text-white/60 mb-3">
-                          <MapPin className="w-4 h-4 text-gold/60" />
+                        <div className="flex flex-wrap items-center gap-1 sm:gap-2 text-xs sm:text-sm text-white/60 mb-2 sm:mb-3">
+                          <MapPin className="w-3 h-3 sm:w-4 sm:h-4 text-gold/60" />
                           <span>{shipment.origin}</span>
-                          <ArrowRight className="w-4 h-4" />
+                          <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4" />
                           <span>{shipment.destination}</span>
                         </div>
 
                         {/* Progress Bar */}
-                        <div className="relative h-2 bg-obsidian rounded-full overflow-hidden mb-3">
+                        <div className="relative h-1.5 sm:h-2 bg-obsidian rounded-full overflow-hidden mb-2 sm:mb-3">
                           <motion.div
                             className="absolute inset-y-0 left-0 bg-gradient-to-r from-gold-dark to-gold rounded-full"
                             initial={{ width: 0 }}
@@ -421,23 +460,23 @@ export function Tracking() {
             {/* Timeline */}
             <div>
               <LuxuryCard variant="elevated" className="h-full">
-                <div className="flex items-center justify-between mb-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0 mb-4 sm:mb-6">
                   <div>
-                    <h3 className="text-xl font-semibold text-white">Shipment Timeline</h3>
-                    <p className="text-white/50 text-sm">{selectedShipment?.id || 'Select a shipment'}</p>
+                    <h3 className="text-lg sm:text-xl font-semibold text-white">Shipment Timeline</h3>
+                    <p className="text-white/50 text-xs sm:text-sm">{selectedShipment?.id || 'Select a shipment'}</p>
                   </div>
                   <GoldButton variant="ghost" size="sm">
-                    <FileText className="w-4 h-4 mr-1" />
-                    Manifest
+                    <FileText className="w-4 h-4 sm:mr-1" />
+                    <span className="hidden sm:inline">Manifest</span>
                   </GoldButton>
                 </div>
 
                 {selectedShipment ? (
                   <ShipmentTimeline events={timelineEvents} />
                 ) : (
-                  <div className="flex flex-col items-center justify-center py-12 text-center">
-                    <Package className="w-16 h-16 text-gold/30 mb-4" />
-                    <p className="text-white/50">Select a shipment to view timeline</p>
+                  <div className="flex flex-col items-center justify-center py-8 sm:py-12 text-center">
+                    <Package className="w-12 h-12 sm:w-16 sm:h-16 text-gold/30 mb-3 sm:mb-4" />
+                    <p className="text-white/50 text-sm">Select a shipment to view timeline</p>
                   </div>
                 )}
               </LuxuryCard>
@@ -447,20 +486,20 @@ export function Tracking() {
       </section>
 
       {/* ETA Predictions Chart */}
-      <section className="py-12 px-6">
+      <section className="py-8 sm:py-12 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto">
           <LuxuryCard variant="elevated">
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0 mb-4 sm:mb-6">
               <div>
-                <h3 className="text-xl font-semibold text-white">Delivery Forecast</h3>
-                <p className="text-white/50 text-sm">Grok-powered ETA predictions for today</p>
+                <h3 className="text-lg sm:text-xl font-semibold text-white">Delivery Forecast</h3>
+                <p className="text-white/50 text-xs sm:text-sm">Grok-powered ETA predictions for today</p>
               </div>
-              <div className="flex items-center gap-2 text-sm text-gold">
-                <Zap className="w-4 h-4" />
+              <div className="flex items-center gap-2 text-xs sm:text-sm text-gold">
+                <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 <span>AI-Powered</span>
               </div>
             </div>
-            <div className="h-64">
+            <div className="h-48 sm:h-56 md:h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={etaData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#333" />
@@ -489,19 +528,19 @@ export function Tracking() {
       </section>
 
       {/* Features */}
-      <section className="py-20 px-6">
+      <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto">
           <motion.div
-            className="text-center mb-12"
+            className="text-center mb-8 sm:mb-10 md:mb-12"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <p className="text-gold uppercase tracking-[0.3em] text-sm mb-4">Advanced Features</p>
-            <h2 className="serif text-4xl md:text-5xl font-semibold text-white">Tracking Intelligence</h2>
+            <p className="text-gold uppercase tracking-[0.2em] sm:tracking-[0.3em] text-xs sm:text-sm mb-3 sm:mb-4">Advanced Features</p>
+            <h2 className="serif text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-white">Tracking Intelligence</h2>
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
             {[
               { icon: Navigation, title: 'GPS Heatmap', desc: 'Real-time visualization of all active shipments across New York State.' },
               { icon: Zap, title: 'AI Forecasting', desc: 'Grok-powered ETA predictions with 98% accuracy for delivery planning.' },
@@ -515,11 +554,11 @@ export function Tracking() {
                 transition={{ delay: index * 0.1 }}
               >
                 <LuxuryCard variant="glass" className="text-center h-full">
-                  <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-gold/10 flex items-center justify-center">
-                    <feature.icon className="w-8 h-8 text-gold" />
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 mx-auto mb-4 sm:mb-5 md:mb-6 rounded-full bg-gold/10 flex items-center justify-center">
+                    <feature.icon className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-gold" />
                   </div>
-                  <h3 className="text-xl font-semibold text-white mb-3">{feature.title}</h3>
-                  <p className="text-white/60">{feature.desc}</p>
+                  <h3 className="text-lg sm:text-xl font-semibold text-white mb-2 sm:mb-3">{feature.title}</h3>
+                  <p className="text-white/60 text-sm sm:text-base">{feature.desc}</p>
                 </LuxuryCard>
               </motion.div>
             ))}
@@ -528,22 +567,22 @@ export function Tracking() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-6 border-t border-gold/10">
+      <footer className="py-8 sm:py-10 md:py-12 px-4 sm:px-6 border-t border-gold/10">
         <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="flex items-center gap-3">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 sm:gap-6">
+            <div className="flex items-center gap-2 sm:gap-3">
               <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gold to-gold-dark flex items-center justify-center">
                 <Leaf className="w-4 h-4 text-void" />
               </div>
-              <span className="serif text-xl font-semibold text-white">
+              <span className="serif text-lg sm:text-xl font-semibold text-white">
                 <span className="text-gold">V</span>OUCHED
               </span>
             </div>
-            <div className="flex items-center gap-8 text-sm text-white/40">
+            <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-xs sm:text-sm text-white/40">
               <a href="#" className="hover:text-gold transition">Terms</a>
               <a href="#" className="hover:text-gold transition">Privacy</a>
               <a href="#" className="hover:text-gold transition">Contact</a>
-              <span>© 2025 VOUCHED. All rights reserved.</span>
+              <span className="w-full sm:w-auto text-center">© 2025 VOUCHED. All rights reserved.</span>
             </div>
           </div>
         </div>
