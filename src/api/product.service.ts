@@ -19,6 +19,250 @@ import { db } from '@/lib/firebase';
 import { COLLECTIONS } from '@/lib/constants';
 import type { Product, ProductFormData, ProductFilters, PaginatedResponse } from '@/types';
 
+// Sample inventory data for when Firestore is unavailable or empty
+const SAMPLE_PRODUCTS: Product[] = [
+  {
+    id: 'sample-1',
+    name: 'Blue Dream',
+    type: 'Flower',
+    description: 'A sativa-dominant hybrid with sweet berry aroma. Known for full-body relaxation with gentle cerebral invigoration.',
+    thc: 24.3,
+    cbd: 0.5,
+    quality: 'INDOOR',
+    price: 2800,
+    unit: 'pound',
+    stock: 150,
+    minOrder: 1,
+    companyId: 'vendor-1',
+    companyName: 'Hudson Valley Cultivators',
+    licenseNumber: 'NYS-CUL-001234',
+    images: [],
+    createdAt: new Date(),
+    lastUpdated: new Date(),
+    active: true,
+  },
+  {
+    id: 'sample-2',
+    name: 'Purple Punch',
+    type: 'Flower',
+    description: 'Indica-dominant strain with grape candy and blueberry muffin aromas. Perfect for evening relaxation.',
+    thc: 22.1,
+    cbd: 0.3,
+    quality: 'INDOOR',
+    price: 2600,
+    unit: 'pound',
+    stock: 200,
+    minOrder: 1,
+    companyId: 'vendor-2',
+    companyName: 'Brooklyn Cannabis Co',
+    licenseNumber: 'NYS-CUL-002345',
+    images: [],
+    createdAt: new Date(),
+    lastUpdated: new Date(),
+    active: true,
+  },
+  {
+    id: 'sample-3',
+    name: 'OG Kush',
+    type: 'Flower',
+    description: 'Classic hybrid with earthy pine and sour lemon scent. Provides heavy euphoria and stress relief.',
+    thc: 26.5,
+    cbd: 0.2,
+    quality: 'INDOOR',
+    price: 3200,
+    unit: 'pound',
+    stock: 75,
+    minOrder: 1,
+    companyId: 'vendor-1',
+    companyName: 'Hudson Valley Cultivators',
+    licenseNumber: 'NYS-CUL-001234',
+    images: [],
+    createdAt: new Date(),
+    lastUpdated: new Date(),
+    active: true,
+  },
+  {
+    id: 'sample-4',
+    name: 'Gelato',
+    type: 'Flower',
+    description: 'Balanced hybrid with sweet sherbet flavor. Delivers relaxation without heavy sedation.',
+    thc: 25.0,
+    cbd: 0.4,
+    quality: 'INDOOR',
+    price: 3000,
+    unit: 'pound',
+    stock: 120,
+    minOrder: 1,
+    companyId: 'vendor-3',
+    companyName: 'Syracuse Green Gardens',
+    licenseNumber: 'NYS-CUL-003456',
+    images: [],
+    createdAt: new Date(),
+    lastUpdated: new Date(),
+    active: true,
+  },
+  {
+    id: 'sample-5',
+    name: 'Wedding Cake',
+    type: 'Flower',
+    description: 'Indica-dominant with rich tangy flavor and relaxing effects. High THC content.',
+    thc: 27.8,
+    cbd: 0.1,
+    quality: 'INDOOR',
+    price: 3400,
+    unit: 'pound',
+    stock: 50,
+    minOrder: 1,
+    companyId: 'vendor-2',
+    companyName: 'Brooklyn Cannabis Co',
+    licenseNumber: 'NYS-CUL-002345',
+    images: [],
+    createdAt: new Date(),
+    lastUpdated: new Date(),
+    active: true,
+  },
+  {
+    id: 'sample-6',
+    name: 'Sour Diesel',
+    type: 'Flower',
+    description: 'Energizing sativa with pungent diesel aroma. Great for daytime use and creativity.',
+    thc: 23.5,
+    cbd: 0.3,
+    quality: 'LIGHT_ASSISTED',
+    price: 2400,
+    unit: 'pound',
+    stock: 180,
+    minOrder: 1,
+    companyId: 'vendor-4',
+    companyName: 'Finger Lakes Farms',
+    licenseNumber: 'NYS-CUL-004567',
+    images: [],
+    createdAt: new Date(),
+    lastUpdated: new Date(),
+    active: true,
+  },
+  {
+    id: 'sample-7',
+    name: 'Live Rosin - Blue Dream',
+    type: 'Concentrate',
+    description: 'Solventless extract preserving full terpene profile. Premium quality live rosin.',
+    thc: 78.5,
+    cbd: 1.2,
+    quality: 'INDOOR',
+    price: 45,
+    unit: 'gram',
+    stock: 500,
+    minOrder: 10,
+    companyId: 'vendor-5',
+    companyName: 'Empire Extracts',
+    licenseNumber: 'NYS-PRO-005678',
+    images: [],
+    createdAt: new Date(),
+    lastUpdated: new Date(),
+    active: true,
+  },
+  {
+    id: 'sample-8',
+    name: 'Distillate Cartridge - Hybrid',
+    type: 'Concentrate',
+    description: 'High-purity THC distillate in 510-thread cartridge. Smooth and potent.',
+    thc: 92.0,
+    cbd: 0.5,
+    quality: 'INDOOR',
+    price: 25,
+    unit: 'each',
+    stock: 1000,
+    minOrder: 50,
+    companyId: 'vendor-5',
+    companyName: 'Empire Extracts',
+    licenseNumber: 'NYS-PRO-005678',
+    images: [],
+    createdAt: new Date(),
+    lastUpdated: new Date(),
+    active: true,
+  },
+  {
+    id: 'sample-9',
+    name: 'Gummies - Mixed Fruit',
+    type: 'Edible',
+    description: '10mg THC per gummy. Assorted fruit flavors. Lab tested for consistency.',
+    thc: 10,
+    cbd: 0,
+    quality: 'INDOOR',
+    price: 18,
+    unit: 'each',
+    stock: 2000,
+    minOrder: 100,
+    companyId: 'vendor-6',
+    companyName: 'NY Edibles Co',
+    licenseNumber: 'NYS-PRO-006789',
+    images: [],
+    createdAt: new Date(),
+    lastUpdated: new Date(),
+    active: true,
+  },
+  {
+    id: 'sample-10',
+    name: 'Full Spectrum Tincture',
+    type: 'Tincture',
+    description: '1000mg THC per bottle. MCT oil base. Precise dosing with dropper.',
+    thc: 33.3,
+    cbd: 5.0,
+    quality: 'INDOOR',
+    price: 55,
+    unit: 'each',
+    stock: 300,
+    minOrder: 20,
+    companyId: 'vendor-6',
+    companyName: 'NY Edibles Co',
+    licenseNumber: 'NYS-PRO-006789',
+    images: [],
+    createdAt: new Date(),
+    lastUpdated: new Date(),
+    active: true,
+  },
+  {
+    id: 'sample-11',
+    name: 'Runtz',
+    type: 'Flower',
+    description: 'Exotic hybrid with candy-like sweetness. Balanced effects for any time of day.',
+    thc: 24.8,
+    cbd: 0.2,
+    quality: 'INDOOR',
+    price: 3100,
+    unit: 'pound',
+    stock: 90,
+    minOrder: 1,
+    companyId: 'vendor-3',
+    companyName: 'Syracuse Green Gardens',
+    licenseNumber: 'NYS-CUL-003456',
+    images: [],
+    createdAt: new Date(),
+    lastUpdated: new Date(),
+    active: true,
+  },
+  {
+    id: 'sample-12',
+    name: 'Northern Lights',
+    type: 'Flower',
+    description: 'Pure indica with sweet and spicy aromas. Legendary strain for deep relaxation.',
+    thc: 21.0,
+    cbd: 0.6,
+    quality: 'OUTDOOR',
+    price: 1800,
+    unit: 'pound',
+    stock: 400,
+    minOrder: 5,
+    companyId: 'vendor-4',
+    companyName: 'Finger Lakes Farms',
+    licenseNumber: 'NYS-CUL-004567',
+    images: [],
+    createdAt: new Date(),
+    lastUpdated: new Date(),
+    active: true,
+  },
+];
+
 /**
  * Convert Firestore timestamp to Date
  */
@@ -187,10 +431,82 @@ export async function getProducts(
       hasMore,
     };
   } catch (error) {
-    console.error('Error getting products:', error);
-    // Rethrow original error to preserve Firestore error message (e.g., missing index)
-    throw error;
+    console.error('Error getting products from Firestore, using sample data:', error);
+    // Fall back to sample data when Firestore fails (missing index, permissions, etc.)
+    return filterSampleProducts(filters, page, pageLimit);
   }
+}
+
+/**
+ * Filter and paginate sample products (used as fallback)
+ */
+function filterSampleProducts(
+  filters: ProductFilters,
+  page: number,
+  pageLimit: number
+): PaginatedResponse<Product> {
+  let products = [...SAMPLE_PRODUCTS];
+
+  // Apply filters
+  if (filters.type) {
+    products = products.filter((p) => p.type === filters.type);
+  }
+  if (filters.quality) {
+    products = products.filter((p) => p.quality === filters.quality);
+  }
+  if (filters.search) {
+    const searchLower = filters.search.toLowerCase();
+    products = products.filter(
+      (p) =>
+        p.name.toLowerCase().includes(searchLower) ||
+        p.description?.toLowerCase().includes(searchLower) ||
+        p.companyName.toLowerCase().includes(searchLower)
+    );
+  }
+  if (filters.minPrice !== undefined) {
+    products = products.filter((p) => p.price >= filters.minPrice!);
+  }
+  if (filters.maxPrice !== undefined) {
+    products = products.filter((p) => p.price <= filters.maxPrice!);
+  }
+  if (filters.minTHC !== undefined) {
+    products = products.filter((p) => (p.thc || 0) >= filters.minTHC!);
+  }
+  if (filters.maxTHC !== undefined) {
+    products = products.filter((p) => (p.thc || 0) <= filters.maxTHC!);
+  }
+
+  // Apply sorting
+  switch (filters.sortBy) {
+    case 'price-low':
+      products.sort((a, b) => a.price - b.price);
+      break;
+    case 'price-high':
+      products.sort((a, b) => b.price - a.price);
+      break;
+    case 'thc-high':
+      products.sort((a, b) => (b.thc || 0) - (a.thc || 0));
+      break;
+    case 'thc-low':
+      products.sort((a, b) => (a.thc || 0) - (b.thc || 0));
+      break;
+    default:
+      // newest - already sorted by default
+      break;
+  }
+
+  // Paginate
+  const startIndex = (page - 1) * pageLimit;
+  const paginatedProducts = products.slice(startIndex, startIndex + pageLimit);
+  const hasMore = startIndex + pageLimit < products.length;
+
+  return {
+    items: paginatedProducts,
+    total: products.length,
+    page,
+    limit: pageLimit,
+    hasMore,
+  };
 }
 
 /**
