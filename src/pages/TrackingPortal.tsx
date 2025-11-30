@@ -70,7 +70,7 @@ export function TrackingPortal() {
   const [selectedShipment, setSelectedShipment] = useState<Shipment | null>(null);
 
   // AI Assistant view configuration
-  const [viewConfig, setViewConfig] = useState<ViewConfiguration>({
+  const [_viewConfig, setViewConfig] = useState<ViewConfiguration>({
     layout: 'list',
     density: 'comfortable',
   });

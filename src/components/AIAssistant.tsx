@@ -1,7 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Button } from './ui';
 import {
-  MessageSquare,
   Send,
   X,
   Minimize2,

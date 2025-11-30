@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { ViewConfiguration, ColumnConfig } from '@/services/aiAssistant';
-import { Card, Button } from './ui';
+import { Card } from './ui';
 import { ArrowUpDown, Eye, EyeOff } from 'lucide-react';
 
 interface DynamicViewProps<T = any> {

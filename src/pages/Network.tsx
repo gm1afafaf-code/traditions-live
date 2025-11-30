@@ -69,7 +69,7 @@ export function Network() {
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
 
   // AI Assistant view configuration
-  const [viewConfig, setViewConfig] = useState<ViewConfiguration>({
+  const [_viewConfig, setViewConfig] = useState<ViewConfiguration>({
     layout: 'grid',
     density: 'comfortable',
   });
