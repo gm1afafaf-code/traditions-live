@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useAuth } from '@/hooks';
 import { AppLayout } from '@/components/layout';
 import { Card, Button, Input, Select, Modal } from '@/components/ui';
+import { AIAssistant } from '@/components/AIAssistant';
+import type { ViewConfiguration } from '@/services/aiAssistant';
 import {
   Users,
   Building2,
@@ -78,6 +80,16 @@ export function SalesCRM() {
   const [isCustomerModalOpen, setIsCustomerModalOpen] = useState(false);
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
+
+  // AI Assistant view configuration
+  const [viewConfig, setViewConfig] = useState<ViewConfiguration>({
+    layout: 'table',
+    density: 'comfortable',
+  });
+
+  const handleViewConfigChange = (newConfig: ViewConfiguration) => {
+    setViewConfig(newConfig);
+  };
 
   // Mock data
   const mockCustomers: Customer[] = [
@@ -723,6 +735,12 @@ export function SalesCRM() {
           </div>
         </div>
       </Modal>
+
+      {/* AI Assistant */}
+      <AIAssistant
+        portalType="sales"
+        onViewConfigChange={handleViewConfigChange}
+      />
     </AppLayout>
   );
 }

@@ -2,6 +2,9 @@ import { useState } from 'react';
 import { useAuth } from '@/hooks';
 import { AppLayout } from '@/components/layout';
 import { Card, Button, Input, Select, Modal } from '@/components/ui';
+import { AIAssistant } from '@/components/AIAssistant';
+import { DynamicView } from '@/components/DynamicView';
+import type { ViewConfiguration } from '@/services/aiAssistant';
 import {
   Shield,
   Package,
@@ -102,6 +105,16 @@ export function CompliancePortal() {
   const [isPlantBatchModalOpen, setIsPlantBatchModalOpen] = useState(false);
   const [isPackageModalOpen, setIsPackageModalOpen] = useState(false);
   const [isManifestModalOpen, setIsManifestModalOpen] = useState(false);
+
+  // AI Assistant view configuration
+  const [viewConfig, setViewConfig] = useState<ViewConfiguration>({
+    layout: 'table',
+    density: 'comfortable',
+  });
+
+  const handleViewConfigChange = (newConfig: ViewConfiguration) => {
+    setViewConfig(newConfig);
+  };
 
   // Mock data - will be replaced with real METRC API calls
   const mockPlantBatches: PlantBatch[] = [
@@ -520,7 +533,7 @@ export function CompliancePortal() {
                 </Card>
               </div>
 
-              {/* Packages Table */}
+              {/* Packages Table - Dynamic View with AI Assistant */}
               <Card className="p-6">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-lg font-semibold text-charcoal">METRC Packages</h2>
@@ -536,48 +549,11 @@ export function CompliancePortal() {
                   </div>
                 </div>
 
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b border-gold/10 text-left">
-                        <th className="pb-3 text-sm font-medium text-slate">Package UID</th>
-                        <th className="pb-3 text-sm font-medium text-slate">Product</th>
-                        <th className="pb-3 text-sm font-medium text-slate">Type</th>
-                        <th className="pb-3 text-sm font-medium text-slate">Quantity</th>
-                        <th className="pb-3 text-sm font-medium text-slate">THC%</th>
-                        <th className="pb-3 text-sm font-medium text-slate">CBD%</th>
-                        <th className="pb-3 text-sm font-medium text-slate">Retail ID</th>
-                        <th className="pb-3 text-sm font-medium text-slate">Status</th>
-                        <th className="pb-3 text-sm font-medium text-slate">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {mockPackages.map((pkg) => (
-                        <tr key={pkg.id} className="border-b border-gold/5 hover:bg-gold/5">
-                          <td className="py-3 text-sm font-mono text-charcoal">{pkg.label}</td>
-                          <td className="py-3 text-sm text-charcoal">{pkg.productName}</td>
-                          <td className="py-3 text-sm text-slate">{pkg.type}</td>
-                          <td className="py-3 text-sm text-slate">
-                            {pkg.quantity} {pkg.unit}
-                          </td>
-                          <td className="py-3 text-sm text-charcoal font-medium">{pkg.thc?.toFixed(1)}%</td>
-                          <td className="py-3 text-sm text-charcoal">{pkg.cbd?.toFixed(1)}%</td>
-                          <td className="py-3 text-sm font-mono text-slate">{pkg.retailItemId || '—'}</td>
-                          <td className="py-3">
-                            <span className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(pkg.status)}`}>
-                              {pkg.status}
-                            </span>
-                          </td>
-                          <td className="py-3">
-                            <Button variant="ghost" size="sm">
-                              Details
-                            </Button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                <DynamicView
+                  data={mockPackages}
+                  config={viewConfig}
+                  onItemClick={(pkg) => console.log('Package clicked:', pkg)}
+                />
               </Card>
             </div>
           )}
@@ -833,6 +809,12 @@ export function CompliancePortal() {
           </div>
         </div>
       </Modal>
+
+      {/* AI Assistant */}
+      <AIAssistant
+        portalType="compliance"
+        onViewConfigChange={handleViewConfigChange}
+      />
     </AppLayout>
   );
 }

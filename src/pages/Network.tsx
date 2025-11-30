@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useAuth } from '@/hooks';
 import { AppLayout } from '@/components/layout';
 import { Card, Button, Input, Modal } from '@/components/ui';
+import { AIAssistant } from '@/components/AIAssistant';
+import type { ViewConfiguration } from '@/services/aiAssistant';
 import {
   Building2,
   Search,
@@ -65,6 +67,16 @@ export function Network() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedBusiness, setSelectedBusiness] = useState<NetworkBusiness | null>(null);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+
+  // AI Assistant view configuration
+  const [viewConfig, setViewConfig] = useState<ViewConfiguration>({
+    layout: 'grid',
+    density: 'comfortable',
+  });
+
+  const handleViewConfigChange = (newConfig: ViewConfiguration) => {
+    setViewConfig(newConfig);
+  };
 
   // Mock data - would come from Firebase/API
   const mockBusinesses: NetworkBusiness[] = [
@@ -519,6 +531,12 @@ export function Network() {
           </div>
         )}
       </Modal>
+
+      {/* AI Assistant */}
+      <AIAssistant
+        portalType="network"
+        onViewConfigChange={handleViewConfigChange}
+      />
     </AppLayout>
   );
 }
