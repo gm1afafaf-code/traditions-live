@@ -56,6 +56,10 @@ export const ROUTES = {
   BROKER_DASHBOARD: '/broker',
   VENDOR_PORTAL: '/vendor',
   SETTINGS: '/settings',
+  COMPLIANCE: '/compliance',
+  TRACKING: '/tracking',
+  COMPLIANCE_PORTAL: '/portal/compliance',
+  TRACKING_PORTAL: '/portal/tracking',
 } as const;
 
 // Validation Rules

@@ -70,6 +70,17 @@ export interface License {
   county?: string;
 }
 
+export interface LicenseVerificationResult {
+  licenseNumber: string;
+  companyName: string;
+  licenseHolder: string;
+  licenseType: string;
+  city: string;
+  state: string;
+  address: string;
+  verifiedByGrok?: boolean;
+}
+
 // UI State Types
 export interface LoadingState {
   isLoading: boolean;

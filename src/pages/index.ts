@@ -5,3 +5,7 @@ export { PendingApproval } from './PendingApproval';
 export { Vault } from './Vault';
 export { BrokerDashboard } from './BrokerDashboard';
 export { AdminDashboard } from './AdminDashboard';
+export { Compliance } from './Compliance';
+export { Tracking } from './Tracking';
+export { CompliancePortal } from './CompliancePortal';
+export { TrackingPortal } from './TrackingPortal';

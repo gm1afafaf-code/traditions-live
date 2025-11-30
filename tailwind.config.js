@@ -18,6 +18,9 @@ export default {
         slate: '#404040',
         gold: '#b8a369',
         'gold-muted': '#c4b896',
+        'gold-dark': '#a08d5c',
+        void: '#0a0a0a',
+        obsidian: '#1a1a1a',
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
