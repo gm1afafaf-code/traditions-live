@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks';
 import { ROUTES } from '@/lib/constants';
 import { Loading } from '@/components/ui';
@@ -24,8 +24,22 @@ function App() {
         {/* Public Routes */}
         <Route path={ROUTES.HOME} element={<Landing />} />
         <Route path={ROUTES.LOGIN} element={<Login />} />
-        <Route path={ROUTES.COMPLIANCE} element={<Compliance />} />
-        <Route path={ROUTES.TRACKING} element={<Tracking />} />
+        <Route
+          path={ROUTES.COMPLIANCE}
+          element={
+            <PublicOnlyRoute>
+              <Compliance />
+            </PublicOnlyRoute>
+          }
+        />
+        <Route
+          path={ROUTES.TRACKING}
+          element={
+            <PublicOnlyRoute>
+              <Tracking />
+            </PublicOnlyRoute>
+          }
+        />
 
         {/* Protected Routes */}
         <Route
@@ -95,6 +109,35 @@ function App() {
       </Routes>
     </BrowserRouter>
   );
+}
+
+interface PublicOnlyRouteProps {
+  children: React.ReactNode;
+}
+
+function PublicOnlyRoute({ children }: PublicOnlyRouteProps) {
+  const { isAuthenticated, isLoading } = useAuth();
+  const location = useLocation();
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-marble flex items-center justify-center">
+        <Loading size="lg" text="Loading..." />
+      </div>
+    );
+  }
+
+  // If authenticated and on marketing page, redirect to portal version
+  if (isAuthenticated) {
+    if (location.pathname === ROUTES.COMPLIANCE) {
+      return <Navigate to={ROUTES.COMPLIANCE_PORTAL} replace />;
+    }
+    if (location.pathname === ROUTES.TRACKING) {
+      return <Navigate to={ROUTES.TRACKING_PORTAL} replace />;
+    }
+  }
+
+  return <>{children}</>;
 }
 
 interface ProtectedRouteProps {
