@@ -8,7 +8,6 @@ export { AdminDashboard } from './AdminDashboard';
 export { Compliance } from './Compliance';
 export { Network } from './Network';
 export { Tracking } from './Tracking';
-export { Network } from './Network';
 export { CompliancePortal } from './CompliancePortal';
 export { TrackingPortal } from './TrackingPortal';
 export { SalesCRM } from './SalesCRM';

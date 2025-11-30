@@ -82,7 +82,7 @@ export function SalesCRM() {
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
 
   // AI Assistant view configuration
-  const [viewConfig, setViewConfig] = useState<ViewConfiguration>({
+  const [_viewConfig, setViewConfig] = useState<ViewConfiguration>({
     layout: 'table',
     density: 'comfortable',
   });

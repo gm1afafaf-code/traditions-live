@@ -66,7 +66,6 @@ export interface GroupConfig {
 }
 
 class AIAssistantService {
-  private apiKey: string = '';
   private conversationHistory: Array<{ role: 'user' | 'assistant'; content: string }> = [];
 
   // This would integrate with Claude API, GPT, or similar
@@ -207,7 +206,7 @@ class AIAssistantService {
     };
   }
 
-  private async handleMetrcStyle(prompt: string, context?: any): Promise<AIResponse> {
+  private async handleMetrcStyle(_prompt: string, _context?: any): Promise<AIResponse> {
     const viewConfig: ViewConfiguration = {
       layout: 'table',
       density: 'compact',
@@ -234,7 +233,7 @@ class AIAssistantService {
     };
   }
 
-  private async handleDataQuery(prompt: string, context?: any): Promise<AIResponse> {
+  private async handleDataQuery(prompt: string, _context?: any): Promise<AIResponse> {
     const lowerPrompt = prompt.toLowerCase();
 
     // Example queries
@@ -269,7 +268,7 @@ class AIAssistantService {
     };
   }
 
-  private async handleDocumentGeneration(prompt: string, context?: any): Promise<AIResponse> {
+  private async handleDocumentGeneration(prompt: string, _context?: any): Promise<AIResponse> {
     const lowerPrompt = prompt.toLowerCase();
 
     // Transfer Manifest
@@ -360,9 +359,8 @@ class AIAssistantService {
     };
   }
 
-  private async handlePurchaseOrder(prompt: string, context?: any): Promise<AIResponse> {
+  private async handlePurchaseOrder(prompt: string, _context?: any): Promise<AIResponse> {
     // Parse purchase order details from natural language
-    const lowerPrompt = prompt.toLowerCase();
 
     // Extract product names, quantities, and prices using pattern matching
     const items = this.parsePurchaseOrderItems(prompt);
@@ -400,7 +398,7 @@ class AIAssistantService {
     };
   }
 
-  private parsePurchaseOrderItems(prompt: string): Array<{
+  private parsePurchaseOrderItems(_prompt: string): Array<{
     product: string;
     quantity: number;
     unit: string;
@@ -479,7 +477,7 @@ class AIAssistantService {
     `;
   }
 
-  private async handleGeneral(prompt: string, context?: any): Promise<AIResponse> {
+  private async handleGeneral(_prompt: string, _context?: any): Promise<AIResponse> {
     return {
       type: 'general',
       message: "I'm here to help! I can:\n• Customize your portal views\n• Query your data\n• Generate documents and reports\n• Create purchase orders\n• Match METRC styling\n\nTry saying 'make this view more compact' or 'show me packages over 25% THC'",
