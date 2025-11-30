@@ -164,7 +164,11 @@ export function DynamicView<T extends Record<string, any>>({
       );
 
     case 'grid':
-      const gridCols = config.density === 'compact' ? 'grid-cols-4' : config.density === 'spacious' ? 'grid-cols-2' : 'grid-cols-3';
+      const gridCols = config.density === 'compact'
+        ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4'
+        : config.density === 'spacious'
+        ? 'grid-cols-1 md:grid-cols-2'
+        : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3';
       return (
         <div className={`grid ${gridCols} gap-4 ${className}`}>
           {sortedData.map((item, idx) => (
@@ -199,7 +203,7 @@ export function DynamicView<T extends Record<string, any>>({
               }`}
               onClick={() => onItemClick?.(item)}
             >
-              <div className="flex-1 grid grid-cols-4 gap-4">
+              <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {config.columns?.filter(col => col.visible).slice(0, 4).map((column) => (
                   <div key={column.id}>
                     <p className="text-xs text-slate">{column.label}</p>
@@ -216,7 +220,7 @@ export function DynamicView<T extends Record<string, any>>({
 
     case 'cards':
       return (
-        <div className={`grid grid-cols-2 gap-4 ${className}`}>
+        <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 ${className}`}>
           {sortedData.map((item, idx) => (
             <Card
               key={idx}
@@ -253,7 +257,7 @@ export function DynamicView<T extends Record<string, any>>({
       return (
         <div className={`flex gap-4 overflow-x-auto pb-4 ${className}`}>
           {Object.entries(grouped).map(([groupName, items]) => (
-            <div key={groupName} className="flex-shrink-0 w-80">
+            <div key={groupName} className="flex-shrink-0 w-72 md:w-80">
               <div className="bg-gray-100 rounded-lg p-3 mb-2">
                 <h3 className="font-semibold text-charcoal">{groupName}</h3>
                 <p className="text-xs text-slate">{items.length} items</p>

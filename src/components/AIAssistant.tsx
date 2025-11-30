@@ -115,9 +115,9 @@ export function AIAssistant({ portalType, onViewConfigChange, userData }: AIAssi
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg hover:shadow-xl transition-all flex items-center justify-center group z-50"
+        className="fixed bottom-4 right-4 md:bottom-6 md:right-6 w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg hover:shadow-xl transition-all flex items-center justify-center group z-50"
       >
-        <Sparkles className="w-6 h-6 group-hover:scale-110 transition-transform" />
+        <Sparkles className="w-5 h-5 md:w-6 md:h-6 group-hover:scale-110 transition-transform" />
         <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white animate-pulse" />
       </button>
     );
@@ -125,8 +125,10 @@ export function AIAssistant({ portalType, onViewConfigChange, userData }: AIAssi
 
   return (
     <div
-      className={`fixed right-6 bottom-6 bg-white rounded-2xl shadow-2xl border border-purple-200 flex flex-col z-50 transition-all ${
-        isMinimized ? 'w-80 h-16' : 'w-96 h-[600px]'
+      className={`fixed inset-x-2 bottom-2 md:inset-x-auto md:right-6 md:bottom-6 bg-white rounded-2xl shadow-2xl border border-purple-200 flex flex-col z-50 transition-all ${
+        isMinimized
+          ? 'w-auto md:w-80 h-16'
+          : 'w-auto md:w-96 h-[85vh] md:h-[600px] max-h-[600px]'
       }`}
     >
       {/* Header */}
@@ -243,7 +245,7 @@ export function AIAssistant({ portalType, onViewConfigChange, userData }: AIAssi
           {/* Quick Actions */}
           <div className="px-4 py-2 border-t border-purple-100 bg-purple-50/30">
             <p className="text-xs text-slate mb-2">Quick Actions:</p>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {quickActions.map((action, idx) => {
                 const Icon = action.icon;
                 return (
@@ -253,10 +255,10 @@ export function AIAssistant({ portalType, onViewConfigChange, userData }: AIAssi
                       setInput(action.prompt);
                       handleSend();
                     }}
-                    className="flex items-center gap-2 px-3 py-2 bg-white hover:bg-purple-50 rounded-lg text-xs text-charcoal border border-purple-100 transition-colors"
+                    className="flex items-center gap-2 px-3 py-2 bg-white hover:bg-purple-50 rounded-lg text-xs text-charcoal border border-purple-100 transition-colors touch-manipulation"
                   >
-                    <Icon className="w-3 h-3 text-purple-600" />
-                    <span>{action.label}</span>
+                    <Icon className="w-3 h-3 text-purple-600 flex-shrink-0" />
+                    <span className="truncate">{action.label}</span>
                   </button>
                 );
               })}
@@ -264,7 +266,7 @@ export function AIAssistant({ portalType, onViewConfigChange, userData }: AIAssi
           </div>
 
           {/* Input */}
-          <div className="p-4 border-t border-purple-100">
+          <div className="p-3 md:p-4 border-t border-purple-100">
             <div className="flex gap-2">
               <input
                 type="text"
@@ -272,15 +274,15 @@ export function AIAssistant({ portalType, onViewConfigChange, userData }: AIAssi
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                 placeholder="Ask me anything..."
-                className="flex-1 px-4 py-2 border border-purple-200 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+                className="flex-1 px-3 md:px-4 py-2 md:py-2.5 border border-purple-200 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm touch-manipulation"
                 disabled={isLoading}
               />
               <button
                 onClick={handleSend}
                 disabled={!input.trim() || isLoading}
-                className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-600 to-blue-600 text-white flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg transition-all"
+                className="w-10 h-10 md:w-11 md:h-11 rounded-full bg-gradient-to-r from-purple-600 to-blue-600 text-white flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg transition-all flex-shrink-0 touch-manipulation"
               >
-                <Send className="w-4 h-4" />
+                <Send className="w-4 h-4 md:w-5 md:h-5" />
               </button>
             </div>
           </div>

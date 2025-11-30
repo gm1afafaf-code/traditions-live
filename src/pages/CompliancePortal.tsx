@@ -182,8 +182,8 @@ export function CompliancePortal() {
       <div className="min-h-screen bg-gradient-to-br from-marble via-white to-marble-dark">
         {/* Header */}
         <div className="bg-white/80 backdrop-blur-sm border-b border-gold/20 sticky top-0 z-10">
-          <div className="max-w-7xl mx-auto px-6 py-4">
-            <div className="flex items-center justify-between">
+          <div className="max-w-7xl mx-auto px-4 md:px-6 py-4">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
               <div>
                 <div className="flex items-center gap-3">
                   <Shield className="w-8 h-8 text-gold" />
@@ -255,7 +255,7 @@ export function CompliancePortal() {
           {activeTab === 'cultivation' && (
             <div className="space-y-6">
               {/* Quick Stats */}
-              <div className="grid grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <Card className="p-4">
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center">
@@ -409,7 +409,7 @@ export function CompliancePortal() {
                   </Button>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {mockLocations.map((location) => (
                     <div key={location.id} className="p-4 rounded-lg border border-gold/10 bg-white">
                       <div className="flex items-start justify-between">
@@ -448,7 +448,7 @@ export function CompliancePortal() {
                   </Button>
                 </div>
 
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {mockStrains.map((strain) => (
                     <div key={strain.id} className="p-4 rounded-lg border border-gold/10 bg-white">
                       <div className="flex items-start justify-between mb-3">
@@ -486,7 +486,7 @@ export function CompliancePortal() {
           {activeTab === 'inventory' && (
             <div className="space-y-6">
               {/* Stats */}
-              <div className="grid grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <Card className="p-4">
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
@@ -562,7 +562,7 @@ export function CompliancePortal() {
           {activeTab === 'distribution' && (
             <div className="space-y-6">
               {/* Stats */}
-              <div className="grid grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <Card className="p-4">
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
@@ -719,7 +719,7 @@ export function CompliancePortal() {
               <Card className="p-6">
                 <h2 className="text-lg font-semibold text-charcoal mb-4">Label Templates</h2>
                 <p className="text-sm text-slate mb-4">Customize label templates for packages, plants, and transfers</p>
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <Button variant="outline">
                     <FileText className="w-4 h-4 mr-2" />
                     Package Labels
