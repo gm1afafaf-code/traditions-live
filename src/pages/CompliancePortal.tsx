@@ -2,6 +2,9 @@ import { useState } from 'react';
 import { useAuth } from '@/hooks';
 import { AppLayout } from '@/components/layout';
 import { Card, Button, Input, Select, Modal } from '@/components/ui';
+import { AIAssistant } from '@/components/AIAssistant';
+import { DynamicView } from '@/components/DynamicView';
+import type { ViewConfiguration } from '@/services/aiAssistant';
 import {
   Shield,
   Package,
@@ -103,6 +106,16 @@ export function CompliancePortal() {
   const [isPackageModalOpen, setIsPackageModalOpen] = useState(false);
   const [isManifestModalOpen, setIsManifestModalOpen] = useState(false);
 
+  // AI Assistant view configuration
+  const [viewConfig, setViewConfig] = useState<ViewConfiguration>({
+    layout: 'table',
+    density: 'comfortable',
+  });
+
+  const handleViewConfigChange = (newConfig: ViewConfiguration) => {
+    setViewConfig(newConfig);
+  };
+
   // Mock data - will be replaced with real METRC API calls
   const mockPlantBatches: PlantBatch[] = [
     { id: '1', name: 'OG-CLONE-001', type: 'Clone', count: 100, strain: 'OG Kush', location: 'Clone Room A', plantedDate: '2025-11-15', status: 'active' },
@@ -169,8 +182,8 @@ export function CompliancePortal() {
       <div className="min-h-screen bg-gradient-to-br from-marble via-white to-marble-dark">
         {/* Header */}
         <div className="bg-white/80 backdrop-blur-sm border-b border-gold/20 sticky top-0 z-10">
-          <div className="max-w-7xl mx-auto px-6 py-4">
-            <div className="flex items-center justify-between">
+          <div className="max-w-7xl mx-auto px-4 md:px-6 py-4">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
               <div>
                 <div className="flex items-center gap-3">
                   <Shield className="w-8 h-8 text-gold" />
@@ -242,7 +255,7 @@ export function CompliancePortal() {
           {activeTab === 'cultivation' && (
             <div className="space-y-6">
               {/* Quick Stats */}
-              <div className="grid grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <Card className="p-4">
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center">
@@ -396,7 +409,7 @@ export function CompliancePortal() {
                   </Button>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {mockLocations.map((location) => (
                     <div key={location.id} className="p-4 rounded-lg border border-gold/10 bg-white">
                       <div className="flex items-start justify-between">
@@ -435,7 +448,7 @@ export function CompliancePortal() {
                   </Button>
                 </div>
 
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {mockStrains.map((strain) => (
                     <div key={strain.id} className="p-4 rounded-lg border border-gold/10 bg-white">
                       <div className="flex items-start justify-between mb-3">
@@ -473,7 +486,7 @@ export function CompliancePortal() {
           {activeTab === 'inventory' && (
             <div className="space-y-6">
               {/* Stats */}
-              <div className="grid grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <Card className="p-4">
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
@@ -520,7 +533,7 @@ export function CompliancePortal() {
                 </Card>
               </div>
 
-              {/* Packages Table */}
+              {/* Packages Table - Dynamic View with AI Assistant */}
               <Card className="p-6">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-lg font-semibold text-charcoal">METRC Packages</h2>
@@ -536,48 +549,11 @@ export function CompliancePortal() {
                   </div>
                 </div>
 
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b border-gold/10 text-left">
-                        <th className="pb-3 text-sm font-medium text-slate">Package UID</th>
-                        <th className="pb-3 text-sm font-medium text-slate">Product</th>
-                        <th className="pb-3 text-sm font-medium text-slate">Type</th>
-                        <th className="pb-3 text-sm font-medium text-slate">Quantity</th>
-                        <th className="pb-3 text-sm font-medium text-slate">THC%</th>
-                        <th className="pb-3 text-sm font-medium text-slate">CBD%</th>
-                        <th className="pb-3 text-sm font-medium text-slate">Retail ID</th>
-                        <th className="pb-3 text-sm font-medium text-slate">Status</th>
-                        <th className="pb-3 text-sm font-medium text-slate">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {mockPackages.map((pkg) => (
-                        <tr key={pkg.id} className="border-b border-gold/5 hover:bg-gold/5">
-                          <td className="py-3 text-sm font-mono text-charcoal">{pkg.label}</td>
-                          <td className="py-3 text-sm text-charcoal">{pkg.productName}</td>
-                          <td className="py-3 text-sm text-slate">{pkg.type}</td>
-                          <td className="py-3 text-sm text-slate">
-                            {pkg.quantity} {pkg.unit}
-                          </td>
-                          <td className="py-3 text-sm text-charcoal font-medium">{pkg.thc?.toFixed(1)}%</td>
-                          <td className="py-3 text-sm text-charcoal">{pkg.cbd?.toFixed(1)}%</td>
-                          <td className="py-3 text-sm font-mono text-slate">{pkg.retailItemId || '—'}</td>
-                          <td className="py-3">
-                            <span className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(pkg.status)}`}>
-                              {pkg.status}
-                            </span>
-                          </td>
-                          <td className="py-3">
-                            <Button variant="ghost" size="sm">
-                              Details
-                            </Button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                <DynamicView
+                  data={mockPackages}
+                  config={viewConfig}
+                  onItemClick={(pkg) => console.log('Package clicked:', pkg)}
+                />
               </Card>
             </div>
           )}
@@ -586,7 +562,7 @@ export function CompliancePortal() {
           {activeTab === 'distribution' && (
             <div className="space-y-6">
               {/* Stats */}
-              <div className="grid grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <Card className="p-4">
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
@@ -743,7 +719,7 @@ export function CompliancePortal() {
               <Card className="p-6">
                 <h2 className="text-lg font-semibold text-charcoal mb-4">Label Templates</h2>
                 <p className="text-sm text-slate mb-4">Customize label templates for packages, plants, and transfers</p>
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <Button variant="outline">
                     <FileText className="w-4 h-4 mr-2" />
                     Package Labels
@@ -833,6 +809,12 @@ export function CompliancePortal() {
           </div>
         </div>
       </Modal>
+
+      {/* AI Assistant */}
+      <AIAssistant
+        portalType="compliance"
+        onViewConfigChange={handleViewConfigChange}
+      />
     </AppLayout>
   );
 }

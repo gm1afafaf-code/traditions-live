@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useAuth } from '@/hooks';
 import { AppLayout } from '@/components/layout';
 import { Card, Button, Input, Select, Modal } from '@/components/ui';
+import { AIAssistant } from '@/components/AIAssistant';
+import type { ViewConfiguration } from '@/services/aiAssistant';
 import {
   Users,
   Building2,
@@ -78,6 +80,16 @@ export function SalesCRM() {
   const [isCustomerModalOpen, setIsCustomerModalOpen] = useState(false);
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
+
+  // AI Assistant view configuration
+  const [viewConfig, setViewConfig] = useState<ViewConfiguration>({
+    layout: 'table',
+    density: 'comfortable',
+  });
+
+  const handleViewConfigChange = (newConfig: ViewConfiguration) => {
+    setViewConfig(newConfig);
+  };
 
   // Mock data
   const mockCustomers: Customer[] = [
@@ -344,7 +356,7 @@ export function SalesCRM() {
                             </span>
                           </div>
 
-                          <div className="grid grid-cols-4 gap-4 text-sm">
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                             <div>
                               <p className="text-slate mb-1">Contact</p>
                               <p className="text-charcoal font-medium">{customer.contactName}</p>
@@ -404,7 +416,7 @@ export function SalesCRM() {
           {activeTab === 'orders' && (
             <div className="space-y-6">
               {/* Stats */}
-              <div className="grid grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <Card className="p-4">
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
@@ -567,7 +579,7 @@ export function SalesCRM() {
                           </div>
                           <p className="text-sm text-slate mb-3">{quote.customerName}</p>
 
-                          <div className="grid grid-cols-3 gap-4 text-sm">
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                             <div>
                               <p className="text-slate">Total Amount</p>
                               <p className="text-lg font-bold text-green-600">{formatCurrency(quote.totalAmount)}</p>
@@ -602,7 +614,7 @@ export function SalesCRM() {
           {/* ANALYTICS TAB */}
           {activeTab === 'analytics' && (
             <div className="space-y-6">
-              <div className="grid grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <Card className="p-6">
                   <h3 className="text-sm font-medium text-slate mb-4">Revenue by Customer Type</h3>
                   <div className="space-y-3">
@@ -723,6 +735,12 @@ export function SalesCRM() {
           </div>
         </div>
       </Modal>
+
+      {/* AI Assistant */}
+      <AIAssistant
+        portalType="sales"
+        onViewConfigChange={handleViewConfigChange}
+      />
     </AppLayout>
   );
 }
