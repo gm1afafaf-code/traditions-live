@@ -9,3 +9,4 @@ export { Compliance } from './Compliance';
 export { Tracking } from './Tracking';
 export { CompliancePortal } from './CompliancePortal';
 export { TrackingPortal } from './TrackingPortal';
+export { SalesCRM } from './SalesCRM';
