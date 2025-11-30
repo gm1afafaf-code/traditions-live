@@ -60,6 +60,8 @@ export function Sidebar() {
       <nav className="flex-1 py-4 overflow-y-auto">
         <NavItem to={ROUTES.VAULT} active={isActive(ROUTES.VAULT)} icon="◇" label="VAULT" collapsed={sidebarCollapsed} />
         <NavItem to={ROUTES.BROKER_DASHBOARD} active={isActive(ROUTES.BROKER_DASHBOARD)} icon="◈" label="PORTAL" collapsed={sidebarCollapsed} />
+        <NavItem to={ROUTES.COMPLIANCE_PORTAL} active={isActive(ROUTES.COMPLIANCE_PORTAL)} icon="⚡" label="COMPLIANCE" collapsed={sidebarCollapsed} />
+        <NavItem to={ROUTES.TRACKING_PORTAL} active={isActive(ROUTES.TRACKING_PORTAL)} icon="➜" label="TRACKING" collapsed={sidebarCollapsed} />
 
         {user?.role === 'admin' && (
           <NavItem to={ROUTES.ADMIN_DASHBOARD} active={isActive(ROUTES.ADMIN_DASHBOARD)} icon="⚙" label="ADMIN" collapsed={sidebarCollapsed} />

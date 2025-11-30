@@ -44,6 +44,10 @@ ui-debug.log
 setup/firebase-key.json
 *.json.bak
 
+# Legacy files (old vanilla JS version)
+js/
+public/js/
+
 # Misc
 *.log
 .cache/

@@ -59,6 +59,8 @@ export const ROUTES = {
   COMPLIANCE: '/compliance',
   NETWORK: '/network',
   TRACKING: '/tracking',
+  COMPLIANCE_PORTAL: '/portal/compliance',
+  TRACKING_PORTAL: '/portal/tracking',
 } as const;
 
 // Validation Rules

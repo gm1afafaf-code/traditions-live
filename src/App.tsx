@@ -13,6 +13,8 @@ import {
   Compliance,
   Network,
   Tracking,
+  CompliancePortal,
+  TrackingPortal,
 } from '@/pages';
 
 function App() {
@@ -22,6 +24,8 @@ function App() {
         {/* Public Routes */}
         <Route path={ROUTES.HOME} element={<Landing />} />
         <Route path={ROUTES.LOGIN} element={<Login />} />
+        <Route path={ROUTES.COMPLIANCE} element={<Compliance />} />
+        <Route path={ROUTES.TRACKING} element={<Tracking />} />
 
         {/* Protected Routes */}
         <Route
@@ -61,6 +65,22 @@ function App() {
           element={
             <ProtectedRoute requireApproval requireRole="admin">
               <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={ROUTES.COMPLIANCE_PORTAL}
+          element={
+            <ProtectedRoute requireApproval>
+              <CompliancePortal />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={ROUTES.TRACKING_PORTAL}
+          element={
+            <ProtectedRoute requireApproval>
+              <TrackingPortal />
             </ProtectedRoute>
           }
         />
