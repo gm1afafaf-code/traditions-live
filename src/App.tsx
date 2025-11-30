@@ -12,6 +12,8 @@ import {
   AdminDashboard,
   Compliance,
   Tracking,
+  CompliancePortal,
+  TrackingPortal,
 } from '@/pages';
 
 function App() {
@@ -62,6 +64,22 @@ function App() {
           element={
             <ProtectedRoute requireApproval requireRole="admin">
               <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={ROUTES.COMPLIANCE_PORTAL}
+          element={
+            <ProtectedRoute requireApproval>
+              <CompliancePortal />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={ROUTES.TRACKING_PORTAL}
+          element={
+            <ProtectedRoute requireApproval>
+              <TrackingPortal />
             </ProtectedRoute>
           }
         />
