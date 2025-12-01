@@ -133,8 +133,8 @@ export function Checkout() {
             )}
           </div>
 
+          {/* Progress Steps */}
           {currentStep !== 'confirmed' && (
-            {/* Progress Steps */}
             <div className="mb-8">
               <div className="flex items-center justify-between">
                 {steps.map((step, idx) => {
@@ -400,7 +400,7 @@ export function Checkout() {
                     <div className="space-y-4">
                       <div className="flex gap-4 mb-4">
                         <Button
-                          variant={isAddingPayment ? 'default' : 'outline'}
+                          variant={isAddingPayment ? 'primary' : 'outline'}
                           size="sm"
                           className="flex-1"
                         >
