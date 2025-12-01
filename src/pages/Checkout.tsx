@@ -134,8 +134,7 @@ export function Checkout() {
           </div>
 
           {currentStep !== 'confirmed' && (
-            {/* Progress Steps */}
-            <div className="mb-8">
+            <div className="mb-8">{/* Progress Steps */}
               <div className="flex items-center justify-between">
                 {steps.map((step, idx) => {
                   const Icon = step.icon;
