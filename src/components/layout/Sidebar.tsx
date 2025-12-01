@@ -44,11 +44,11 @@ export function Sidebar() {
         <div className="p-4 border-b border-black/5">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-full bg-gradient-to-br from-gold/30 to-gold/10 flex items-center justify-center text-gold text-sm font-medium">
-              {user.firstName[0]}{user.lastName[0]}
+              {user.firstName?.[0] || ''}{user.lastName?.[0] || ''}
             </div>
             <div className="flex-1 min-w-0">
               <p className="font-medium text-charcoal text-sm truncate">
-                {user.firstName} {user.lastName}
+                {user.firstName || ''} {user.lastName || ''}
               </p>
               <p className="text-[10px] text-gold uppercase tracking-wider">{user.role}</p>
             </div>

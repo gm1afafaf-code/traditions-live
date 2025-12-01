@@ -6,6 +6,6 @@ export { Card } from './Card';
 export { Loading, LoadingOverlay } from './Loading';
 export { NotificationContainer } from './Notification';
 export { Modal } from './Modal';
-export { LuxuryCard } from './LuxuryCard';
-export { GoldButton } from './GoldButton';
 export { AnimatedCounter } from './AnimatedCounter';
+export { GoldButton } from './GoldButton';
+export { LuxuryCard } from './LuxuryCard';

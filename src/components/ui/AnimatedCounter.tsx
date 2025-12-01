@@ -1,35 +1,51 @@
-import { useEffect } from 'react';
-import { motion, useSpring, useTransform } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
+import { motion, useInView, useSpring, useTransform } from 'framer-motion';
 
-export interface AnimatedCounterProps {
+interface AnimatedCounterProps {
   value: number;
-  duration?: number;
   prefix?: string;
   suffix?: string;
-  decimals?: number;
+  duration?: number;
   className?: string;
+  decimals?: number;
 }
 
 export function AnimatedCounter({
   value,
-  duration = 2,
   prefix = '',
   suffix = '',
-  decimals = 0,
+  duration = 2,
   className = '',
+  decimals = 0,
 }: AnimatedCounterProps) {
-  const springValue = useSpring(0, { duration: duration * 1000 });
-  const display = useTransform(springValue, (current) =>
-    `${prefix}${current.toFixed(decimals)}${suffix}`
-  );
+  const ref = useRef<HTMLSpanElement>(null);
+  const isInView = useInView(ref, { once: true, margin: '-100px' });
+  const [hasAnimated, setHasAnimated] = useState(false);
+
+  const spring = useSpring(0, {
+    duration: duration * 1000,
+    bounce: 0,
+  });
+
+  const display = useTransform(spring, (current) => {
+    if (decimals > 0) {
+      return current.toFixed(decimals);
+    }
+    return Math.floor(current).toLocaleString();
+  });
 
   useEffect(() => {
-    springValue.set(value);
-  }, [springValue, value]);
+    if (isInView && !hasAnimated) {
+      spring.set(value);
+      setHasAnimated(true);
+    }
+  }, [isInView, value, spring, hasAnimated]);
 
   return (
-    <motion.span className={className}>
-      {display}
-    </motion.span>
+    <span ref={ref} className={className}>
+      {prefix}
+      <motion.span>{display}</motion.span>
+      {suffix}
+    </span>
   );
 }

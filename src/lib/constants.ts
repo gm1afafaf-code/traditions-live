@@ -57,9 +57,12 @@ export const ROUTES = {
   VENDOR_PORTAL: '/vendor',
   SETTINGS: '/settings',
   COMPLIANCE: '/compliance',
+  NETWORK: '/network',
   TRACKING: '/tracking',
   COMPLIANCE_PORTAL: '/portal/compliance',
   TRACKING_PORTAL: '/portal/tracking',
+  SELLER_DASHBOARD: '/seller',
+  CHECKOUT: '/checkout',
 } as const;
 
 // Validation Rules

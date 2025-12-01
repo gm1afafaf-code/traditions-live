@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useAuth } from '@/hooks';
 import { AppLayout } from '@/components/layout';
 import { Card, Button, Input, Modal } from '@/components/ui';
+import { AIAssistant } from '@/components/AIAssistant';
+import type { ViewConfiguration } from '@/services/aiAssistant';
 import { Truck, MapPin, Clock, Package, Navigation, FileText, CheckCircle, AlertTriangle } from 'lucide-react';
 
 interface Shipment {
@@ -66,6 +68,16 @@ export function TrackingPortal() {
   const [activeTab, setActiveTab] = useState<'active' | 'pending' | 'history'>('active');
   const [isCreateShipmentOpen, setIsCreateShipmentOpen] = useState(false);
   const [selectedShipment, setSelectedShipment] = useState<Shipment | null>(null);
+
+  // AI Assistant view configuration
+  const [_viewConfig, setViewConfig] = useState<ViewConfiguration>({
+    layout: 'list',
+    density: 'comfortable',
+  });
+
+  const handleViewConfigChange = (newConfig: ViewConfiguration) => {
+    setViewConfig(newConfig);
+  };
 
   const tabs = [
     { id: 'active' as const, label: 'Active Shipments', count: mockShipments.filter(s => s.status === 'in_transit').length },
@@ -363,6 +375,12 @@ export function TrackingPortal() {
           )}
         </Modal>
       </div>
+
+      {/* AI Assistant */}
+      <AIAssistant
+        portalType="tracking"
+        onViewConfigChange={handleViewConfigChange}
+      />
     </AppLayout>
   );
 }
