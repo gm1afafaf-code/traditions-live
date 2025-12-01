@@ -11,3 +11,5 @@ export { Tracking } from './Tracking';
 export { CompliancePortal } from './CompliancePortal';
 export { TrackingPortal } from './TrackingPortal';
 export { SalesCRM } from './SalesCRM';
+export { SellerDashboard } from './SellerDashboard';
+export { Checkout } from './Checkout';
