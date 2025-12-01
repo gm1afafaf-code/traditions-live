@@ -14,6 +14,8 @@ import {
   Tracking,
   CompliancePortal,
   TrackingPortal,
+  SellerDashboard,
+  Checkout,
 } from '@/pages';
 
 function App() {
@@ -94,6 +96,22 @@ function App() {
           element={
             <ProtectedRoute requireApproval>
               <TrackingPortal />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={ROUTES.SELLER_DASHBOARD}
+          element={
+            <ProtectedRoute requireApproval>
+              <SellerDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={ROUTES.CHECKOUT}
+          element={
+            <ProtectedRoute requireApproval>
+              <Checkout />
             </ProtectedRoute>
           }
         />

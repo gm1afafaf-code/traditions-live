@@ -60,6 +60,8 @@ export const ROUTES = {
   TRACKING: '/tracking',
   COMPLIANCE_PORTAL: '/portal/compliance',
   TRACKING_PORTAL: '/portal/tracking',
+  SELLER_DASHBOARD: '/seller',
+  CHECKOUT: '/checkout',
 } as const;
 
 // Validation Rules
