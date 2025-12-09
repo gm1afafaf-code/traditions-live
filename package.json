@@ -1,7 +1,7 @@
 {
-  "name": "traditions-live",
+  "name": "vouched",
   "version": "2.0.0",
-  "description": "Premium Wholesale Cannabis Platform - Modern, Type-Safe, Production-Ready",
+  "description": "Premium THCA Cannabis E-commerce Platform - Shop Flower, Vapes, Edibles & More",
   "type": "module",
   "scripts": {
     "dev": "vite",
