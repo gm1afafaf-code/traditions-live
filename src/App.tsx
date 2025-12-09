@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from '@/hooks';
 import { ROUTES } from '@/lib/constants';
 import { Loading } from '@/components/ui';
+import { AgeVerification } from '@/components/AgeVerification';
 import {
   Landing,
   Login,
@@ -14,80 +15,91 @@ import {
   Tracking,
   CompliancePortal,
   TrackingPortal,
+  Shop,
+  ProductDetail,
+  Cart,
 } from '@/pages';
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* Public Routes */}
-        <Route path={ROUTES.HOME} element={<Landing />} />
-        <Route path={ROUTES.LOGIN} element={<Login />} />
-        <Route path={ROUTES.COMPLIANCE} element={<Compliance />} />
-        <Route path={ROUTES.TRACKING} element={<Tracking />} />
+    <AgeVerification>
+      <BrowserRouter>
+        <Routes>
+          {/* Public Routes - E-commerce */}
+          <Route path={ROUTES.HOME} element={<Landing />} />
+          <Route path="/shop" element={<Shop />} />
+          <Route path="/shop/:category" element={<Shop />} />
+          <Route path="/product/:id" element={<ProductDetail />} />
+          <Route path="/cart" element={<Cart />} />
 
-        {/* Protected Routes */}
-        <Route
-          path={ROUTES.PROFILE_SETUP}
-          element={
-            <ProtectedRoute>
-              <ProfileSetup />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path={ROUTES.PENDING_APPROVAL}
-          element={
-            <ProtectedRoute>
-              <PendingApproval />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path={ROUTES.VAULT}
-          element={
-            <ProtectedRoute requireApproval>
-              <Vault />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path={ROUTES.BROKER_DASHBOARD}
-          element={
-            <ProtectedRoute requireApproval>
-              <BrokerDashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path={ROUTES.ADMIN_DASHBOARD}
-          element={
-            <ProtectedRoute requireApproval requireRole="admin">
-              <AdminDashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path={ROUTES.COMPLIANCE_PORTAL}
-          element={
-            <ProtectedRoute requireApproval>
-              <CompliancePortal />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path={ROUTES.TRACKING_PORTAL}
-          element={
-            <ProtectedRoute requireApproval>
-              <TrackingPortal />
-            </ProtectedRoute>
-          }
-        />
+          {/* Auth Routes */}
+          <Route path={ROUTES.LOGIN} element={<Login />} />
+          <Route path={ROUTES.COMPLIANCE} element={<Compliance />} />
+          <Route path={ROUTES.TRACKING} element={<Tracking />} />
 
-        {/* Catch all - redirect to home */}
-        <Route path="*" element={<Navigate to={ROUTES.HOME} replace />} />
-      </Routes>
-    </BrowserRouter>
+          {/* Protected Routes */}
+          <Route
+            path={ROUTES.PROFILE_SETUP}
+            element={
+              <ProtectedRoute>
+                <ProfileSetup />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path={ROUTES.PENDING_APPROVAL}
+            element={
+              <ProtectedRoute>
+                <PendingApproval />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path={ROUTES.VAULT}
+            element={
+              <ProtectedRoute requireApproval>
+                <Vault />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path={ROUTES.BROKER_DASHBOARD}
+            element={
+              <ProtectedRoute requireApproval>
+                <BrokerDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path={ROUTES.ADMIN_DASHBOARD}
+            element={
+              <ProtectedRoute requireApproval requireRole="admin">
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path={ROUTES.COMPLIANCE_PORTAL}
+            element={
+              <ProtectedRoute requireApproval>
+                <CompliancePortal />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path={ROUTES.TRACKING_PORTAL}
+            element={
+              <ProtectedRoute requireApproval>
+                <TrackingPortal />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Catch all - redirect to home */}
+          <Route path="*" element={<Navigate to={ROUTES.HOME} replace />} />
+        </Routes>
+      </BrowserRouter>
+    </AgeVerification>
   );
 }
 
