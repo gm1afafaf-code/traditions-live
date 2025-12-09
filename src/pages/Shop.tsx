@@ -4,12 +4,13 @@ import {
   ShoppingCart,
   Menu,
   X,
-  Leaf,
   Star,
   Filter,
   ChevronDown,
   Grid3X3,
   List,
+  Search,
+  User,
 } from 'lucide-react';
 import { ROUTES } from '@/lib/constants';
 
@@ -256,72 +257,67 @@ export function Shop() {
   const currentCategory = category ? categoryInfo[category] : null;
 
   return (
-    <div className="min-h-screen bg-dark">
+    <div className="min-h-screen bg-white">
       {/* Announcement Bar */}
-      <div className="bg-emerald-600 text-white text-center py-2 px-4 text-sm font-medium">
-        <span className="hidden sm:inline">🔥 FREE SHIPPING on orders over $77 | </span>
-        <span>
-          Use code <span className="font-bold">VOUCHED20</span> for 20% off!
-        </span>
+      <div className="bg-cyan-400 text-white text-center py-2 px-4 text-sm font-medium flex items-center justify-center gap-2">
+        <span className="hidden sm:inline">Free Shipping on Orders Over $100</span>
+        <span className="sm:hidden">Free Shipping Over $100</span>
+        <span className="text-white">+</span>
+        <Link to="/shop" className="underline font-bold hover:no-underline">SHOP NOW</Link>
       </div>
 
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-dark/95 backdrop-blur-md border-b border-white/10">
+      <header className="sticky top-0 z-50 bg-cyan-400">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <Link to="/" className="flex items-center gap-2">
-              <Leaf className="w-8 h-8 text-emerald-500" />
-              <span className="text-2xl font-display tracking-wider text-white">VOUCHED</span>
+            {/* Left - Shop All Button */}
+            <Link
+              to="/shop"
+              className="bg-gray-900 text-white px-4 py-2 rounded-md text-sm font-bold hover:bg-gray-800 transition"
+            >
+              SHOP ALL
             </Link>
 
-            <nav className="hidden md:flex items-center gap-8">
-              <Link to="/shop" className="text-emerald-400 font-medium">
-                Shop All
-              </Link>
-              <Link
-                to="/shop/flower"
-                className={`transition font-medium ${
-                  category === 'flower' ? 'text-emerald-400' : 'text-gray-300 hover:text-emerald-400'
-                }`}
-              >
-                THCA Flower
-              </Link>
-              <Link
-                to="/shop/vapes"
-                className={`transition font-medium ${
-                  category === 'vapes' ? 'text-emerald-400' : 'text-gray-300 hover:text-emerald-400'
-                }`}
-              >
-                Vapes
-              </Link>
-              <Link
-                to="/shop/edibles"
-                className={`transition font-medium ${
-                  category === 'edibles' ? 'text-emerald-400' : 'text-gray-300 hover:text-emerald-400'
-                }`}
-              >
-                Edibles
-              </Link>
-            </nav>
+            {/* Center - Logo */}
+            <Link to="/" className="flex items-center">
+              <span className="text-2xl font-display tracking-wider text-white drop-shadow-lg" style={{ fontFamily: 'cursive' }}>
+                Vouched
+              </span>
+            </Link>
 
-            <div className="flex items-center gap-4">
-              <Link
-                to={ROUTES.LOGIN}
-                className="hidden sm:block text-gray-300 hover:text-white transition font-medium"
-              >
-                Sign In
+            {/* Right - Search, Account, Cart */}
+            <div className="flex items-center gap-2">
+              {/* Search */}
+              <div className="hidden md:flex items-center bg-white rounded-md px-3 py-1.5">
+                <input
+                  type="text"
+                  placeholder="Search Products"
+                  className="bg-transparent outline-none text-sm text-gray-700 w-32 lg:w-48"
+                />
+                <button className="bg-cyan-400 text-white p-1 rounded ml-2">
+                  <Search className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Account */}
+              <Link to={ROUTES.LOGIN} className="p-2 text-white hover:text-gray-200 transition">
+                <User className="w-6 h-6" />
               </Link>
-              <Link to="/cart" className="relative p-2 text-gray-300 hover:text-white transition">
+
+              {/* Cart */}
+              <Link to="/cart" className="flex items-center gap-1 text-white hover:text-gray-200 transition">
                 <ShoppingCart className="w-6 h-6" />
                 {cartCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-emerald-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">
+                  <span className="bg-gray-900 text-white text-xs px-2 py-0.5 rounded-full font-bold">
                     {cartCount}
                   </span>
                 )}
               </Link>
+
+              {/* Mobile Menu Button */}
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="md:hidden p-2 text-gray-300"
+                className="md:hidden p-2 text-white"
               >
                 {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
               </button>
@@ -329,22 +325,23 @@ export function Shop() {
           </div>
         </div>
 
+        {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden bg-dark-50 border-t border-white/10">
+          <div className="md:hidden bg-cyan-500 border-t border-cyan-300">
             <div className="px-4 py-4 space-y-3">
-              <Link to="/shop" className="block py-2 text-emerald-400">
+              <Link to="/shop" className="block py-2 text-white hover:text-gray-200 transition font-medium">
                 Shop All
               </Link>
-              <Link to="/shop/flower" className="block py-2 text-gray-300 hover:text-emerald-400">
+              <Link to="/shop/flower" className="block py-2 text-white hover:text-gray-200 transition">
                 THCA Flower
               </Link>
-              <Link to="/shop/vapes" className="block py-2 text-gray-300 hover:text-emerald-400">
+              <Link to="/shop/vapes" className="block py-2 text-white hover:text-gray-200 transition">
                 Vapes
               </Link>
-              <Link to="/shop/edibles" className="block py-2 text-gray-300 hover:text-emerald-400">
+              <Link to="/shop/edibles" className="block py-2 text-white hover:text-gray-200 transition">
                 Edibles
               </Link>
-              <Link to={ROUTES.LOGIN} className="block py-2 text-emerald-400 font-medium">
+              <Link to={ROUTES.LOGIN} className="block py-2 text-white font-medium">
                 Sign In
               </Link>
             </div>
@@ -353,27 +350,27 @@ export function Shop() {
       </header>
 
       {/* Page Header */}
-      <div className="bg-dark-50 border-b border-white/10">
+      <div className="bg-gray-50 border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <nav className="flex items-center gap-2 text-sm text-gray-400 mb-4">
-            <Link to="/" className="hover:text-white transition">
+          <nav className="flex items-center gap-2 text-sm text-gray-500 mb-4">
+            <Link to="/" className="hover:text-cyan-500 transition">
               Home
             </Link>
             <span>/</span>
-            <Link to="/shop" className="hover:text-white transition">
+            <Link to="/shop" className="hover:text-cyan-500 transition">
               Shop
             </Link>
             {currentCategory && (
               <>
                 <span>/</span>
-                <span className="text-white">{currentCategory.title}</span>
+                <span className="text-gray-900">{currentCategory.title}</span>
               </>
             )}
           </nav>
-          <h1 className="text-3xl md:text-4xl font-display tracking-wide text-white">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
             {currentCategory ? currentCategory.title : 'ALL PRODUCTS'}
           </h1>
-          {currentCategory && <p className="text-gray-400 mt-2">{currentCategory.description}</p>}
+          {currentCategory && <p className="text-gray-600 mt-2">{currentCategory.description}</p>}
         </div>
       </div>
 
@@ -385,15 +382,15 @@ export function Shop() {
             <div className="sticky top-24 space-y-6">
               {/* Categories */}
               <div>
-                <h3 className="font-semibold text-white mb-4">Categories</h3>
+                <h3 className="font-semibold text-gray-900 mb-4">Categories</h3>
                 <ul className="space-y-2">
                   <li>
                     <Link
                       to="/shop"
                       className={`block py-2 px-3 rounded-lg transition ${
                         !category
-                          ? 'bg-emerald-500/20 text-emerald-400'
-                          : 'text-gray-400 hover:text-white hover:bg-white/5'
+                          ? 'bg-cyan-100 text-cyan-600'
+                          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                       }`}
                     >
                       All Products
@@ -405,8 +402,8 @@ export function Shop() {
                         to={`/shop/${key}`}
                         className={`block py-2 px-3 rounded-lg transition ${
                           category === key
-                            ? 'bg-emerald-500/20 text-emerald-400'
-                            : 'text-gray-400 hover:text-white hover:bg-white/5'
+                            ? 'bg-cyan-100 text-cyan-600'
+                            : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                         }`}
                       >
                         {info.title}
@@ -419,7 +416,7 @@ export function Shop() {
               {/* Strain Type Filter */}
               {(category === 'flower' || category === 'vapes' || !category) && (
                 <div>
-                  <h3 className="font-semibold text-white mb-4">Strain Type</h3>
+                  <h3 className="font-semibold text-gray-900 mb-4">Strain Type</h3>
                   <div className="space-y-2">
                     {['indica', 'sativa', 'hybrid'].map((type) => (
                       <button
@@ -427,8 +424,8 @@ export function Shop() {
                         onClick={() => setStrainFilter(strainFilter === type ? null : type)}
                         className={`block w-full text-left py-2 px-3 rounded-lg transition capitalize ${
                           strainFilter === type
-                            ? 'bg-emerald-500/20 text-emerald-400'
-                            : 'text-gray-400 hover:text-white hover:bg-white/5'
+                            ? 'bg-cyan-100 text-cyan-600'
+                            : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                         }`}
                       >
                         {type}
@@ -444,8 +441,8 @@ export function Shop() {
           <div className="flex-1">
             {/* Toolbar */}
             <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-              <p className="text-gray-400">
-                Showing <span className="text-white font-medium">{filteredProducts.length}</span>{' '}
+              <p className="text-gray-600">
+                Showing <span className="text-gray-900 font-medium">{filteredProducts.length}</span>{' '}
                 products
               </p>
 
@@ -453,7 +450,7 @@ export function Shop() {
                 {/* Mobile Filter Button */}
                 <button
                   onClick={() => setFiltersOpen(true)}
-                  className="lg:hidden flex items-center gap-2 px-4 py-2 bg-dark-50 rounded-lg text-gray-300 hover:text-white transition"
+                  className="lg:hidden flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-lg text-gray-700 hover:bg-gray-200 transition"
                 >
                   <Filter className="w-4 h-4" />
                   Filters
@@ -464,7 +461,7 @@ export function Shop() {
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value)}
-                    className="appearance-none bg-dark-50 border border-white/10 rounded-lg px-4 py-2 pr-10 text-white focus:outline-none focus:border-emerald-500"
+                    className="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-10 text-gray-900 focus:outline-none focus:border-cyan-500"
                   >
                     {sortOptions.map((option) => (
                       <option key={option.value} value={option.value}>
@@ -476,13 +473,13 @@ export function Shop() {
                 </div>
 
                 {/* View Mode Toggle */}
-                <div className="hidden sm:flex items-center border border-white/10 rounded-lg overflow-hidden">
+                <div className="hidden sm:flex items-center border border-gray-300 rounded-lg overflow-hidden">
                   <button
                     onClick={() => setViewMode('grid')}
                     className={`p-2 transition ${
                       viewMode === 'grid'
-                        ? 'bg-emerald-500 text-white'
-                        : 'text-gray-400 hover:text-white'
+                        ? 'bg-cyan-500 text-white'
+                        : 'text-gray-400 hover:text-gray-600'
                     }`}
                   >
                     <Grid3X3 className="w-5 h-5" />
@@ -491,8 +488,8 @@ export function Shop() {
                     onClick={() => setViewMode('list')}
                     className={`p-2 transition ${
                       viewMode === 'list'
-                        ? 'bg-emerald-500 text-white'
-                        : 'text-gray-400 hover:text-white'
+                        ? 'bg-cyan-500 text-white'
+                        : 'text-gray-400 hover:text-gray-600'
                     }`}
                   >
                     <List className="w-5 h-5" />
@@ -513,12 +510,12 @@ export function Shop() {
                 <Link
                   key={product.id}
                   to={`/product/${product.id}`}
-                  className={`group bg-dark-50 rounded-xl overflow-hidden border border-white/5 hover:border-emerald-500/50 transition ${
+                  className={`group bg-white rounded-xl overflow-hidden border border-gray-200 hover:border-cyan-400 hover:shadow-lg transition ${
                     viewMode === 'list' ? 'flex' : ''
                   }`}
                 >
                   <div
-                    className={`relative overflow-hidden ${
+                    className={`relative overflow-hidden bg-gray-100 ${
                       viewMode === 'list' ? 'w-40 h-40 flex-shrink-0' : 'aspect-square'
                     }`}
                   >
@@ -533,7 +530,7 @@ export function Shop() {
                           product.badge === 'Sale'
                             ? 'bg-red-500 text-white'
                             : product.badge === 'New'
-                            ? 'bg-emerald-500 text-white'
+                            ? 'bg-cyan-500 text-white'
                             : product.badge === 'Top Shelf' || product.badge === 'Premium'
                             ? 'bg-purple-500 text-white'
                             : product.badge === 'Strong'
@@ -546,29 +543,29 @@ export function Shop() {
                     )}
                   </div>
                   <div className={`p-4 ${viewMode === 'list' ? 'flex-1' : ''}`}>
-                    <p className="text-sm text-emerald-400 mb-1">{product.strain}</p>
-                    <h3 className="font-semibold text-white mb-2 group-hover:text-emerald-400 transition">
+                    <p className="text-sm text-cyan-500 mb-1">{product.strain}</p>
+                    <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-cyan-500 transition">
                       {product.name}
                     </h3>
                     <div className="flex items-center gap-2 mb-2">
                       <div className="flex items-center gap-1">
                         <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                        <span className="text-sm text-gray-400">{product.rating}</span>
+                        <span className="text-sm text-gray-600">{product.rating}</span>
                       </div>
-                      <span className="text-gray-600">•</span>
-                      <span className="text-sm text-gray-400">{product.reviews} reviews</span>
+                      <span className="text-gray-400">•</span>
+                      <span className="text-sm text-gray-600">{product.reviews} reviews</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-lg font-bold text-white">${product.price}</span>
+                      <span className="text-lg font-bold text-gray-900">${product.price}</span>
                       {product.originalPrice && (
-                        <span className="text-sm text-gray-500 line-through">
+                        <span className="text-sm text-gray-400 line-through">
                           ${product.originalPrice}
                         </span>
                       )}
                     </div>
                     <p className="text-xs text-gray-500 mt-1">THC: {product.thc}</p>
                     {viewMode === 'list' && (
-                      <button className="mt-4 w-full bg-emerald-500 hover:bg-emerald-600 text-white py-2 rounded-lg font-medium transition">
+                      <button className="mt-4 w-full bg-cyan-500 hover:bg-cyan-600 text-white py-2 rounded-lg font-medium transition">
                         Add to Cart
                       </button>
                     )}
@@ -579,10 +576,10 @@ export function Shop() {
 
             {filteredProducts.length === 0 && (
               <div className="text-center py-16">
-                <p className="text-gray-400 text-lg">No products found</p>
+                <p className="text-gray-500 text-lg">No products found</p>
                 <Link
                   to="/shop"
-                  className="inline-block mt-4 text-emerald-400 hover:text-emerald-300 transition"
+                  className="inline-block mt-4 text-cyan-500 hover:text-cyan-600 transition"
                 >
                   View all products
                 </Link>
@@ -596,12 +593,12 @@ export function Shop() {
       {filtersOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-black/50" onClick={() => setFiltersOpen(false)} />
-          <div className="absolute bottom-0 left-0 right-0 bg-dark rounded-t-2xl p-6 max-h-[80vh] overflow-y-auto">
+          <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl p-6 max-h-[80vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold text-white">Filters</h2>
+              <h2 className="text-xl font-semibold text-gray-900">Filters</h2>
               <button
                 onClick={() => setFiltersOpen(false)}
-                className="p-2 text-gray-400 hover:text-white"
+                className="p-2 text-gray-400 hover:text-gray-600"
               >
                 <X className="w-6 h-6" />
               </button>
@@ -609,15 +606,15 @@ export function Shop() {
 
             {/* Categories */}
             <div className="mb-6">
-              <h3 className="font-semibold text-white mb-4">Categories</h3>
+              <h3 className="font-semibold text-gray-900 mb-4">Categories</h3>
               <div className="space-y-2">
                 <Link
                   to="/shop"
                   onClick={() => setFiltersOpen(false)}
                   className={`block py-2 px-3 rounded-lg transition ${
                     !category
-                      ? 'bg-emerald-500/20 text-emerald-400'
-                      : 'text-gray-400 hover:text-white'
+                      ? 'bg-cyan-100 text-cyan-600'
+                      : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
                   All Products
@@ -629,8 +626,8 @@ export function Shop() {
                     onClick={() => setFiltersOpen(false)}
                     className={`block py-2 px-3 rounded-lg transition ${
                       category === key
-                        ? 'bg-emerald-500/20 text-emerald-400'
-                        : 'text-gray-400 hover:text-white'
+                        ? 'bg-cyan-100 text-cyan-600'
+                        : 'text-gray-600 hover:text-gray-900'
                     }`}
                   >
                     {info.title}
@@ -641,7 +638,7 @@ export function Shop() {
 
             {/* Strain Type */}
             <div className="mb-6">
-              <h3 className="font-semibold text-white mb-4">Strain Type</h3>
+              <h3 className="font-semibold text-gray-900 mb-4">Strain Type</h3>
               <div className="flex flex-wrap gap-2">
                 {['indica', 'sativa', 'hybrid'].map((type) => (
                   <button
@@ -649,8 +646,8 @@ export function Shop() {
                     onClick={() => setStrainFilter(strainFilter === type ? null : type)}
                     className={`py-2 px-4 rounded-full transition capitalize ${
                       strainFilter === type
-                        ? 'bg-emerald-500 text-white'
-                        : 'bg-dark-50 text-gray-400 hover:text-white'
+                        ? 'bg-cyan-500 text-white'
+                        : 'bg-gray-100 text-gray-600 hover:text-gray-900'
                     }`}
                   >
                     {type}
@@ -661,7 +658,7 @@ export function Shop() {
 
             <button
               onClick={() => setFiltersOpen(false)}
-              className="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-3 rounded-lg font-semibold transition"
+              className="w-full bg-cyan-500 hover:bg-cyan-600 text-white py-3 rounded-lg font-semibold transition"
             >
               Show {filteredProducts.length} Products
             </button>
@@ -670,12 +667,11 @@ export function Shop() {
       )}
 
       {/* Footer */}
-      <footer className="bg-dark-100 border-t border-white/10 mt-16">
+      <footer className="bg-gray-900 border-t border-gray-800 mt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <Link to="/" className="flex items-center gap-2">
-              <Leaf className="w-6 h-6 text-emerald-500" />
-              <span className="text-xl font-display tracking-wider text-white">VOUCHED</span>
+              <span className="text-xl font-bold text-white" style={{ fontFamily: 'cursive' }}>Vouched</span>
             </Link>
             <p className="text-gray-500 text-sm">© 2025 Vouched. All rights reserved.</p>
           </div>
